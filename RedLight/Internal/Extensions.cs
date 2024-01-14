@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace RedLight.Internal;
 
@@ -18,6 +19,19 @@ internal static class Extensions
     public static bool IsSystem(this Type source) => source.Namespace is not null && source.Namespace.StartsWith("System");
 
     public static bool IsNullable(this Type source) => source.IsGenericType && source.GetGenericTypeDefinition() == typeof(Nullable<>);
+
+    public static StringBuilder AppendJoin(this StringBuilder builder, string separator, params string[] value)
+    {
+        if (value.Length == 0)
+            return builder;
+
+        builder.Append(value[0]);
+
+        for (int i = 1; i < value.Length; i++)
+            builder.Append(separator).Append(value[i]);
+        
+        return builder;
+    }
 
     public static T Convert<T>(object value) => value is T tValue ? tValue : (T)Convert(value, typeof(T));
 

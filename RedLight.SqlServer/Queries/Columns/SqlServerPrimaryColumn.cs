@@ -14,7 +14,7 @@ internal sealed class SqlServerPrimaryColumn : PrimaryColumn
         if (!String.IsNullOrEmpty(KeyName))
             builder.Append("CONSTRAINT ").Append(KeyName).Append(' ');
 
-        builder.Append("PRIMARY KEY CLUSTERED (").Append(String.Join(", ", Columns)).Append("),");
+        builder.Append("PRIMARY KEY CLUSTERED (").AppendJoin(", ", Columns).Append("),");
     }
 
 }
