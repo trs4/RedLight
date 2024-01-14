@@ -12,15 +12,11 @@ public static class CreateTableQueryFluent
     /// <param name="type">Тип поля</param>
     /// <param name="increment">Интервал между значениями</param>
     /// <param name="minValue">Минимальное значение</param>
-    /// <param name="maxValue">Максимальное значение</param>
-    public static TQuery AddIdentityColumn<TQuery>(this TQuery query, string name, string sequenceName = null, ColumnType type = ColumnType.String,
-        long increment = 1, long minValue = 1, long maxValue = 0)
+    public static TQuery AddIdentityColumn<TQuery>(this TQuery query, string name, string sequenceName = null, ColumnType type = ColumnType.Integer,
+        long increment = 1, long minValue = 1)
         where TQuery : CreateTableQuery
     {
-        query.SetIdentityColumnCore(
-            query.Connection.Naming.GetName(name),
-            sequenceName, type, increment, minValue, maxValue);
-
+        query.SetIdentityColumnCore(query.Connection.Naming.GetName(name), sequenceName, type, increment, minValue);
         return query;
     }
 
@@ -30,16 +26,12 @@ public static class CreateTableQueryFluent
     /// <param name="type">Тип поля</param>
     /// <param name="increment">Интервал между значениями</param>
     /// <param name="minValue">Минимальное значение</param>
-    /// <param name="maxValue">Максимальное значение</param>
-    public static TQuery AddIdentityColumn<TQuery, TEnum>(this TQuery query, TEnum name, string sequenceName = null, ColumnType type = ColumnType.String,
-        long increment = 1, long minValue = 1, long maxValue = 0)
+    public static TQuery AddIdentityColumn<TQuery, TEnum>(this TQuery query, TEnum name, string sequenceName = null, ColumnType type = ColumnType.Integer,
+        long increment = 1, long minValue = 1)
         where TQuery : CreateTableQuery
         where TEnum : Enum
     {
-        query.SetIdentityColumnCore(
-            query.Connection.Naming.GetName(name),
-            sequenceName, type, increment, minValue, maxValue);
-
+        query.SetIdentityColumnCore(query.Connection.Naming.GetName(name), sequenceName, type, increment, minValue);
         return query;
     }
 
@@ -118,7 +110,7 @@ public static class CreateTableQueryFluent
         var naming = query.Connection.Naming;
 
         query.SetPrimaryColumnCore(
-            naming.GetName(pkName),
+            pkName is null ? null : naming.GetName(pkName),
             columns.Select(naming.GetName).ToArray());
 
         return query;
@@ -134,7 +126,7 @@ public static class CreateTableQueryFluent
         var naming = query.Connection.Naming;
 
         query.SetPrimaryColumnCore(
-            naming.GetName(pkName),
+            pkName is null ? null : naming.GetName(pkName),
             columns.Select(f => naming.GetName(f)).ToArray());
 
         return query;

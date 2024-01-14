@@ -5,9 +5,8 @@ namespace RedLight.SqlServer;
 
 internal sealed class SqlServerIdentityColumn : IdentityColumn
 {
-    public SqlServerIdentityColumn(string name, string sequenceName, ColumnType type,
-        long increment, long minValue, long maxValue)
-        : base(name, sequenceName, type, increment, minValue, maxValue) { }
+    public SqlServerIdentityColumn(string name, string sequenceName, ColumnType type, long increment, long minValue)
+        : base(name, sequenceName, type, increment, minValue) { }
 
     internal override void BuildSql(StringBuilder builder)
     {

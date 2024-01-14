@@ -18,6 +18,10 @@ public sealed class Table
     /// <summary>Список полей</summary>
     public IReadOnlyCollection<Column> Columns => _columns.Values;
 
+    internal IdentityColumnAttribute IdentityColumn { get; set; } // %%TODO Отдельный тип сделать
+
+    internal PrimaryKeyAttribute PrimaryKey { get; set; } // %%TODO Отдельный тип сделать
+
     /// <summary>Описание схемы данных</summary>
     public Database Database { get; internal set; }
 

@@ -6,18 +6,13 @@ namespace RedLight;
 /// <summary>Колонка-идентификатор</summary>
 public abstract class IdentityColumn
 {
-    protected IdentityColumn(string name, string sequenceName, ColumnType type,
-        long increment, long minValue, long maxValue)
+    protected IdentityColumn(string name, string sequenceName, ColumnType type, long increment, long minValue)
     {
-        if (String.IsNullOrWhiteSpace(name))
-            throw new ArgumentNullException(nameof(name));
-
-        Name = name;
+        Name = String.IsNullOrWhiteSpace(name) ? throw new ArgumentNullException(nameof(name)) : name;
         SequenceName = sequenceName;
         Type = type;
         Increment = increment;
         MinValue = minValue;
-        MaxValue = maxValue;
     }
 
     /// <summary>Имя поля</summary>
@@ -34,9 +29,6 @@ public abstract class IdentityColumn
 
     /// <summary>Минимальное значение</summary>
     public long MinValue { get; }
-
-    /// <summary>Максимальное значение</summary>
-    public long MaxValue { get; }
 
     internal abstract void BuildSql(StringBuilder builder);
 

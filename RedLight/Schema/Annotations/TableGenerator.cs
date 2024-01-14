@@ -7,6 +7,8 @@ namespace RedLight;
 public static class TableGenerator
 {
     private static readonly Type _columnAttributeType = typeof(ColumnAttribute);
+    private static readonly Type _identityColumnAttributeType = typeof(IdentityColumnAttribute);
+    private static readonly Type _primaryKeyAttributeType = typeof(PrimaryKeyAttribute);
 
     /// <summary>Получает описание таблицы из перечисления</summary>
     /// <typeparam name="T">Перечисление таблицы с полями</typeparam>
@@ -23,14 +25,31 @@ public static class TableGenerator
                 continue;
 
             var attribute = field.GetCustomAttributes(_columnAttributeType, false).OfType<ColumnAttribute>().FirstOrDefault();
+            Column column;
 
             if (attribute is not null)
             {
-                table.AddColumn(attribute.Name ?? field.Name, attribute.Type, attribute.Nullable, attribute.Size, attribute.Precision,
-                    attribute.DefaultValue, attribute.DefaultConstraint);
+                column = table.AddColumn(attribute.Name ?? field.Name, attribute.Type, attribute.Nullable, attribute.Size, attribute.Precision,
+                       attribute.DefaultValue, attribute.DefaultConstraint);
             }
             else
-                table.AddColumn(field.Name, ColumnType.String);
+                column = table.AddColumn(field.Name, ColumnType.String);
+
+            if (table.IdentityColumn is null)
+            {
+                var identityColumnAttribute = field.GetCustomAttributes(_identityColumnAttributeType, true).OfType<IdentityColumnAttribute>().FirstOrDefault();
+
+                if (identityColumnAttribute is not null)
+                    table.IdentityColumn = identityColumnAttribute.ForTable(column);
+            }
+
+            if (table.PrimaryKey is null)
+            {
+                var primaryKeyAttribute = field.GetCustomAttributes(_primaryKeyAttributeType, true).OfType<PrimaryKeyAttribute>().FirstOrDefault();
+
+                if (primaryKeyAttribute is not null)
+                    table.PrimaryKey = primaryKeyAttribute.ForTable(column);
+            }
         }
 
         return table;

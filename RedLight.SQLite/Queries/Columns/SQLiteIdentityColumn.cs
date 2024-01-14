@@ -4,9 +4,8 @@ namespace RedLight.SQLite;
 
 internal sealed class SQLiteIdentityColumn : IdentityColumn
 {
-    public SQLiteIdentityColumn(string name, string sequenceName, ColumnType type,
-        long increment, long minValue, long maxValue)
-        : base(name, sequenceName, type, increment, minValue, maxValue) { }
+    public SQLiteIdentityColumn(string name, string sequenceName, ColumnType type, long increment, long minValue)
+        : base(name, sequenceName, type, increment, minValue) { }
 
     internal override void BuildSql(StringBuilder builder)
     {
@@ -14,7 +13,6 @@ internal sealed class SQLiteIdentityColumn : IdentityColumn
         int size = Type == ColumnType.Long ? sizeof(long) : sizeof(int);
         builder.Append("\r\n    ").Append(Name).Append(' ').Append(SQLiteColumnTypes.Instance.GetDataTypeName(dbType));
         SQLiteColumnTypes.Instance.AppendTypeOptions(builder, dbType, size, -1);
-        builder.Append(')');
     }
 
 }

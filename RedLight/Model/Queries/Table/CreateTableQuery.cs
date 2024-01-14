@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 using RedLight.Internal;
@@ -19,12 +20,10 @@ public abstract class CreateTableQuery : SchemaQuery
 
     #region Internal
 
-    internal void SetIdentityColumnCore(string name, string sequenceName, ColumnType type,
-        long increment, long minValue, long maxValue)
-        => _identityColumn = CreateIdentityColumn(name, sequenceName, type, increment, minValue, maxValue);
+    internal void SetIdentityColumnCore(string name, string sequenceName, ColumnType type, long increment, long minValue)
+        => _identityColumn = CreateIdentityColumn(name, sequenceName, type, increment, minValue);
 
-    protected abstract IdentityColumn CreateIdentityColumn(string name, string sequenceName, ColumnType type,
-        long increment, long minValue, long maxValue);
+    protected abstract IdentityColumn CreateIdentityColumn(string name, string sequenceName, ColumnType type, long increment, long minValue);
 
     internal void AddColumnCore(string name, ColumnType type, bool nullable, int size, int precision,
         string defaultValue, string defaultConstraint)
@@ -43,6 +42,7 @@ public abstract class CreateTableQuery : SchemaQuery
 
     protected void BuildSqlWithoutLastComma(string tableName, StringBuilder builder)
     {
+        var columns = _columns;
         bool hasColumns = false;
 
         builder.Append("CREATE TABLE ").Append(tableName)
@@ -52,9 +52,17 @@ public abstract class CreateTableQuery : SchemaQuery
         {
             _identityColumn.BuildSql(builder);
             hasColumns = true;
+
+            int index = columns.FindIndex(c => c.Name.Equals(_identityColumn.Name, StringComparison.OrdinalIgnoreCase));
+
+            if (index >= 0)
+            {
+                columns = new(columns);
+                columns.RemoveAt(index);
+            }
         }
 
-        if (_columns.Count > 0)
+        if (columns.Count > 0)
         {
             if (hasColumns)
                 builder.Append(',');
@@ -62,12 +70,12 @@ public abstract class CreateTableQuery : SchemaQuery
                 hasColumns = true;
 
             builder.Append("\r\n    ");
-            _columns[0].BuildSql(builder);
+            columns[0].BuildSql(builder);
 
-            for (int i = 1; i < _columns.Count; i++)
+            for (int i = 1; i < columns.Count; i++)
             {
                 builder.Append(",\r\n    ");
-                _columns[i].BuildSql(builder);
+                columns[i].BuildSql(builder);
             }
         }
 

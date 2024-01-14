@@ -8,7 +8,7 @@ public abstract class PrimaryColumn
 {
     protected PrimaryColumn(string keyName, string[] columns)
     {
-        KeyName = String.IsNullOrWhiteSpace(keyName) ? throw new ArgumentNullException(nameof(keyName)) : keyName;
+        KeyName = keyName;
         Columns = columns;
     }
 
