@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace RedLight;
 
@@ -40,6 +41,14 @@ internal sealed class NoBracketsNaming : Naming
     #region Internal
 
     internal override string StrictEscapedTrim(string name) => name.Contains('-') ? name.Replace("-", "_") : name;
+
+    internal override void StrictEscapedTrim(StringBuilder builder, string name)
+    {
+        if (name.Contains('-'))
+            builder.Append(name.Replace("-", "_"));
+        else
+            builder.Append(name);
+    }
 
     internal override void ClearCache() { }
 

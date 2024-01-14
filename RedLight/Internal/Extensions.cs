@@ -33,6 +33,12 @@ internal static class Extensions
         return builder;
     }
 
+    public static StringBuilder AppendStrictEscapedTrim(this StringBuilder builder, Naming naming, string name)
+    {
+        naming.StrictEscapedTrim(builder, name);
+        return builder;
+    }
+
     public static T Convert<T>(object value) => value is T tValue ? tValue : (T)Convert(value, typeof(T));
 
     public static object Convert(object value, Type type)

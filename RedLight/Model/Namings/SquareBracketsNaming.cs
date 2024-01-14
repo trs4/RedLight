@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace RedLight;
 
@@ -131,6 +132,30 @@ internal sealed class SquareBracketsNaming : Naming
             finishIndex = name.Length - 1;
 
         return name.Substring(startIndex + 1, finishIndex - startIndex - 1);
+    }
+
+    internal override void StrictEscapedTrim(StringBuilder builder, string name)
+    {
+        if (name.Contains('-'))
+            name = name.Replace("-", "_");
+
+        int startIndex = name.LastIndexOf('[');
+
+        if (startIndex == -1)
+            startIndex = 0;
+
+        int finishIndex = name.LastIndexOf(']');
+
+        if (startIndex == 0 && finishIndex == -1)
+        {
+            builder.Append(name);
+            return;
+        }
+
+        if (finishIndex == -1)
+            finishIndex = name.Length - 1;
+
+        builder.Append(name, startIndex + 1, finishIndex - startIndex - 1);
     }
 
     internal override void ClearCache()

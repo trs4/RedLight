@@ -44,6 +44,8 @@ public abstract class Naming
 
     internal abstract string StrictEscapedTrim(string name);
 
+    internal abstract void StrictEscapedTrim(StringBuilder builder, string name);
+
     internal abstract void ClearCache();
 
     #endregion

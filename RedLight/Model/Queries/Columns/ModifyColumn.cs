@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using RedLight.Internal;
 
 namespace RedLight;
 
@@ -51,7 +52,7 @@ public abstract class ModifyColumn
     protected void AppendDefaultConstraintName(StringBuilder builder)
     {
         var naming = Query.Connection.Naming;
-        builder.Append("DF_").Append(naming.StrictEscapedTrim(Query.TableName)).Append('_').Append(naming.StrictEscapedTrim(Name));
+        builder.Append("DF_").AppendStrictEscapedTrim(naming, Query.TableName).Append('_').AppendStrictEscapedTrim(naming, Name);
     }
 
     public override string ToString() => Name;
