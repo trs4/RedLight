@@ -1,0 +1,51 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+<# var types = new [] { 
+    ("Bool", "bool", "reader.GetBoolean(index)"),
+    ("Byte", "byte", "reader.GetByte(index)"),
+    ("Short", "short", "reader.GetInt16(index)"),
+    ("Int", "int", "reader.GetInt32(index)"), 
+    ("Long", "long", "reader.GetInt64(index)"),
+    ("Float", "float", "reader.GetFloat(index)"),
+    ("Double", "double", "reader.GetDouble(index)"),
+    ("Decimal", "decimal", "reader.GetDecimal(index)"),
+    ("String", "string", "reader.GetString(index)"), 
+    ("DateTime", "DateTime", "reader.GetDateTime(index)"),
+    ("Guid", "Guid", "reader.GetGuid(index)"),
+    ("ByteArray", "byte[]", "reader.GetValue(index) as byte[]"),
+};
+var nullableTypes = new[] {
+    ("NullableBool", "bool", "reader.GetBoolean(index)"),
+    ("NullableByte", "byte", "reader.GetByte(index)"),
+    ("NullableShort", "short", "reader.GetInt16(index)"),
+    ("NullableInt", "int", "reader.GetInt32(index)"),
+    ("NullableLong", "long", "reader.GetInt64(index)"),
+    ("NullableFloat", "float", "reader.GetFloat(index)"),
+    ("NullableDouble", "double", "reader.GetDouble(index)"),
+    ("NullableDecimal", "decimal", "reader.GetDecimal(index)"),
+    ("NullableDateTime", "DateTime", "reader.GetDateTime(index)"),
+    ("NullableGuid", "Guid", "reader.GetGuid(index)"),
+}; #>
+using System;
+using System.Data.Common;
+
+namespace RedLight.Internal;
+
+<# foreach (var p in types) { #>
+internal sealed class ScalarReadAction<#= p.Item1 #> : ScalarReadAction<<#= p.Item2 #>>
+{
+    public override <#= p.Item2 #> Read(DbDataReader reader, int index) => <#= p.Item3 #>;
+}
+
+<# } #>
+<# foreach (var p in nullableTypes) { #>
+internal sealed class ScalarReadAction<#= p.Item1 #> : ScalarReadAction<<#= p.Item2 #>?>
+{
+    public override <#= p.Item2 #>? Read(DbDataReader reader, int index) => reader.IsDBNull(index) ? null : <#= p.Item3 #>;
+}
+
+<# } #>

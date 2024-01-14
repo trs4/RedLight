@@ -1,0 +1,50 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+<# var types = new [] { 
+    ("Bool", "bool"),
+    ("NullableBool", "bool?"),
+    ("Byte", "byte"),
+    ("NullableByte", "byte?"),
+    ("Short", "short"),
+    ("NullableShort", "short?"),
+    ("Int", "int"), 
+    ("NullableInt", "int?"), 
+    ("Long", "long"),
+    ("NullableLong", "long?"),
+    ("Float", "float"),
+    ("NullableFloat", "float?"),
+    ("Double", "double"),
+    ("NullableDouble", "double?"),
+    ("Decimal", "decimal"),
+    ("NullableDecimal", "decimal?"),
+    ("String", "string"), 
+    ("DateTime", "DateTime"),
+    ("NullableDateTime", "DateTime?"),
+    ("Guid", "Guid"),
+    ("NullableGuid", "Guid?"),
+    ("ByteArray", "byte[]"),
+}; #>
+using System;
+
+namespace RedLight;
+
+<# foreach (var p in types) { #>
+/// <summary>Условие с оператором <#= p.Item2 #></summary>
+internal sealed class OperatorTerm<#= p.Item1 #> : OperatorTerm
+{
+    public OperatorTerm<#= p.Item1 #>(Query owner, string firstOperand, Op termOperator, <#= p.Item2 #> secondOperand)
+        : base(owner, firstOperand, termOperator)
+        => SecondOperand = secondOperand;
+
+    /// <summary>Второй операнд (имя колонки или значение)</summary>
+    public <#= p.Item2 #> SecondOperand { get; }
+
+    protected sealed override string GetSecondOperand(QueryOptions options)
+        => ParameterProcessing.Construct<#= p.Item1 #>(Connection, options, SecondOperand);
+}
+
+<# } #>

@@ -1,0 +1,67 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+<# var types = new [] { 
+    ("Bool", "bool", "Bool"),
+    ("Byte", "byte", "Byte"),
+    ("Short", "short", "Short"),
+    ("Int", "int", "Int"), 
+    ("Long", "long", "Long"),
+    ("Float", "float", "Float"),
+    ("Double", "double", "Double"),
+    ("Decimal", "decimal", "Decimal"),
+    ("String", "string", "String"), 
+    ("DateTime", "DateTime", "DateTime"),
+    ("Guid", "Guid", "Guid"),
+    ("ByteArray", "byte[]", "ByteArray"),
+};
+var nullableTypes = new [] { 
+    ("NullableBool", "bool?", "Bool"),
+    ("NullableByte", "byte?", "Byte"),
+    ("NullableShort", "short?", "Short"),
+    ("NullableInt", "int?", "Int"), 
+    ("NullableLong", "long?", "Long"),
+    ("NullableFloat", "float?", "Float"),
+    ("NullableDouble", "double?", "Double"),
+    ("NullableDecimal", "decimal?", "Decimal"),
+    ("NullableDateTime", "DateTime?", "DateTime"),
+    ("NullableGuid", "Guid?", "Guid"),
+}; #>
+using System;
+using RedLight.Internal;
+
+namespace RedLight;
+
+/// <summary>Добавление параметров в запрос</summary>
+internal static class ParameterProcessing
+{
+<# foreach (var p in types) { #>
+    public static string Construct<#= p.Item1 #>(DatabaseConnection connection, QueryOptions options, <#= p.Item2 #> value)
+    {
+        if (!options.UseParameters || options.Parameters.Count == Consts.MaxQueryParameters)
+            return connection.Escaping.Escape(value);
+
+        string name = connection.ParameterNaming.GetName(options.Parameters.Count + 1);
+        var parameter = new QueryParameter(name, value, ColumnType.<#= p.Item3 #>, false);
+        options.Parameters.Add(parameter);
+        return connection.ParameterNaming.GetNameForQuery(name);
+    }
+
+<# } #>
+<# foreach (var p in nullableTypes) { #>
+    public static string Construct<#= p.Item1 #>(DatabaseConnection connection, QueryOptions options, <#= p.Item2 #> value)
+    {
+        if (!options.UseParameters || options.Parameters.Count == Consts.MaxQueryParameters)
+            return value.HasValue ? connection.Escaping.Escape(value.Value) : Consts.Null;
+
+        string name = connection.ParameterNaming.GetName(options.Parameters.Count + 1);
+        var parameter = new QueryParameter(name, value, ColumnType.<#= p.Item3 #>, true);
+        options.Parameters.Add(parameter);
+        return connection.ParameterNaming.GetNameForQuery(name);
+    }
+
+<# } #>
+}

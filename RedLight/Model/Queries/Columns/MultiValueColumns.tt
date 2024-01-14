@@ -1,0 +1,78 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+<# var types = new [] { 
+    ("Bool", "bool"),
+    ("Byte", "byte"),
+    ("Short", "short"),
+    ("Int", "int"), 
+    ("Long", "long"),
+    ("Float", "float"),
+    ("Double", "double"),
+    ("Decimal", "decimal"),
+    ("String", "string"), 
+    ("DateTime", "DateTime"),
+    ("Guid", "Guid"),
+    ("ByteArray", "byte[]"),
+};
+var nullableTypes = new [] { 
+    ("NullableBool", "bool?"),
+    ("NullableByte", "byte?"),
+    ("NullableShort", "short?"),
+    ("NullableInt", "int?"), 
+    ("NullableLong", "long?"),
+    ("NullableFloat", "float?"),
+    ("NullableDouble", "double?"),
+    ("NullableDecimal", "decimal?"),
+    ("NullableDateTime", "DateTime?"),
+    ("NullableGuid", "Guid?"),
+}; #>
+using System;
+using System.Collections.Generic;
+using RedLight.Internal;
+
+namespace RedLight;
+
+<# foreach (var p in types) { #>
+/// <summary>Конструктор поля для изменения данных</summary>
+internal sealed class <#= p.Item1 #>MultiValueColumn : MultiValueColumn
+{
+    public <#= p.Item1 #>MultiValueColumn(string name, IReadOnlyList<<#= p.Item2 #>> values)
+        : base(name)
+        => Values = values;
+
+    public override int RowCount => Values.Count;
+
+    /// <summary>Список значений поля</summary>
+    public IReadOnlyList<<#= p.Item2 #>> Values { get; }
+
+    internal override string GetEscapedString(DatabaseConnection connection, int rowIndex)
+        => connection.Escaping.Escape(Values[rowIndex]);
+}
+
+<# } #>
+<# foreach (var p in nullableTypes) { #>
+/// <summary>Конструктор поля для изменения данных</summary>
+internal sealed class <#= p.Item1 #>MultiValueColumn : MultiValueColumn
+{
+    public <#= p.Item1 #>MultiValueColumn(string name, IReadOnlyList<<#= p.Item2 #>> values)
+        : base(name)
+        => Values = values;
+
+    public override int RowCount => Values.Count;
+
+    /// <summary>Список значений поля</summary>
+    public IReadOnlyList<<#= p.Item2 #>> Values { get; }
+
+    internal override string GetEscapedString(DatabaseConnection connection, int rowIndex)
+    {
+        var value = Values[rowIndex];
+        return value.HasValue ? connection.Escaping.Escape(value.Value) : Consts.Null;
+    }
+
+}
+
+<# } #>

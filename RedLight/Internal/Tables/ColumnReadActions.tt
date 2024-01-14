@@ -1,0 +1,74 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+<# var types = new [] { 
+    ("Bool", "Boolean", "reader.GetBoolean(_index)"),
+    ("Byte", "Byte", "reader.GetByte(_index)"),
+    ("Short", "Int16", "reader.GetInt16(_index)"),
+    ("Int", "Int32", "reader.GetInt32(_index)"), 
+    ("Long", "Int64", "reader.GetInt64(_index)"),
+    ("Float", "Single", "reader.GetFloat(_index)"),
+    ("Double", "Double", "reader.GetDouble(_index)"),
+    ("Decimal", "Decimal", "reader.GetDecimal(_index)"),
+    ("String", "String", "reader.GetString(_index)"), 
+    ("DateTime", "DateTime", "reader.GetDateTime(_index)"),
+    ("Guid", "Guid", "reader.GetGuid(_index)"),
+    ("ByteArray", "ByteArray", "reader.GetValue(_index) as byte[]"),
+};
+var nullableTypes = new[] {
+    ("NullableBool", "NullableBoolean", "reader.GetBoolean(_index)"),
+    ("NullableByte", "NullableByte", "reader.GetByte(_index)"),
+    ("NullableShort", "NullableInt16", "reader.GetInt16(_index)"),
+    ("NullableInt", "NullableInt32", "reader.GetInt32(_index)"),
+    ("NullableLong", "NullableInt64", "reader.GetInt64(_index)"),
+    ("NullableFloat", "NullableSingle", "reader.GetFloat(_index)"),
+    ("NullableDouble", "NullableDouble", "reader.GetDouble(_index)"),
+    ("NullableDecimal", "NullableDecimal", "reader.GetDecimal(_index)"),
+    ("NullableString", "NullableString", "reader.GetString(_index)"),
+    ("NullableDateTime", "NullableDateTime", "reader.GetDateTime(_index)"),
+    ("NullableGuid", "NullableGuid", "reader.GetGuid(_index)"),
+}; #>
+using System.Data.Common;
+using IcyRain.Tables;
+
+namespace RedLight.Internal;
+
+<# foreach (var p in types) { #>
+internal sealed class ColumnReadAction<#= p.Item1 #> : ColumnReadAction
+{
+    private readonly <#= p.Item2 #>DataColumn _column;
+
+    public ColumnReadAction<#= p.Item1 #>(DataTable dataTable, int index, string name)
+        : base(index)
+        => _column = dataTable.Add<#= p.Item2 #>Column(name);
+
+    public override void Read(DbDataReader reader, int row) => _column.Set(row, <#= p.Item3 #>);
+
+    public override string ToString() => $"{_index} {_column.Type}";
+}
+
+<# } #>
+<# foreach (var p in nullableTypes) { #>
+internal sealed class ColumnReadAction<#= p.Item1 #> : ColumnReadAction
+{
+    private readonly <#= p.Item2 #>DataColumn _column;
+
+    public ColumnReadAction<#= p.Item1 #>(DataTable dataTable, int index, string name)
+        : base(index)
+        => _column = dataTable.Add<#= p.Item2 #>Column(name);
+
+    public override void Read(DbDataReader reader, int row)
+    {
+        if (reader.IsDBNull(_index))
+            _column.Set(row, null);
+        else
+            _column.Set(row, <#= p.Item3 #>);
+    }
+
+    public override string ToString() => $"{_index} {_column.Type}";
+}
+
+<# } #>

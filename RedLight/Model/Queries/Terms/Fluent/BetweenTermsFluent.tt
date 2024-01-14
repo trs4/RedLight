@@ -1,0 +1,93 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+<# var types = new [] { 
+    ("Byte", "byte", "Byte"),
+    ("Short", "short", "Short"),
+    ("Int", "int", "Int"), 
+    ("Long", "long", "Long"),
+    ("Float", "float", "Float"),
+    ("Double", "double", "Double"),
+    ("Decimal", "decimal", "Decimal"),
+    ("DateTime", "DateTime", "DateTime"),
+}; #>
+<# var notValues = new [] { 
+    ("", ""), 
+    ("Not", @"
+        {
+            Not = true,
+        }"),
+}; #>
+using System;
+
+namespace RedLight;
+
+public static class BetweenTermsFluent
+{
+<# foreach (var n in notValues) { #>
+<# foreach (var p in types) { #>
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="column">Имя поля</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock With<#= n.Item1 #>Between(this TermBlock termBlock, string column, <#= p.Item2 #> beginValue, <#= p.Item2 #> endValue)
+    {
+        var term = new BetweenTerm<#= p.Item1 #>(termBlock, termBlock.Connection.Naming.GetName(column), beginValue, endValue)<#= n.Item2 #>;
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="column">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock With<#= n.Item1 #>Between<TEnum>(this TermBlock termBlock, TEnum column, <#= p.Item2 #> beginValue, <#= p.Item2 #> endValue)
+        where TEnum : Enum
+    {
+        var term = new BetweenTerm<#= p.Item1 #>(termBlock, termBlock.Connection.Naming.GetName(column), beginValue, endValue)<#= n.Item2 #>;
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="alias">Псевдоним таблицы</param>
+    /// <param name="column">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock With<#= n.Item1 #>Between(this TermBlock termBlock, string alias, string column, <#= p.Item2 #> beginValue, <#= p.Item2 #> endValue)
+    {
+        var term = new BetweenTerm<#= p.Item1 #>(termBlock, termBlock.Connection.Naming.GetNameWithAlias(alias, column), beginValue, endValue)<#= n.Item2 #>;
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="alias">Псевдоним таблицы</param>
+    /// <param name="column">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock With<#= n.Item1 #>Between<TEnum>(this TermBlock termBlock, string alias, TEnum column, <#= p.Item2 #> beginValue, <#= p.Item2 #> endValue)
+        where TEnum : Enum
+    {
+        var term = new BetweenTerm<#= p.Item1 #>(termBlock, termBlock.Connection.Naming.GetNameWithAlias(alias, column), beginValue, endValue)<#= n.Item2 #>;
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="rawColumn">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithRaw<#= n.Item1 #>Between(this TermBlock termBlock, string rawColumn, <#= p.Item2 #> beginValue, <#= p.Item2 #> endValue)
+    {
+        var term = new BetweenTerm<#= p.Item1 #>(termBlock, rawColumn, beginValue, endValue)<#= n.Item2 #>;
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+<# } #>
+<# } #>
+}

@@ -1,0 +1,71 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+<# var types = new [] { 
+    ("Bool", "bool"),
+    ("NullableBool", "bool?"),
+    ("Byte", "byte"),
+    ("NullableByte", "byte?"),
+    ("Short", "short"),
+    ("NullableShort", "short?"),
+    ("Int", "int"), 
+    ("NullableInt", "int?"), 
+    ("Long", "long"),
+    ("NullableLong", "long?"),
+    ("Float", "float"),
+    ("NullableFloat", "float?"),
+    ("Double", "double"),
+    ("NullableDouble", "double?"),
+    ("Decimal", "decimal"),
+    ("NullableDecimal", "decimal?"),
+    ("String", "string"), 
+    ("DateTime", "DateTime"),
+    ("NullableDateTime", "DateTime?"),
+    ("Guid", "Guid"),
+    ("NullableGuid", "Guid?"),
+    ("ByteArray", "byte[]"),
+}; #>
+using System;
+
+namespace RedLight;
+
+public static class SelectQueryColumnsWithReadFluent
+{
+<# foreach (var p in types) { #>
+    /// <summary>Добавляет поле выборки данных с действием чтения данного поля типа <#= p.Item2 #></summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="readColumn">Действие чтения поля типа <#= p.Item2 #></param>
+    public static SelectQuery<TResult> Add<#= p.Item1 #>Column<TResult>(
+        this SelectQuery<TResult> query, string name, Action<TResult, <#= p.Item2 #>> readColumn)
+        => query.AddColumn(name, readColumn);
+
+    /// <summary>Добавляет поле выборки данных с действием чтения данного поля типа <#= p.Item2 #></summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="readColumn">Действие чтения поля типа <#= p.Item2 #></param>
+    public static SelectQuery<TResult> Add<#= p.Item1 #>Column<TResult, TEnum>(
+        this SelectQuery<TResult> query, TEnum name, Action<TResult, <#= p.Item2 #>> readColumn)
+        where TEnum : Enum
+        => query.AddColumn(name, readColumn);
+
+    /// <summary>Добавляет поле выборки данных с действием чтения данного поля типа <#= p.Item2 #></summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="alias">Псевдоним поля</param>
+    /// <param name="readColumn">Действие чтения поля типа <#= p.Item2 #></param>
+    public static SelectQuery<TResult> Add<#= p.Item1 #>Column<TResult>(
+        this SelectQuery<TResult> query, string name, string alias, Action<TResult, <#= p.Item2 #>> readColumn)
+        => query.AddColumn(name, alias, readColumn);
+
+    /// <summary>Добавляет поле выборки данных с действием чтения данного поля типа <#= p.Item2 #></summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="alias">Псевдоним поля</param>
+    /// <param name="readColumn">Действие чтения поля типа <#= p.Item2 #></param>
+    public static SelectQuery<TResult> Add<#= p.Item1 #>Column<TResult, TEnum>(
+        this SelectQuery<TResult> query, TEnum name, string alias, Action<TResult, <#= p.Item2 #>> readColumn)
+        where TEnum : Enum
+        => query.AddColumn(name, alias, readColumn);
+
+<# } #>
+}

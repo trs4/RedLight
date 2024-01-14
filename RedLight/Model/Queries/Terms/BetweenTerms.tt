@@ -1,0 +1,45 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+<# var types = new [] { 
+    ("Byte", "byte", "Byte"),
+    ("Short", "short", "Short"),
+    ("Int", "int", "Int"), 
+    ("Long", "long", "Long"),
+    ("Float", "float", "Float"),
+    ("Double", "double", "Double"),
+    ("Decimal", "decimal", "Decimal"),
+    ("DateTime", "DateTime", "DateTime"),
+}; #>
+using System;
+
+namespace RedLight;
+
+<# foreach (var p in types) { #>
+/// <summary>Условие с диапазоном по <#= p.Item2 #></summary>
+internal sealed class BetweenTerm<#= p.Item1 #> : BetweenTerm
+{
+    public BetweenTerm<#= p.Item1 #>(Query owner, string column, <#= p.Item2 #> beginValue, <#= p.Item2 #> endValue)
+        : base(owner, column)
+    {
+        BeginValue = beginValue;
+        EndValue = endValue;
+    }
+
+    /// <summary>Значение начала диапазона</summary>
+    public <#= p.Item2 #> BeginValue { get; }
+
+    /// <summary>Значение конца диапазона</summary>
+    public <#= p.Item2 #> EndValue { get; }
+
+    protected override string GetBeginValue(QueryOptions options)
+        => ParameterProcessing.Construct<#= p.Item1 #>(Connection, options, BeginValue);
+
+    protected override string GetEndValue(QueryOptions options)
+        => ParameterProcessing.Construct<#= p.Item1 #>(Connection, options, EndValue);
+}
+
+<# } #>

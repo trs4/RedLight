@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+	<AssemblyName>RedLight.All</AssemblyName>
+	<TargetFrameworks>net8.0</TargetFrameworks>
+	<DefineConstants></DefineConstants>
+
+	<PackageId>RedLight.All</PackageId>
+	<PackageTags>sql;sql-builder;orm;mini-orm;ado-net</PackageTags>
+	<PackageProjectUrl>https://github.com/trs4/RedLight</PackageProjectUrl>
+	<RepositoryUrl>https://github.com/trs4/RedLight</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<ProjectReference Include="..\RedLight.PostgreSql\RedLight.PostgreSql.csproj" />
+	<ProjectReference Include="..\RedLight.SQLite\RedLight.SQLite.csproj" />
+	<ProjectReference Include="..\RedLight.SqlServer\RedLight.SqlServer.csproj" />
+  </ItemGroup>
+</Project>
