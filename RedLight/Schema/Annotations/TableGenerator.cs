@@ -13,46 +13,53 @@ public static class TableGenerator
     /// <summary>Получает описание таблицы из перечисления</summary>
     /// <typeparam name="T">Перечисление таблицы с полями</typeparam>
     /// <returns>Описание таблицы</returns>
-    public static Table From<T>()
-        where T : Enum
+    public static Table From<T>() where T : Enum => EnumTable<T>.Table;
+
+    private static class EnumTable<T> where T : Enum
     {
-        var type = typeof(T);
-        var table = new Table(type.Name);
+        public static readonly Table Table;
 
-        foreach (var field in type.GetFields())
+        static EnumTable()
         {
-            if (!field.IsStatic)
-                continue;
+            var type = typeof(T);
+            var table = new Table(type.Name);
 
-            var attribute = field.GetCustomAttributes(_columnAttributeType, false).OfType<ColumnAttribute>().FirstOrDefault();
-            Column column;
-
-            if (attribute is not null)
+            foreach (var field in type.GetFields())
             {
-                column = table.AddColumn(attribute.Name ?? field.Name, attribute.Type, attribute.Nullable, attribute.Size, attribute.Precision,
-                       attribute.DefaultValue, attribute.DefaultConstraint);
+                if (!field.IsStatic)
+                    continue;
+
+                var attribute = field.GetCustomAttributes(_columnAttributeType, false).OfType<ColumnAttribute>().FirstOrDefault();
+                Column column;
+
+                if (attribute is not null)
+                {
+                    column = table.AddColumn(attribute.Name ?? field.Name, attribute.Type, attribute.Nullable, attribute.Size, attribute.Precision,
+                        attribute.DefaultValue, attribute.DefaultConstraint);
+                }
+                else
+                    column = table.AddColumn(field.Name, ColumnType.String);
+
+                if (table.IdentityColumn is null)
+                {
+                    var identityColumnAttribute = field.GetCustomAttributes(_identityColumnAttributeType, true).OfType<IdentityColumnAttribute>().FirstOrDefault();
+
+                    if (identityColumnAttribute is not null)
+                        table.IdentityColumn = identityColumnAttribute.ForTable(column);
+                }
+
+                if (table.PrimaryKey is null)
+                {
+                    var primaryKeyAttribute = field.GetCustomAttributes(_primaryKeyAttributeType, true).OfType<PrimaryKeyAttribute>().FirstOrDefault();
+
+                    if (primaryKeyAttribute is not null)
+                        table.PrimaryKey = primaryKeyAttribute.ForTable(column);
+                }
             }
-            else
-                column = table.AddColumn(field.Name, ColumnType.String);
 
-            if (table.IdentityColumn is null)
-            {
-                var identityColumnAttribute = field.GetCustomAttributes(_identityColumnAttributeType, true).OfType<IdentityColumnAttribute>().FirstOrDefault();
-
-                if (identityColumnAttribute is not null)
-                    table.IdentityColumn = identityColumnAttribute.ForTable(column);
-            }
-
-            if (table.PrimaryKey is null)
-            {
-                var primaryKeyAttribute = field.GetCustomAttributes(_primaryKeyAttributeType, true).OfType<PrimaryKeyAttribute>().FirstOrDefault();
-
-                if (primaryKeyAttribute is not null)
-                    table.PrimaryKey = primaryKeyAttribute.ForTable(column);
-            }
+            Table = table;
         }
 
-        return table;
     }
 
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using IcyRain.Tables;
+using RedLight.Internal;
 
 namespace RedLight;
 
@@ -55,6 +57,41 @@ public abstract class DatabaseSelectQueries
     public SelectQuery<TResult> CreateQuery<TResult, TEnum>(string alias = null)
         where TEnum : Enum
         => Create<TResult>(Connection.Naming.GetNameWithSchema<TEnum>(), alias is null ? null : Connection.Naming.GetName(alias));
+
+    /// <summary>Создаёт запрос выборки данных</summary>
+    /// <typeparam name="TResult">Тип результата</typeparam>
+    /// <typeparam name="TEnum">Имя таблицы</typeparam>
+    /// <param name="alias">Псевдоним таблицы</param>
+    public SelectQuery<TResult> CreateWithParseQuery<TResult, TEnum>(string alias = null)
+        where TEnum : Enum
+    {
+        var table = TableGenerator.From<TEnum>();
+        var query = CreateQuery<TResult>(table.Name, alias);
+        var type = typeof(TResult);
+
+        if (type == typeof(DataSet) || type == typeof(DataTable))
+        {
+            foreach (var column in table.Columns)
+                query.AddColumn(column.Name, alias);
+        }
+        else if (type.IsClass && !type.IsSystem())
+        {
+            foreach (var column in table.Columns)
+            {
+                var propertyInfo = type.GetProperty(column.Name);
+
+                if (propertyInfo is null)
+                    continue;
+
+                query.AddColumn(column.Name, alias);
+                query.AddReadAction(propertyInfo.PropertyType, (obj, value) => propertyInfo.SetValue(obj, value));
+            }
+        }
+        else
+            throw new NotImplementedException();
+
+        return query;
+    }
 
 
     /// <summary>Создаёт запрос выборки данных с вложенным запросом</summary>

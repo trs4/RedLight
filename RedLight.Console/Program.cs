@@ -1,7 +1,8 @@
 ﻿using RedLight;
+using RedLight.Console;
 
-//string connectionString = @"Provider=SQLite;Data Source='C:\GitHubProjects\RedLight\test.db'"; // SQLite
-//using var connection = DatabaseConnection.Create(connectionString);
+string connectionString = @"Provider=SQLite;Data Source='C:\GitHubProjects\RedLight\test.db'"; // SQLite
+using var connection = DatabaseConnection.Create(connectionString);
 //var r1 = connection.Details.Version.ToString();
 
 
@@ -22,7 +23,10 @@
 //PostgreSql:
 //User ID = root; Password = myPassword; Host = localhost; Port = 5432; Database = myDataBase; Pooling = true; Min Pool Size=0; Max Pool Size=100; Connection Lifetime = 0;
 
-var q1 = TableGenerator.From<ColumnType>();
+//var r1 = connection.Select.CreateWithParseQuery<List<Track>, Tracks>("t");
+var r2 = connection.Select.CreateWithParseQuery<Track, Tracks>("t").Sql;
+//List<Track> r3 = connection.Select.CreateWithParseQuery<Track, Tracks>("t").Get();
+//var q1 = TableGenerator.From<ColumnType>();
 
 Console.WriteLine("Exit");
 Console.ReadLine();

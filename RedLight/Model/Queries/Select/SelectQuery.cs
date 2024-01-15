@@ -242,4 +242,7 @@ public abstract class SelectQuery<TResult> : SelectQuery, IUnionQuery
 
     [MethodImpl(Flags.HotPath)]
     internal void AddReadAction<T>(Action<TResult, T> readAction) => ScalarReadBuilder.Add(ref _readActions, readAction);
+
+    [MethodImpl(Flags.HotPath)]
+    internal void AddReadAction(Type type, Action<TResult, object> readAction) => ScalarReadBuilder.Add(ref _readActions, type, readAction);
 }

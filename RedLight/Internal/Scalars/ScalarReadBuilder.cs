@@ -18,6 +18,14 @@ internal static class ScalarReadBuilder
         readActions.Add((obj, reader) => readAction(obj, ScalarReadAction<T>.Instance.Read(reader, index)));
     }
 
+    [MethodImpl(Flags.HotPath)]
+    public static void Add<TResult>(ref List<Action<TResult, DbDataReader>> readActions, Type type, Action<TResult, object> readAction)
+    {
+        readActions ??= [];
+        int index = readActions.Count;
+        readActions.Add((obj, reader) => readAction(obj, Read(type, reader, index)));
+    }
+
     public static object Read(Type type, DbDataReader reader, int index)
         => _readActionsByType.GetOrAdd(type, CreateReadActionByType).Read(reader, index);
 
