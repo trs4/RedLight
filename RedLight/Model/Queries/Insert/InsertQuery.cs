@@ -99,11 +99,5 @@ public abstract class InsertQuery<TResult> : InsertQuery
     }
 
     [MethodImpl(Flags.HotPath)]
-    internal void AddReadAction<T>(Action<TResult, T> readAction)
-    {
-        var readActions = _readActions ??= [];
-        int index = readActions.Count;
-        readActions.Add((obj, reader) => readAction(obj, ScalarReadAction<T>.Instance.Read(reader, index)));
-    }
-
+    internal void AddReadAction<T>(Action<TResult, T> readAction) => ScalarReadBuilder.Add(ref _readActions, readAction);
 }

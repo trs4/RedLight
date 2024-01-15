@@ -24,7 +24,6 @@ internal static class DataReader
                 if (readActions.IsNullOrEmpty())
                 {
                     var propertyNames = getColumns().Select(f => f.Substring(1, f.Length - 2));
-
                     int index = -1;
 
                     foreach (string propertyName in propertyNames)
@@ -35,10 +34,7 @@ internal static class DataReader
                         if (propertyInfo is null)
                             continue;
 
-                        if (propertyInfo.PropertyType == typeof(int))
-                            propertyInfo.SetValue(obj, reader.GetInt32(index));
-                        else if (propertyInfo.PropertyType == typeof(string))
-                            propertyInfo.SetValue(obj, reader.GetString(index));
+                        propertyInfo.SetValue(obj, ScalarReadBuilder.Read(propertyInfo.PropertyType, reader, index));
                     }
                 }
                 else

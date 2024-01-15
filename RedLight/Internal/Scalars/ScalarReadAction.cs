@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Common;
 
 namespace RedLight.Internal;
 
-public abstract class ScalarReadAction<T>
+public abstract class ScalarReadAction<T> : IScalarReadAction
 {
     static ScalarReadAction()
         => Instance = (ScalarReadAction<T>)Create();
@@ -63,4 +64,24 @@ public abstract class ScalarReadAction<T>
     }
 
     public abstract T Read(DbDataReader reader, int index);
+
+    public void Read(List<T> source, DbDataReader reader)
+    {
+        while (reader.Read())
+            source.Add(Read(reader, 0));
+    }
+
+    public void Read(HashSet<T> source, DbDataReader reader)
+    {
+        while (reader.Read())
+            source.Add(Read(reader, 0));
+    }
+
+    public void Read(ICollection<T> source, DbDataReader reader)
+    {
+        while (reader.Read())
+            source.Add(Read(reader, 0));
+    }
+
+    object IScalarReadAction.Read(DbDataReader reader, int index) => Read(reader, index);
 }

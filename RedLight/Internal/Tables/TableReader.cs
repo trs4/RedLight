@@ -13,41 +13,57 @@ internal static class TableReader
     {
         var type = typeof(T);
 
-        if (type == typeof(List<int>))
+        if (Types.TryGetICollectionArgumentType(type, out var elementType))
         {
-            bool multipleResult = options?.MultipleResult ?? false;
-            var list = new List<int>();
-
-            do
-            {
-                while (reader.Read())
-                    list.Add(reader.GetInt32(0));
-            } while (multipleResult && reader.NextResult());
-
-            return (T)(object)list;
+            var source = Activator.CreateInstance<T>();
+            typeof(TableReader).GetMethod(nameof(Append)).MakeGenericMethod(elementType).Invoke(null, new object[] { source, reader, options });
+            return source;
         }
-
-        throw new NotImplementedException();
+        else
+            throw new NotSupportedException();
     }
 
     [MethodImpl(Flags.HotPath)]
     public static void Append<T>(ICollection<T> source, DbDataReader reader, QueryOptions options)
     {
-        var type = typeof(T);
+        if (source is List<T> list)
+            AppendCore(list, reader, options);
+        else if (source is HashSet<T> hashSet)
+            AppendCore(hashSet, reader, options);
+        else if (source is ICollection<T> collection)
+            AppendCore(collection, reader, options);
+        else
+            throw new NotSupportedException();
+    }
 
-        if (type == typeof(List<int>))
+    private static void AppendCore<T>(List<T> source, DbDataReader reader, QueryOptions options)
+    {
+        bool multipleResult = options?.MultipleResult ?? false;
+
+        do
         {
-            bool multipleResult = options?.MultipleResult ?? false;
-            var list = (List<int>)source;
+            ScalarReadAction<T>.Instance.Read(source, reader);
+        } while (multipleResult && reader.NextResult());
+    }
 
-            do
-            {
-                while (reader.Read())
-                    list.Add(reader.GetInt32(0));
-            } while (multipleResult && reader.NextResult());
-        }
+    private static void AppendCore<T>(HashSet<T> source, DbDataReader reader, QueryOptions options)
+    {
+        bool multipleResult = options?.MultipleResult ?? false;
 
-        throw new NotImplementedException();
+        do
+        {
+            ScalarReadAction<T>.Instance.Read(source, reader);
+        } while (multipleResult && reader.NextResult());
+    }
+
+    private static void AppendCore<T>(ICollection<T> source, DbDataReader reader, QueryOptions options)
+    {
+        bool multipleResult = options?.MultipleResult ?? false;
+
+        do
+        {
+            ScalarReadAction<T>.Instance.Read(source, reader);
+        } while (multipleResult && reader.NextResult());
     }
 
     [MethodImpl(Flags.HotPath)]

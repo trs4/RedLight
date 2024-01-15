@@ -240,21 +240,6 @@ public abstract class SelectQuery<TResult> : SelectQuery, IUnionQuery
         return await Connection.GetAsync(sql, readAction, options, Timeout, token).ConfigureAwait(false);
     }
 
-    internal void AddReadAction<T>(Action<TResult, T> readColumn)
-    {
-        _readActions ??= [];
-        int index = _readActions.Count;
-        var valueType = typeof(T);
-
-        var innerReadAction = new Action<TResult, DbDataReader>((obj, reader) =>
-        {
-            if (valueType == typeof(int))
-                readColumn(obj, (T)(object)reader.GetInt32(index));
-            else if (valueType == typeof(string))
-                readColumn(obj, (T)(object)reader.GetString(index));
-        });
-
-        _readActions.Add(innerReadAction);
-    }
-
+    [MethodImpl(Flags.HotPath)]
+    internal void AddReadAction<T>(Action<TResult, T> readAction) => ScalarReadBuilder.Add(ref _readActions, readAction);
 }
