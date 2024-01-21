@@ -14,6 +14,31 @@ internal static class ColumnBuilder
     private const string LineSplitter = "\r\n       ";
 
     [MethodImpl(Flags.HotPath)]
+    public static void Build(StringBuilder builder, List<string> columns)
+    {
+        if (columns.Count == 0)
+            throw new ArgumentException("Empty columns");
+
+        int countInLine = 1;
+        builder.Append(columns[0]);
+
+        for (int i = 1; i < columns.Count; ++i)
+        {
+            builder.Append(", ");
+
+            if (countInLine >= MaxInLine)
+            {
+                builder.Append(LineSplitter);
+                countInLine = 0;
+            }
+            else
+                countInLine++;
+
+            builder.Append(columns[i]);
+        }
+    }
+
+    [MethodImpl(Flags.HotPath)]
     public static void Build<TColumn>(StringBuilder builder, List<TColumn> columns, Func<TColumn, string> getValue)
     {
         if (columns.Count == 0)

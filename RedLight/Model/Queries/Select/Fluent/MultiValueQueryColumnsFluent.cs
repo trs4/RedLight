@@ -407,6 +407,48 @@ public static class MultiValueQueryColumnsFluent
     /// <summary>Добавляет поле добавления данных</summary>
     /// <param name="name">Имя поля</param>
     /// <param name="values">Список значений</param>
+    public static TQuery AddColumn<TQuery>(this TQuery query, string name, IReadOnlyList<TimeSpan> values)
+        where TQuery : MultiValueQuery
+    {
+        query.AddColumnCore(new TimeSpanMultiValueColumn(query.Connection.Naming.GetName(name), values));
+        return query;
+    }
+
+    /// <summary>Добавляет поле добавления данных</summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="values">Список значений</param>
+    public static TQuery AddColumn<TQuery, TEnum>(this TQuery query, TEnum name, IReadOnlyList<TimeSpan> values)
+        where TQuery : MultiValueQuery
+        where TEnum : Enum
+    {
+        query.AddColumnCore(new TimeSpanMultiValueColumn(query.Connection.Naming.GetName(name), values));
+        return query;
+    }
+
+    /// <summary>Добавляет поле добавления данных</summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="values">Список значений</param>
+    public static TQuery AddColumn<TQuery>(this TQuery query, string name, IReadOnlyList<TimeSpan?> values)
+        where TQuery : MultiValueQuery
+    {
+        query.AddColumnCore(new NullableTimeSpanMultiValueColumn(query.Connection.Naming.GetName(name), values));
+        return query;
+    }
+
+    /// <summary>Добавляет поле добавления данных</summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="values">Список значений</param>
+    public static TQuery AddColumn<TQuery, TEnum>(this TQuery query, TEnum name, IReadOnlyList<TimeSpan?> values)
+        where TQuery : MultiValueQuery
+        where TEnum : Enum
+    {
+        query.AddColumnCore(new NullableTimeSpanMultiValueColumn(query.Connection.Naming.GetName(name), values));
+        return query;
+    }
+
+    /// <summary>Добавляет поле добавления данных</summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="values">Список значений</param>
     public static TQuery AddColumn<TQuery>(this TQuery query, string name, IReadOnlyList<Guid> values)
         where TQuery : MultiValueQuery
     {

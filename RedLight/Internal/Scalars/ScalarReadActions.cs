@@ -53,6 +53,11 @@ internal sealed class ScalarReadActionDateTime : ScalarReadAction<DateTime>
     public override DateTime Read(DbDataReader reader, int index) => reader.GetDateTime(index);
 }
 
+internal sealed class ScalarReadActionTimeSpan : ScalarReadAction<TimeSpan>
+{
+    public override TimeSpan Read(DbDataReader reader, int index) => (TimeSpan)reader.GetValue(index);
+}
+
 internal sealed class ScalarReadActionGuid : ScalarReadAction<Guid>
 {
     public override Guid Read(DbDataReader reader, int index) => reader.GetGuid(index);
@@ -106,6 +111,11 @@ internal sealed class ScalarReadActionNullableDecimal : ScalarReadAction<decimal
 internal sealed class ScalarReadActionNullableDateTime : ScalarReadAction<DateTime?>
 {
     public override DateTime? Read(DbDataReader reader, int index) => reader.IsDBNull(index) ? null : reader.GetDateTime(index);
+}
+
+internal sealed class ScalarReadActionNullableTimeSpan : ScalarReadAction<TimeSpan?>
+{
+    public override TimeSpan? Read(DbDataReader reader, int index) => reader.IsDBNull(index) ? null : (TimeSpan)reader.GetValue(index);
 }
 
 internal sealed class ScalarReadActionNullableGuid : ScalarReadAction<Guid?>

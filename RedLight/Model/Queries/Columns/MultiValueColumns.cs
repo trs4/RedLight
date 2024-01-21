@@ -165,6 +165,22 @@ internal sealed class DateTimeMultiValueColumn : MultiValueColumn
 }
 
 /// <summary>Конструктор поля для изменения данных</summary>
+internal sealed class TimeSpanMultiValueColumn : MultiValueColumn
+{
+    public TimeSpanMultiValueColumn(string name, IReadOnlyList<TimeSpan> values)
+        : base(name)
+        => Values = values;
+
+    public override int RowCount => Values.Count;
+
+    /// <summary>Список значений поля</summary>
+    public IReadOnlyList<TimeSpan> Values { get; }
+
+    internal override string GetEscapedString(DatabaseConnection connection, int rowIndex)
+        => connection.Escaping.Escape(Values[rowIndex]);
+}
+
+/// <summary>Конструктор поля для изменения данных</summary>
 internal sealed class GuidMultiValueColumn : MultiValueColumn
 {
     public GuidMultiValueColumn(string name, IReadOnlyList<Guid> values)
@@ -367,6 +383,26 @@ internal sealed class NullableDateTimeMultiValueColumn : MultiValueColumn
 
     /// <summary>Список значений поля</summary>
     public IReadOnlyList<DateTime?> Values { get; }
+
+    internal override string GetEscapedString(DatabaseConnection connection, int rowIndex)
+    {
+        var value = Values[rowIndex];
+        return value.HasValue ? connection.Escaping.Escape(value.Value) : Consts.Null;
+    }
+
+}
+
+/// <summary>Конструктор поля для изменения данных</summary>
+internal sealed class NullableTimeSpanMultiValueColumn : MultiValueColumn
+{
+    public NullableTimeSpanMultiValueColumn(string name, IReadOnlyList<TimeSpan?> values)
+        : base(name)
+        => Values = values;
+
+    public override int RowCount => Values.Count;
+
+    /// <summary>Список значений поля</summary>
+    public IReadOnlyList<TimeSpan?> Values { get; }
 
     internal override string GetEscapedString(DatabaseConnection connection, int rowIndex)
     {

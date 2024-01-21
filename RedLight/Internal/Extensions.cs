@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using IcyRain.Tables;
 
 namespace RedLight.Internal;
 
@@ -37,6 +38,17 @@ internal static class Extensions
     {
         naming.StrictEscapedTrim(builder, name);
         return builder;
+    }
+
+    [MethodImpl(Flags.HotPath)]
+    public static int GetHash(DataType type, bool isNullable = false, bool isArray = false)
+    {
+        if (isArray)
+            return (int)type ^ (397 * 2);
+        else if (isNullable)
+            return (int)type ^ 397;
+
+        return (int)type;
     }
 
     public static T Convert<T>(object value) => value is T tValue ? tValue : (T)Convert(value, typeof(T));

@@ -1,67 +1,53 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Reflection;
 
 namespace RedLight.Internal;
 
 public abstract class ScalarReadAction<T> : IScalarReadAction
 {
+    private static readonly FrozenDictionary<Type, Func<IScalarReadAction>> _types = new Dictionary<Type, Func<IScalarReadAction>>()
+    {
+        { typeof(bool), () => new ScalarReadActionBool() },
+        { typeof(bool?), () => new ScalarReadActionNullableBool() },
+        { typeof(byte), () => new ScalarReadActionByte() },
+        { typeof(byte?), () => new ScalarReadActionNullableByte() },
+        { typeof(byte[]), () => new ScalarReadActionByteArray() },
+        { typeof(short), () => new ScalarReadActionShort() },
+        { typeof(short?), () => new ScalarReadActionNullableShort() },
+        { typeof(int), () => new ScalarReadActionInt() },
+        { typeof(int?), () => new ScalarReadActionNullableInt() },
+        { typeof(long), () => new ScalarReadActionLong() },
+        { typeof(long?), () => new ScalarReadActionNullableLong() },
+        { typeof(float), () => new ScalarReadActionFloat() },
+        { typeof(float?), () => new ScalarReadActionNullableFloat() },
+        { typeof(double), () => new ScalarReadActionDouble() },
+        { typeof(double?), () => new ScalarReadActionNullableDouble() },
+        { typeof(decimal), () => new ScalarReadActionDecimal() },
+        { typeof(decimal?), () => new ScalarReadActionNullableDecimal() },
+        { typeof(string), () => new ScalarReadActionString() },
+        { typeof(DateTime), () => new ScalarReadActionDateTime() },
+        { typeof(DateTime?), () => new ScalarReadActionNullableDateTime() },
+        { typeof(TimeSpan), () => new ScalarReadActionTimeSpan() },
+        { typeof(TimeSpan?), () => new ScalarReadActionNullableTimeSpan() },
+        { typeof(Guid), () => new ScalarReadActionGuid() },
+        { typeof(Guid?), () => new ScalarReadActionNullableGuid() },
+    }.ToFrozenDictionary();
+
     static ScalarReadAction()
-        => Instance = (ScalarReadAction<T>)Create();
-
-    public static ScalarReadAction<T> Instance { get; }
-
-    private static object Create()
     {
         var type = typeof(T);
 
-        if (type == typeof(bool))
-            return new ScalarReadActionBool();
-        else if (type == typeof(byte))
-            return new ScalarReadActionByte();
-        else if (type == typeof(short))
-            return new ScalarReadActionShort();
-        else if (type == typeof(int))
-            return new ScalarReadActionInt();
-        else if (type == typeof(long))
-            return new ScalarReadActionLong();
-        else if (type == typeof(float))
-            return new ScalarReadActionFloat();
-        else if (type == typeof(double))
-            return new ScalarReadActionDouble();
-        else if (type == typeof(decimal))
-            return new ScalarReadActionDecimal();
-        else if (type == typeof(string))
-            return new ScalarReadActionString();
-        else if (type == typeof(DateTime))
-            return new ScalarReadActionDateTime();
-        else if (type == typeof(Guid))
-            return new ScalarReadActionGuid();
-        else if (type == typeof(byte[]))
-            return new ScalarReadActionByteArray();
-        else if (type == typeof(bool?))
-            return new ScalarReadActionNullableBool();
-        else if (type == typeof(byte?))
-            return new ScalarReadActionNullableByte();
-        else if (type == typeof(short?))
-            return new ScalarReadActionNullableShort();
-        else if (type == typeof(int?))
-            return new ScalarReadActionNullableInt();
-        else if (type == typeof(long?))
-            return new ScalarReadActionNullableLong();
-        else if (type == typeof(float?))
-            return new ScalarReadActionNullableFloat();
-        else if (type == typeof(double?))
-            return new ScalarReadActionNullableDouble();
-        else if (type == typeof(decimal?))
-            return new ScalarReadActionNullableDecimal();
-        else if (type == typeof(DateTime?))
-            return new ScalarReadActionNullableDateTime();
-        else if (type == typeof(Guid?))
-            return new ScalarReadActionNullableGuid();
+        if (!_types.TryGetValue(type, out var func))
+            throw new NotSupportedException(type.FullName);
 
-        throw new NotSupportedException(type.FullName);
+        Instance = (ScalarReadAction<T>)func();
     }
+
+    public static ScalarReadAction<T> Instance { get; }
 
     public abstract T Read(DbDataReader reader, int index);
 
@@ -81,6 +67,16 @@ public abstract class ScalarReadAction<T> : IScalarReadAction
     {
         while (reader.Read())
             source.Add(Read(reader, 0));
+    }
+
+    public IList Fill<TResult>(PropertyInfo propertyInfo, IReadOnlyCollection<TResult> rows)
+    {
+        var result = new List<T>(rows.Count);
+
+        foreach (var row in rows)
+            result.Add((T)propertyInfo.GetValue(row));
+
+        return result;
     }
 
     object IScalarReadAction.Read(DbDataReader reader, int index) => Read(reader, index);

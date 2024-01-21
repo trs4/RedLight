@@ -878,6 +878,98 @@ public static class InsertQueryColumnsFluent
         return query;
     }
 
+    /// <summary>Добавляет поле запрашиваемых данных с действием чтения данного поля типа TimeSpan</summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="readColumn">Действие чтения поля типа TimeSpan</param>
+    public static InsertQuery<TResult> AddTimeSpanReturningColumn<TResult>(
+        this InsertQuery<TResult> query, string name, Action<TResult, TimeSpan> readColumn)
+        => query.AddReturningColumn(name, readColumn);
+
+    /// <summary>Добавляет поле запрашиваемых данных с действием чтения данного поля типа TimeSpan</summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="readColumn">Действие чтения поля типа TimeSpan</param>
+    public static InsertQuery<TResult> AddTimeSpanReturningColumn<TResult, TEnum>(
+        this InsertQuery<TResult> query, TEnum name, Action<TResult, TimeSpan> readColumn)
+        where TEnum : Enum
+        => query.AddReturningColumn(name, readColumn);
+
+    /// <summary>Добавляет условие по полю с значением</summary>
+    /// <param name="column">Имя поля</param>
+    /// <param name="termOperator">Оператор</param>
+    /// <param name="value">Значение</param>
+    public static TQuery WithTerm<TQuery>(this TQuery query, string column, Op termOperator, TimeSpan value)
+        where TQuery : InsertQuery
+    {
+        string escapedInsertQueryColumnsFluent = query.Connection.Naming.GetName(column);
+
+        query.Where.AddTerm(new OperatorTermTimeSpan(
+            query, Naming.GetRawNameWithAlias(query.DataAlias, escapedInsertQueryColumnsFluent), termOperator, value));
+
+        return query;
+    }
+
+    /// <summary>Добавляет условие по полю с значением</summary>
+    /// <param name="column">Имя поля</param>
+    /// <param name="termOperator">Оператор</param>
+    /// <param name="value">Значение</param>
+    public static TQuery WithTerm<TQuery, TEnum>(this TQuery query, TEnum column, Op termOperator, TimeSpan value)
+        where TQuery : InsertQuery
+        where TEnum : Enum
+    {
+        string escapedInsertQueryColumnsFluent = query.Connection.Naming.GetName(column);
+
+        query.Where.AddTerm(new OperatorTermTimeSpan(
+            query, Naming.GetRawNameWithAlias(query.DataAlias, escapedInsertQueryColumnsFluent), termOperator, value));
+
+        return query;
+    }
+
+    /// <summary>Добавляет поле запрашиваемых данных с действием чтения данного поля типа TimeSpan?</summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="readColumn">Действие чтения поля типа TimeSpan?</param>
+    public static InsertQuery<TResult> AddNullableTimeSpanReturningColumn<TResult>(
+        this InsertQuery<TResult> query, string name, Action<TResult, TimeSpan?> readColumn)
+        => query.AddReturningColumn(name, readColumn);
+
+    /// <summary>Добавляет поле запрашиваемых данных с действием чтения данного поля типа TimeSpan?</summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="readColumn">Действие чтения поля типа TimeSpan?</param>
+    public static InsertQuery<TResult> AddNullableTimeSpanReturningColumn<TResult, TEnum>(
+        this InsertQuery<TResult> query, TEnum name, Action<TResult, TimeSpan?> readColumn)
+        where TEnum : Enum
+        => query.AddReturningColumn(name, readColumn);
+
+    /// <summary>Добавляет условие по полю с значением</summary>
+    /// <param name="column">Имя поля</param>
+    /// <param name="termOperator">Оператор</param>
+    /// <param name="value">Значение</param>
+    public static TQuery WithTerm<TQuery>(this TQuery query, string column, Op termOperator, TimeSpan? value)
+        where TQuery : InsertQuery
+    {
+        string escapedInsertQueryColumnsFluent = query.Connection.Naming.GetName(column);
+
+        query.Where.AddTerm(new OperatorTermNullableTimeSpan(
+            query, Naming.GetRawNameWithAlias(query.DataAlias, escapedInsertQueryColumnsFluent), termOperator, value));
+
+        return query;
+    }
+
+    /// <summary>Добавляет условие по полю с значением</summary>
+    /// <param name="column">Имя поля</param>
+    /// <param name="termOperator">Оператор</param>
+    /// <param name="value">Значение</param>
+    public static TQuery WithTerm<TQuery, TEnum>(this TQuery query, TEnum column, Op termOperator, TimeSpan? value)
+        where TQuery : InsertQuery
+        where TEnum : Enum
+    {
+        string escapedInsertQueryColumnsFluent = query.Connection.Naming.GetName(column);
+
+        query.Where.AddTerm(new OperatorTermNullableTimeSpan(
+            query, Naming.GetRawNameWithAlias(query.DataAlias, escapedInsertQueryColumnsFluent), termOperator, value));
+
+        return query;
+    }
+
     /// <summary>Добавляет поле запрашиваемых данных с действием чтения данного поля типа Guid</summary>
     /// <param name="name">Имя поля</param>
     /// <param name="readColumn">Действие чтения поля типа Guid</param>

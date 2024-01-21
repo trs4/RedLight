@@ -63,6 +63,31 @@ public abstract class InsertQuery : DataValueQuery
         }
     }
 
+    [MethodImpl(Flags.HotPath)]
+    protected void BuildSqlReturning(StringBuilder builder)
+    {
+        if (_returningColumns.Count == 0)
+            return;
+
+        builder.Append("\r\nRETURNING ");
+        ColumnBuilder.Build(builder, _returningColumns);
+    }
+
+    [MethodImpl(Flags.HotPath)]
+    protected void BuildSqlOutput(StringBuilder builder)
+    {
+        if (_returningColumns.Count == 0)
+            return;
+
+        builder.Append("OUTPUT ");
+        ColumnBuilder.Build(builder, _returningColumns, f => builder.Append("INSERTED.").Append(f));
+
+        if (OutputTableName is not null)
+            builder.Append("\r\n  INTO ").Append(OutputTableName);
+
+        builder.AppendLine();
+    }
+
     #endregion
 }
 
@@ -100,4 +125,7 @@ public abstract class InsertQuery<TResult> : InsertQuery
 
     [MethodImpl(Flags.HotPath)]
     internal void AddReadAction<T>(Action<TResult, T> readAction) => ScalarReadBuilder.Add(ref _readActions, readAction);
+
+    [MethodImpl(Flags.HotPath)]
+    internal void AddReadAction(Type type, Action<TResult, object> readAction) => ScalarReadBuilder.Add(ref _readActions, type, readAction);
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 
 namespace RedLight.SQLite;
 
@@ -9,11 +8,9 @@ internal sealed class SQLiteMultiInsertQuery<TResult> : MultiInsertQuery<TResult
 
     protected override void BuildBlock(StringBuilder builder, QueryOptions options, int startIndex, int packetSize)
     {
-        if (_returningColumns.Count > 0)
-            throw new NotSupportedException("RETURNING");
-
         BuildSqlBegin(builder);
         BuildSqlEnd(builder, options, startIndex, packetSize);
+        BuildSqlReturning(builder);
     }
 
     protected override void BuildPacketBlock(StringBuilder builder, QueryOptions options,

@@ -83,6 +83,14 @@ internal sealed class InTermDateTime : InTerm<DateTime>
     protected sealed override string EscapeValue(DateTime value) => Connection.Escaping.Escape(value);
 }
 
+/// <summary>Условие по списку значений TimeSpan</summary>
+internal sealed class InTermTimeSpan : InTerm<TimeSpan>
+{
+    public InTermTimeSpan(Query owner, string column, IReadOnlyList<TimeSpan> values) : base(owner, column, values) { }
+
+    protected sealed override string EscapeValue(TimeSpan value) => Connection.Escaping.Escape(value);
+}
+
 /// <summary>Условие по списку значений Guid</summary>
 internal sealed class InTermGuid : InTerm<Guid>
 {

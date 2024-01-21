@@ -1,11 +1,48 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using IcyRain.Tables;
+using RedLight.Internal;
 
 namespace RedLight;
 
 public static class MultiValueQueryFluent
 {
+    /// <summary>Добавляет поле добавления данных</summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="columnType">Тип столбца</param>
+    /// <param name="value">Список значений</param>
+    public static TQuery AddColumn<TQuery>(this TQuery query, string name, Type columnType, ICollection value)
+        where TQuery : MultiValueQuery
+    {
+        ArgumentNullException.ThrowIfNull(columnType);
+
+        if (!_columnByType.TryGetValue(columnType, out var func))
+            throw new NotSupportedException(columnType.FullName);
+
+        query.AddColumnCore(func(query.Connection.Naming.GetName(name), value));
+        return query;
+    }
+
+    /// <summary>Добавляет поле добавления данных</summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="columnType">Тип столбца</param>
+    /// <param name="value">Список значений</param>
+    public static TQuery AddColumn<TQuery, TEnum>(this TQuery query, TEnum name, Type columnType, ICollection value)
+        where TQuery : MultiValueQuery
+        where TEnum : Enum
+    {
+        ArgumentNullException.ThrowIfNull(columnType);
+
+        if (!_columnByType.TryGetValue(columnType, out var func))
+            throw new NotSupportedException(columnType.FullName);
+
+        query.AddColumnCore(func(query.Connection.Naming.GetName(name), value));
+        return query;
+    }
+
+
     /// <summary>Добавляет поле добавления данных</summary>
     /// <param name="name">Имя поля</param>
     /// <param name="dataColumn">Столбец данных</param>
@@ -14,7 +51,12 @@ public static class MultiValueQueryFluent
         where TQuery : MultiValueQuery
     {
         ArgumentNullException.ThrowIfNull(dataColumn);
-        query.AddColumnCore(CreateColumn(query.Connection.Naming.GetName(name), dataColumn, rowCount));
+        int hashCode = Extensions.GetHash(dataColumn.Type, dataColumn.IsNullable, dataColumn.IsArray);
+
+        if (!_columnByDataType.TryGetValue(hashCode, out var func))
+            throw new NotSupportedException(dataColumn.GetType().FullName);
+
+        query.AddColumnCore(func(query.Connection.Naming.GetName(name), dataColumn, rowCount));
         return query;
     }
 
@@ -27,9 +69,15 @@ public static class MultiValueQueryFluent
         where TEnum : Enum
     {
         ArgumentNullException.ThrowIfNull(dataColumn);
-        query.AddColumnCore(CreateColumn(query.Connection.Naming.GetName(name), dataColumn, rowCount));
+        int hashCode = Extensions.GetHash(dataColumn.Type, dataColumn.IsNullable, dataColumn.IsArray);
+
+        if (!_columnByDataType.TryGetValue(hashCode, out var func))
+            throw new NotSupportedException(dataColumn.GetType().FullName);
+
+        query.AddColumnCore(func(query.Connection.Naming.GetName(name), dataColumn, rowCount));
         return query;
     }
+
 
     /// <summary>Добавляет поле добавления данных</summary>
     /// <param name="dataTable">Таблица данных</param>
@@ -39,62 +87,44 @@ public static class MultiValueQueryFluent
         ArgumentNullException.ThrowIfNull(dataTable);
 
         foreach (var pair in dataTable)
-            query.AddColumnCore(CreateColumn(query.Connection.Naming.GetName(pair.Key), pair.Value, dataTable.RowCount));
+        {
+            var dataColumn = pair.Value;
+            int hashCode = Extensions.GetHash(dataColumn.Type, dataColumn.IsNullable, dataColumn.IsArray);
+
+            if (!_columnByDataType.TryGetValue(hashCode, out var func))
+                throw new NotSupportedException(dataColumn.GetType().FullName);
+
+            query.AddColumnCore(func(query.Connection.Naming.GetName(pair.Key), dataColumn, dataTable.RowCount));
+        }
 
         return query;
     }
 
-    private static MultiValueColumn CreateColumn(string name, DataColumn dataColumn, int rowCount)
+    /// <summary>Добавляет поле добавления данных</summary>
+    /// <param name="dataTable">Таблица данных</param>
+    /// <param name="excludeColumnName">Исключаемый столбец</param>
+    public static TQuery AddColumns<TQuery>(this TQuery query, DataTable dataTable, string excludeColumnName)
+        where TQuery : MultiValueQuery
     {
-        if (dataColumn.IsArray)
-            return CreateArrayColumnCore(name, dataColumn, rowCount);
-        else if (dataColumn.IsNullable)
-            return CreateNullableColumnCore(name, dataColumn, rowCount);
-        else
-            return CreateColumnCore(name, dataColumn, rowCount);
+        ArgumentNullException.ThrowIfNull(dataTable);
+
+        foreach (var pair in dataTable)
+        {
+            if (pair.Key.Equals(excludeColumnName, StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            var dataColumn = pair.Value;
+            int hashCode = Extensions.GetHash(dataColumn.Type, dataColumn.IsNullable, dataColumn.IsArray);
+
+            if (!_columnByDataType.TryGetValue(hashCode, out var func))
+                throw new NotSupportedException(dataColumn.GetType().FullName);
+
+            query.AddColumnCore(func(query.Connection.Naming.GetName(pair.Key), dataColumn, dataTable.RowCount));
+        }
+
+        return query;
     }
 
-    private static MultiValueColumn CreateColumnCore(string name, DataColumn dataColumn, int rowCount) => dataColumn.Type switch
-    {
-        DataType.Boolean => new BoolMultiValueColumn(name, ((BooleanDataColumn)dataColumn).GetValues(rowCount)),
-        DataType.Byte => new ByteMultiValueColumn(name, ((ByteDataColumn)dataColumn).GetValues(rowCount)),
-        DataType.Int16 => new ShortMultiValueColumn(name, ((Int16DataColumn)dataColumn).GetValues(rowCount)),
-        DataType.Int32 => new IntMultiValueColumn(name, ((Int32DataColumn)dataColumn).GetValues(rowCount)),
-        DataType.Int64 => new LongMultiValueColumn(name, ((Int64DataColumn)dataColumn).GetValues(rowCount)),
-        DataType.Single => new FloatMultiValueColumn(name, ((SingleDataColumn)dataColumn).GetValues(rowCount)),
-        DataType.Double => new DoubleMultiValueColumn(name, ((DoubleDataColumn)dataColumn).GetValues(rowCount)),
-        DataType.Decimal => new DecimalMultiValueColumn(name, ((DecimalDataColumn)dataColumn).GetValues(rowCount)),
-        DataType.String => new StringMultiValueColumn(name, ((StringDataColumn)dataColumn).GetValues(rowCount)),
-        DataType.DateTime => new DateTimeMultiValueColumn(name, ((DateTimeDataColumn)dataColumn).GetValues(rowCount)),
-        DataType.Guid => new GuidMultiValueColumn(name, ((GuidDataColumn)dataColumn).GetValues(rowCount)),
-        _ => throw new NotSupportedException(dataColumn.GetType().FullName),
-    };
-
-    private static MultiValueColumn CreateNullableColumnCore(string name, DataColumn dataColumn, int rowCount) => dataColumn.Type switch
-    {
-        DataType.Boolean => new NullableBoolMultiValueColumn(name, ((NullableBooleanDataColumn)dataColumn).GetValues(rowCount)),
-        DataType.Byte => new NullableByteMultiValueColumn(name, ((NullableByteDataColumn)dataColumn).GetValues(rowCount)),
-        DataType.Int16 => new NullableShortMultiValueColumn(name, ((NullableInt16DataColumn)dataColumn).GetValues(rowCount)),
-        DataType.Int32 => new NullableIntMultiValueColumn(name, ((NullableInt32DataColumn)dataColumn).GetValues(rowCount)),
-        DataType.Int64 => new NullableLongMultiValueColumn(name, ((NullableInt64DataColumn)dataColumn).GetValues(rowCount)),
-        DataType.Single => new NullableFloatMultiValueColumn(name, ((NullableSingleDataColumn)dataColumn).GetValues(rowCount)),
-        DataType.Double => new NullableDoubleMultiValueColumn(name, ((NullableDoubleDataColumn)dataColumn).GetValues(rowCount)),
-        DataType.Decimal => new NullableDecimalMultiValueColumn(name, ((NullableDecimalDataColumn)dataColumn).GetValues(rowCount)),
-        DataType.String => new StringMultiValueColumn(name, ((NullableStringDataColumn)dataColumn).GetValues(rowCount)),
-        DataType.DateTime => new NullableDateTimeMultiValueColumn(name, ((NullableDateTimeDataColumn)dataColumn).GetValues(rowCount)),
-        DataType.Guid => new NullableGuidMultiValueColumn(name, ((NullableGuidDataColumn)dataColumn).GetValues(rowCount)),
-        _ => throw new NotSupportedException(dataColumn.GetType().FullName),
-    };
-
-#pragma warning disable CA1859 // Use concrete types when possible for improved performance
-    private static MultiValueColumn CreateArrayColumnCore(string name, DataColumn dataColumn, int rowIndex)
-    {
-        if (dataColumn.Type == DataType.Byte)
-            return new ByteArrayMultiValueColumn(name, ((ByteArrayDataColumn)dataColumn).GetValues(rowIndex));
-
-        throw new NotSupportedException(dataColumn.GetType().FullName);
-    }
-#pragma warning restore CA1859 // Use concrete types when possible for improved performance
 
     /// <summary>Добавляет поле добавления данных</summary>
     /// <param name="name">Имя поля</param>
@@ -138,6 +168,142 @@ public static class MultiValueQueryFluent
         return query;
     }
 
+    #region Internal
+
+    private static readonly FrozenDictionary<Type, Func<string, ICollection, MultiValueColumn>> _columnByType
+        = new Dictionary<Type, Func<string, ICollection, MultiValueColumn>>()
+        {
+            { typeof(bool), (name, value) => new BoolMultiValueColumn(name, (IReadOnlyList<bool>)value) },
+            { typeof(bool?), (name, value) => new NullableBoolMultiValueColumn(name, (IReadOnlyList<bool?>)value) },
+            { typeof(byte), (name, value) => new ByteMultiValueColumn(name, (IReadOnlyList<byte>)value) },
+            { typeof(byte?), (name, value) => new NullableByteMultiValueColumn(name, (IReadOnlyList<byte?>)value) },
+            { typeof(byte[]), (name, value) => new ByteArrayMultiValueColumn(name, (IReadOnlyList<byte[]>)value) },
+            { typeof(short), (name, value) => new ShortMultiValueColumn(name, (IReadOnlyList<short>)value) },
+            { typeof(short?), (name, value) => new NullableShortMultiValueColumn(name, (IReadOnlyList<short?>)value) },
+            { typeof(int), (name, value) => new IntMultiValueColumn(name, (IReadOnlyList<int>)value) },
+            { typeof(int?), (name, value) => new NullableIntMultiValueColumn(name, (IReadOnlyList<int?>)value) },
+            { typeof(long), (name, value) => new LongMultiValueColumn(name, (IReadOnlyList<long>)value) },
+            { typeof(long?), (name, value) => new NullableLongMultiValueColumn(name, (IReadOnlyList<long?>)value) },
+            { typeof(float), (name, value) => new FloatMultiValueColumn(name, (IReadOnlyList<float>)value) },
+            { typeof(float?), (name, value) => new NullableFloatMultiValueColumn(name, (IReadOnlyList<float?>)value) },
+            { typeof(double), (name, value) => new DoubleMultiValueColumn(name, (IReadOnlyList<double>)value) },
+            { typeof(double?), (name, value) => new NullableDoubleMultiValueColumn(name, (IReadOnlyList<double?>)value) },
+            { typeof(decimal), (name, value) => new DecimalMultiValueColumn(name, (IReadOnlyList<decimal>)value) },
+            { typeof(decimal?), (name, value) => new NullableDecimalMultiValueColumn(name, (IReadOnlyList<decimal?>)value) },
+            { typeof(string), (name, value) => new StringMultiValueColumn(name, (IReadOnlyList<string>)value) },
+            { typeof(DateTime), (name, value) => new DateTimeMultiValueColumn(name, (IReadOnlyList<DateTime>)value) },
+            { typeof(DateTime?), (name, value) => new NullableDateTimeMultiValueColumn(name, (IReadOnlyList<DateTime?>)value) },
+            { typeof(TimeSpan), (name, value) => new TimeSpanMultiValueColumn(name, (IReadOnlyList<TimeSpan>)value) },
+            { typeof(TimeSpan?), (name, value) => new NullableTimeSpanMultiValueColumn(name, (IReadOnlyList<TimeSpan?>)value) },
+            { typeof(Guid), (name, value) => new GuidMultiValueColumn(name, (IReadOnlyList<Guid>)value) },
+            { typeof(Guid?), (name, value) => new NullableGuidMultiValueColumn(name, (IReadOnlyList<Guid?>)value) },
+        }.ToFrozenDictionary();
+
+    private static readonly FrozenDictionary<int, Func<string, DataColumn, int, MultiValueColumn>> _columnByDataType
+        = new Dictionary<int, Func<string, DataColumn, int, MultiValueColumn>>()
+        {
+            {
+                Extensions.GetHash(DataType.Boolean),
+                (name, dataColumn, rowCount) => new BoolMultiValueColumn(name, ((BooleanDataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
+                Extensions.GetHash(DataType.Boolean, isNullable: true),
+                (name, dataColumn, rowCount) => new NullableBoolMultiValueColumn(name, ((NullableBooleanDataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
+                Extensions.GetHash(DataType.Byte),
+                (name, dataColumn, rowCount) => new ByteMultiValueColumn(name, ((ByteDataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
+                Extensions.GetHash(DataType.Byte, isNullable: true),
+                (name, dataColumn, rowCount) => new NullableByteMultiValueColumn(name, ((NullableByteDataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
+                Extensions.GetHash(DataType.Byte, isArray: true),
+                (name, dataColumn, rowCount) => new ByteArrayMultiValueColumn(name, ((ByteArrayDataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
+                Extensions.GetHash(DataType.Int16),
+                (name, dataColumn, rowCount) => new ShortMultiValueColumn(name, ((Int16DataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
+                Extensions.GetHash(DataType.Int16, isNullable: true),
+                (name, dataColumn, rowCount) => new NullableShortMultiValueColumn(name, ((NullableInt16DataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
+                Extensions.GetHash(DataType.Int32),
+                (name, dataColumn, rowCount) => new IntMultiValueColumn(name, ((Int32DataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
+                Extensions.GetHash(DataType.Int32, isNullable: true),
+                (name, dataColumn, rowCount) => new NullableIntMultiValueColumn(name, ((NullableInt32DataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
+                Extensions.GetHash(DataType.Int64),
+                (name, dataColumn, rowCount) => new LongMultiValueColumn(name, ((Int64DataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
+                Extensions.GetHash(DataType.Int64, isNullable: true),
+                (name, dataColumn, rowCount) => new NullableLongMultiValueColumn(name, ((NullableInt64DataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
+                Extensions.GetHash(DataType.Single),
+                (name, dataColumn, rowCount) => new FloatMultiValueColumn(name, ((SingleDataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
+                Extensions.GetHash(DataType.Single, isNullable: true),
+                (name, dataColumn, rowCount) => new NullableFloatMultiValueColumn(name, ((NullableSingleDataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
+                Extensions.GetHash(DataType.Double),
+                (name, dataColumn, rowCount) => new DoubleMultiValueColumn(name, ((DoubleDataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
+                Extensions.GetHash(DataType.Double, isNullable: true),
+                (name, dataColumn, rowCount) => new NullableDoubleMultiValueColumn(name, ((NullableDoubleDataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
+                Extensions.GetHash(DataType.Decimal),
+                (name, dataColumn, rowCount) => new DecimalMultiValueColumn(name, ((DecimalDataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
+                Extensions.GetHash(DataType.Decimal, isNullable: true),
+                (name, dataColumn, rowCount) => new NullableDecimalMultiValueColumn(name, ((NullableDecimalDataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
+                Extensions.GetHash(DataType.String),
+                (name, dataColumn, rowCount) => new StringMultiValueColumn(name, ((StringDataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
+                Extensions.GetHash(DataType.String, isNullable: true),
+                (name, dataColumn, rowCount) => new StringMultiValueColumn(name, ((NullableStringDataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
+                Extensions.GetHash(DataType.DateTime),
+                (name, dataColumn, rowCount) => new DateTimeMultiValueColumn(name, ((DateTimeDataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
+                Extensions.GetHash(DataType.DateTime, isNullable: true),
+                (name, dataColumn, rowCount) => new NullableDateTimeMultiValueColumn(name, ((NullableDateTimeDataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
+                Extensions.GetHash(DataType.TimeSpan),
+                (name, dataColumn, rowCount) => new TimeSpanMultiValueColumn(name, ((TimeSpanDataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
+                Extensions.GetHash(DataType.TimeSpan, isNullable: true),
+                (name, dataColumn, rowCount) => new NullableTimeSpanMultiValueColumn(name, ((NullableTimeSpanDataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
+                Extensions.GetHash(DataType.Guid),
+                (name, dataColumn, rowCount) => new GuidMultiValueColumn(name, ((GuidDataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
+                Extensions.GetHash(DataType.Guid, isNullable: true),
+                (name, dataColumn, rowCount) => new NullableGuidMultiValueColumn(name, ((NullableGuidDataColumn)dataColumn).GetValues(rowCount))
+            },
+        }.ToFrozenDictionary();
+
 #pragma warning disable IDE0038 // Use pattern matching
     private static MultiValueColumn CreateColumn(string name, IReadOnlyList<object> values)
     {
@@ -168,7 +334,7 @@ public static class MultiValueQueryFluent
         else if (values is IReadOnlyList<byte[]>)
             return new ByteArrayMultiValueColumn(name, (IReadOnlyList<byte[]>)values);
 
-            // Nullable types
+        // Nullable types
         if (values is IReadOnlyList<bool?>)
             return new NullableBoolMultiValueColumn(name, (IReadOnlyList<bool?>)values);
         else if (values is IReadOnlyList<byte?>)
@@ -194,4 +360,5 @@ public static class MultiValueQueryFluent
     }
 #pragma warning restore IDE0038 // Use pattern matching
 
+    #endregion
 }

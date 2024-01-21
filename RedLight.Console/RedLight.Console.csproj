@@ -10,4 +10,9 @@
   <ItemGroup>
 	<ProjectReference Include="..\RedLight.All\RedLight.All.csproj" />
   </ItemGroup>
+  <ItemGroup>
+	<Reference Include="IcyRain.Tables">
+	  <HintPath>..\IcyRain.Tables.dll</HintPath>
+	</Reference>
+  </ItemGroup>
 </Project>

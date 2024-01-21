@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace RedLight.Internal;
@@ -26,8 +28,12 @@ internal static class ScalarReadBuilder
         readActions.Add((obj, reader) => readAction(obj, Read(type, reader, index)));
     }
 
-    public static object Read(Type type, DbDataReader reader, int index)
-        => _readActionsByType.GetOrAdd(type, CreateReadActionByType).Read(reader, index);
+    public static object Read(Type type, DbDataReader reader, int index) => Get(type).Read(reader, index);
+
+    public static IList Fill<TResult>(PropertyInfo propertyInfo, IReadOnlyCollection<TResult> rows) => Get(propertyInfo.PropertyType).Fill(propertyInfo, rows);
+
+    [MethodImpl(Flags.HotPath)]
+    private static IScalarReadAction Get(Type type) => _readActionsByType.GetOrAdd(type, CreateReadActionByType);
 
     private static IScalarReadAction CreateReadActionByType(Type type)
         => typeof(ScalarReadAction<>).MakeGenericType(type)

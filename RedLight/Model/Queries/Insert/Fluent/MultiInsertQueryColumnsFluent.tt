@@ -24,6 +24,8 @@
     ("String", "string"), 
     ("DateTime", "DateTime"),
     ("NullableDateTime", "DateTime?"),
+    ("TimeSpan", "TimeSpan"),
+    ("NullableTimeSpan", "TimeSpan?"),
     ("Guid", "Guid"),
     ("NullableGuid", "Guid?"),
     ("ByteArray", "byte[]"),

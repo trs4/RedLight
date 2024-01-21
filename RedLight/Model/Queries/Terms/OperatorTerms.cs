@@ -268,6 +268,34 @@ internal sealed class OperatorTermNullableDateTime : OperatorTerm
         => ParameterProcessing.ConstructNullableDateTime(Connection, options, SecondOperand);
 }
 
+/// <summary>Условие с оператором TimeSpan</summary>
+internal sealed class OperatorTermTimeSpan : OperatorTerm
+{
+    public OperatorTermTimeSpan(Query owner, string firstOperand, Op termOperator, TimeSpan secondOperand)
+        : base(owner, firstOperand, termOperator)
+        => SecondOperand = secondOperand;
+
+    /// <summary>Второй операнд (имя колонки или значение)</summary>
+    public TimeSpan SecondOperand { get; }
+
+    protected sealed override string GetSecondOperand(QueryOptions options)
+        => ParameterProcessing.ConstructTimeSpan(Connection, options, SecondOperand);
+}
+
+/// <summary>Условие с оператором TimeSpan?</summary>
+internal sealed class OperatorTermNullableTimeSpan : OperatorTerm
+{
+    public OperatorTermNullableTimeSpan(Query owner, string firstOperand, Op termOperator, TimeSpan? secondOperand)
+        : base(owner, firstOperand, termOperator)
+        => SecondOperand = secondOperand;
+
+    /// <summary>Второй операнд (имя колонки или значение)</summary>
+    public TimeSpan? SecondOperand { get; }
+
+    protected sealed override string GetSecondOperand(QueryOptions options)
+        => ParameterProcessing.ConstructNullableTimeSpan(Connection, options, SecondOperand);
+}
+
 /// <summary>Условие с оператором Guid</summary>
 internal sealed class OperatorTermGuid : OperatorTerm
 {

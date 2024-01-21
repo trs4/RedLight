@@ -9,18 +9,7 @@ internal sealed class SqlServerMultiInsertQuery<TResult> : MultiInsertQuery<TRes
     protected override void BuildBlock(StringBuilder builder, QueryOptions options, int startIndex, int packetSize)
     {
         BuildSqlBegin(builder);
-
-        if (_returningColumns.Count > 0)
-        {
-            builder.Append("OUTPUT ");
-            ColumnBuilder.Build(builder, _returningColumns, f => builder.Append("INSERTED.").Append(f));
-
-            if (OutputTableName != null)
-                builder.Append("\r\n  INTO ").Append(OutputTableName);
-
-            builder.AppendLine();
-        }
-
+        BuildSqlOutput(builder);
         BuildSqlEnd(builder, options, startIndex, packetSize);
     }
 

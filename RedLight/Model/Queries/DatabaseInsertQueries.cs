@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using IcyRain.Tables;
+using RedLight.Internal;
 
 namespace RedLight;
 
@@ -51,6 +54,79 @@ public abstract class DatabaseInsertQueries
         where TEnum : Enum
         => Create<TResult>(Connection.Naming.GetNameWithSchema<TEnum>());
 
+    /// <summary>Создаёт запрос добавления данных</summary>
+    /// <typeparam name="TResult">Тип результата</typeparam>
+    /// <typeparam name="TEnum">Имя таблицы</typeparam>
+    /// <param name="row">Вставляемый объект</param>
+    public InsertQuery<TResult> CreateWithParseQuery<TResult, TEnum>(TResult row)
+        where TEnum : Enum
+    {
+        ArgumentNullException.ThrowIfNull(row);
+        var table = TableGenerator.From<TEnum>();
+        var query = CreateQuery<TResult, TEnum>();
+        var type = typeof(TResult);
+
+        if (type == typeof(DataSet))
+            Append(query, table, ((DataSet)(object)row).Values.First());
+        else if (type == typeof(DataTable))
+            Append(query, table, (DataTable)(object)row);
+        else if (type.IsClass && !type.IsSystem())
+        {
+            string identityColumnName = table.IdentityColumn?.Name;
+
+            if (identityColumnName is not null)
+            {
+                foreach (var column in table.Columns)
+                {
+                    var propertyInfo = type.GetProperty(column.Name);
+
+                    if (propertyInfo is null)
+                        continue;
+
+                    if (column.Name.Equals(identityColumnName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        query.AddReturningColumnCore(query.Connection.Naming.GetName(column.Name));
+                        query.AddReadAction(propertyInfo.PropertyType, (obj, value) => propertyInfo.SetValue(obj, value));
+                    }
+                    else
+                        query.AddColumn(column.Name, propertyInfo.PropertyType, propertyInfo.GetValue(row));
+                }
+            }
+            else
+            {
+                foreach (var column in table.Columns)
+                {
+                    var propertyInfo = type.GetProperty(column.Name);
+
+                    if (propertyInfo is null)
+                        continue;
+
+                    query.AddColumn(column.Name, propertyInfo.PropertyType, propertyInfo.GetValue(row));
+                }
+            }
+        }
+        else
+            throw new NotImplementedException();
+
+        return query;
+    }
+
+    private static void Append<TResult>(InsertQuery<TResult> query, Table table, DataTable dataTable)
+    {
+        string identityColumnName = table.IdentityColumn?.Name;
+        dataTable.TryGetValue(identityColumnName, out var returningColumn);
+
+        if (returningColumn is not null)
+        {
+            query.AddColumns(dataTable, 0, identityColumnName);
+
+            query.AddReturningColumnCore(query.Connection.Naming.GetName(identityColumnName));
+            query.AddReadAction(table.IdentityColumn.Type.GetLanguageType(), (obj, value) => returningColumn.SetObject(0, value));
+        }
+        else
+            query.AddColumns(dataTable, 0);
+    }
+
 
     /// <summary>Создаёт запрос добавления множественных данных</summary>
     /// <param name="tableName">Имя таблицы</param>
@@ -90,6 +166,79 @@ public abstract class DatabaseInsertQueries
     public MultiInsertQuery<TResult> CreateMultiQuery<TResult, TEnum>()
         where TEnum : Enum
         => CreateMulti<TResult>(Connection.Naming.GetNameWithSchema<TEnum>());
+
+    /// <summary>Создаёт запрос добавления множественных данных</summary>
+    /// <typeparam name="TResult">Тип результата</typeparam>
+    /// <typeparam name="TEnum">Имя таблицы</typeparam>
+    /// <param name="rows">Вставляемый объект</param>
+    public MultiInsertQuery<TResult> CreateWithParseMultiQuery<TResult, TEnum>(IReadOnlyCollection<TResult> rows)
+        where TEnum : Enum
+    {
+        ArgumentNullException.ThrowIfNull(rows);
+        var table = TableGenerator.From<TEnum>();
+        var query = CreateMultiQuery<TResult, TEnum>();
+        var type = typeof(TResult);
+
+        if (type == typeof(DataSet))
+            Append(query, table, ((DataSet)(object)rows).Values.First());
+        else if (type == typeof(DataTable))
+            Append(query, table, (DataTable)(object)rows);
+        else if (type.IsClass && !type.IsSystem())
+        {
+            string identityColumnName = table.IdentityColumn?.Name;
+
+            if (identityColumnName is not null)
+            {
+                foreach (var column in table.Columns)
+                {
+                    var propertyInfo = type.GetProperty(column.Name);
+
+                    if (propertyInfo is null)
+                        continue;
+
+                    if (column.Name.Equals(identityColumnName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        query.AddReturningColumnCore(query.Connection.Naming.GetName(column.Name));
+                        query.AddReadAction(propertyInfo.PropertyType, (obj, value) => propertyInfo.SetValue(obj, value));
+                    }
+                    else
+                        query.AddColumn(column.Name, propertyInfo.PropertyType, ScalarReadBuilder.Fill(propertyInfo, rows));
+                }
+            }
+            else
+            {
+                foreach (var column in table.Columns)
+                {
+                    var propertyInfo = type.GetProperty(column.Name);
+
+                    if (propertyInfo is null)
+                        continue;
+
+                    query.AddColumn(column.Name, propertyInfo.PropertyType, ScalarReadBuilder.Fill(propertyInfo, rows));
+                }
+            }
+        }
+        else
+            throw new NotImplementedException();
+
+        return query;
+    }
+
+    private static void Append<TResult>(MultiInsertQuery<TResult> query, Table table, DataTable dataTable)
+    {
+        string identityColumnName = table.IdentityColumn?.Name;
+        dataTable.TryGetValue(identityColumnName, out var returningColumn);
+
+        if (returningColumn is not null)
+        {
+            query.AddColumns(dataTable, identityColumnName);
+
+            query.AddReturningColumnCore(query.Connection.Naming.GetName(identityColumnName));
+            query.AddReadAction(table.IdentityColumn.Type.GetLanguageType(), (obj, value) => returningColumn.SetObject(0, value));
+        }
+        else
+            query.AddColumns(dataTable);
+    }
 
 
     /// <summary>Создаёт запрос добавления данных</summary>

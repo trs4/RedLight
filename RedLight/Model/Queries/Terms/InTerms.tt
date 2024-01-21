@@ -13,8 +13,9 @@
     ("Float", "float"),
     ("Double", "double"),
     ("Decimal", "decimal"),
-    ("String", "string"), 
+    ("String", "string"),
     ("DateTime", "DateTime"),
+    ("TimeSpan", "TimeSpan"),
     ("Guid", "Guid"),
 }; #>
 using System;

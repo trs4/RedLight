@@ -878,6 +878,98 @@ public static class MultiInsertQueryColumnsFluent
         return query;
     }
 
+    /// <summary>Добавляет поле запрашиваемых данных с действием чтения данного поля типа TimeSpan</summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="readColumn">Действие чтения поля типа TimeSpan</param>
+    public static MultiInsertQuery<TResult> AddTimeSpanReturningColumn<TResult>(
+        this MultiInsertQuery<TResult> query, string name, Action<TResult, TimeSpan> readColumn)
+        => query.AddReturningColumn(name, readColumn);
+
+    /// <summary>Добавляет поле запрашиваемых данных с действием чтения данного поля типа TimeSpan</summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="readColumn">Действие чтения поля типа TimeSpan</param>
+    public static MultiInsertQuery<TResult> AddTimeSpanReturningColumn<TResult, TEnum>(
+        this MultiInsertQuery<TResult> query, TEnum name, Action<TResult, TimeSpan> readColumn)
+        where TEnum : Enum
+        => query.AddReturningColumn(name, readColumn);
+
+    /// <summary>Добавляет условие по полю с значением</summary>
+    /// <param name="column">Имя поля</param>
+    /// <param name="termOperator">Оператор</param>
+    /// <param name="value">Значение</param>
+    public static TQuery WithTerm<TQuery>(this TQuery query, string column, Op termOperator, TimeSpan value)
+        where TQuery : MultiInsertQuery
+    {
+        string escapedColumn = query.Connection.Naming.GetName(column);
+
+        query.Where.AddTerm(new OperatorTermTimeSpan(
+            query, Naming.GetRawNameWithAlias(query.DataAlias, escapedColumn), termOperator, value));
+
+        return query;
+    }
+
+    /// <summary>Добавляет условие по полю с значением</summary>
+    /// <param name="column">Имя поля</param>
+    /// <param name="termOperator">Оператор</param>
+    /// <param name="value">Значение</param>
+    public static TQuery WithTerm<TQuery, TEnum>(this TQuery query, TEnum column, Op termOperator, TimeSpan value)
+        where TQuery : MultiInsertQuery
+        where TEnum : Enum
+    {
+        string escapedColumn = query.Connection.Naming.GetName(column);
+
+        query.Where.AddTerm(new OperatorTermTimeSpan(
+            query, Naming.GetRawNameWithAlias(query.DataAlias, escapedColumn), termOperator, value));
+
+        return query;
+    }
+
+    /// <summary>Добавляет поле запрашиваемых данных с действием чтения данного поля типа TimeSpan?</summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="readColumn">Действие чтения поля типа TimeSpan?</param>
+    public static MultiInsertQuery<TResult> AddNullableTimeSpanReturningColumn<TResult>(
+        this MultiInsertQuery<TResult> query, string name, Action<TResult, TimeSpan?> readColumn)
+        => query.AddReturningColumn(name, readColumn);
+
+    /// <summary>Добавляет поле запрашиваемых данных с действием чтения данного поля типа TimeSpan?</summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="readColumn">Действие чтения поля типа TimeSpan?</param>
+    public static MultiInsertQuery<TResult> AddNullableTimeSpanReturningColumn<TResult, TEnum>(
+        this MultiInsertQuery<TResult> query, TEnum name, Action<TResult, TimeSpan?> readColumn)
+        where TEnum : Enum
+        => query.AddReturningColumn(name, readColumn);
+
+    /// <summary>Добавляет условие по полю с значением</summary>
+    /// <param name="column">Имя поля</param>
+    /// <param name="termOperator">Оператор</param>
+    /// <param name="value">Значение</param>
+    public static TQuery WithTerm<TQuery>(this TQuery query, string column, Op termOperator, TimeSpan? value)
+        where TQuery : MultiInsertQuery
+    {
+        string escapedColumn = query.Connection.Naming.GetName(column);
+
+        query.Where.AddTerm(new OperatorTermNullableTimeSpan(
+            query, Naming.GetRawNameWithAlias(query.DataAlias, escapedColumn), termOperator, value));
+
+        return query;
+    }
+
+    /// <summary>Добавляет условие по полю с значением</summary>
+    /// <param name="column">Имя поля</param>
+    /// <param name="termOperator">Оператор</param>
+    /// <param name="value">Значение</param>
+    public static TQuery WithTerm<TQuery, TEnum>(this TQuery query, TEnum column, Op termOperator, TimeSpan? value)
+        where TQuery : MultiInsertQuery
+        where TEnum : Enum
+    {
+        string escapedColumn = query.Connection.Naming.GetName(column);
+
+        query.Where.AddTerm(new OperatorTermNullableTimeSpan(
+            query, Naming.GetRawNameWithAlias(query.DataAlias, escapedColumn), termOperator, value));
+
+        return query;
+    }
+
     /// <summary>Добавляет поле запрашиваемых данных с действием чтения данного поля типа Guid</summary>
     /// <param name="name">Имя поля</param>
     /// <param name="readColumn">Действие чтения поля типа Guid</param>

@@ -406,6 +406,48 @@ public static class ValueQueryColumnsFluent
     /// <summary>Добавляет поле добавления данных</summary>
     /// <param name="name">Имя поля</param>
     /// <param name="value">Значение</param>
+    public static TQuery AddColumn<TQuery>(this TQuery query, string name, TimeSpan value)
+        where TQuery : ValueQuery
+    {
+        query.AddColumnCore(new TimeSpanValueColumn(query.Connection.Naming.GetName(name), value));
+        return query;
+    }
+
+    /// <summary>Добавляет поле добавления данных</summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="value">Значение</param>
+    public static TQuery AddColumn<TQuery, TEnum>(this TQuery query, TEnum name, TimeSpan value)
+        where TQuery : ValueQuery
+        where TEnum : Enum
+    {
+        query.AddColumnCore(new TimeSpanValueColumn(query.Connection.Naming.GetName(name), value));
+        return query;
+    }
+
+    /// <summary>Добавляет поле добавления данных</summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="value">Значение</param>
+    public static TQuery AddColumn<TQuery>(this TQuery query, string name, TimeSpan? value)
+        where TQuery : ValueQuery
+    {
+        query.AddColumnCore(new NullableTimeSpanValueColumn(query.Connection.Naming.GetName(name), value));
+        return query;
+    }
+
+    /// <summary>Добавляет поле добавления данных</summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="value">Значение</param>
+    public static TQuery AddColumn<TQuery, TEnum>(this TQuery query, TEnum name, TimeSpan? value)
+        where TQuery : ValueQuery
+        where TEnum : Enum
+    {
+        query.AddColumnCore(new NullableTimeSpanValueColumn(query.Connection.Naming.GetName(name), value));
+        return query;
+    }
+
+    /// <summary>Добавляет поле добавления данных</summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="value">Значение</param>
     public static TQuery AddColumn<TQuery>(this TQuery query, string name, Guid value)
         where TQuery : ValueQuery
     {

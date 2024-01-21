@@ -269,6 +269,34 @@ internal sealed class NullableDateTimeValueColumn : ValueColumn
 }
 
 /// <summary>Конструктор поля для изменения данных</summary>
+internal sealed class TimeSpanValueColumn : ValueColumn
+{
+    public TimeSpanValueColumn(string name, TimeSpan value)
+        : base(name)
+        => Value = value;
+
+    /// <summary>Значение поля</summary>
+    public TimeSpan Value { get; }
+
+    internal override string GetEscapedString(DatabaseConnection connection, QueryOptions options)
+        => ParameterProcessing.ConstructTimeSpan(connection, options, Value);
+}
+
+/// <summary>Конструктор поля для изменения данных</summary>
+internal sealed class NullableTimeSpanValueColumn : ValueColumn
+{
+    public NullableTimeSpanValueColumn(string name, TimeSpan? value)
+        : base(name)
+        => Value = value;
+
+    /// <summary>Значение поля</summary>
+    public TimeSpan? Value { get; }
+
+    internal override string GetEscapedString(DatabaseConnection connection, QueryOptions options)
+        => ParameterProcessing.ConstructNullableTimeSpan(connection, options, Value);
+}
+
+/// <summary>Конструктор поля для изменения данных</summary>
 internal sealed class GuidValueColumn : ValueColumn
 {
     public GuidValueColumn(string name, Guid value)

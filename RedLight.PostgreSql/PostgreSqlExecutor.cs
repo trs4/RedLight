@@ -18,11 +18,8 @@ internal sealed class PostgreSqlExecutor : Executor
         builder.Host = Parameters.ServerName;
         builder.Port = Parameters.Port;
 
-        if (String.IsNullOrEmpty(Parameters.UserName))
-            builder.IntegratedSecurity = true;
-        else
+        if (!String.IsNullOrEmpty(Parameters.UserName))
         {
-            builder.IntegratedSecurity = false;
             builder.Username = Parameters.UserName;
             builder.Password = Parameters.Password ?? String.Empty;
         }

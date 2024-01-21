@@ -5,29 +5,31 @@
 <#@ import namespace="System.Collections.Generic" #>
 <#@ output extension=".cs" #>
 <# var types = new [] { 
-    ("Bool", "bool", "Bool"),
+    ("Bool", "bool", "Boolean"),
     ("Byte", "byte", "Byte"),
     ("Short", "short", "Short"),
-    ("Int", "int", "Int"), 
+    ("Int", "int", "Integer"), 
     ("Long", "long", "Long"),
     ("Float", "float", "Float"),
     ("Double", "double", "Double"),
     ("Decimal", "decimal", "Decimal"),
     ("String", "string", "String"), 
     ("DateTime", "DateTime", "DateTime"),
+    ("TimeSpan", "TimeSpan", "TimeSpan"),
     ("Guid", "Guid", "Guid"),
     ("ByteArray", "byte[]", "ByteArray"),
 };
 var nullableTypes = new [] { 
-    ("NullableBool", "bool?", "Bool"),
+    ("NullableBool", "bool?", "Boolean"),
     ("NullableByte", "byte?", "Byte"),
     ("NullableShort", "short?", "Short"),
-    ("NullableInt", "int?", "Int"), 
+    ("NullableInt", "int?", "Integer"), 
     ("NullableLong", "long?", "Long"),
     ("NullableFloat", "float?", "Float"),
     ("NullableDouble", "double?", "Double"),
     ("NullableDecimal", "decimal?", "Decimal"),
     ("NullableDateTime", "DateTime?", "DateTime"),
+    ("NullableTimeSpan", "TimeSpan?", "TimeSpan"),
     ("NullableGuid", "Guid?", "Guid"),
 }; #>
 using System;

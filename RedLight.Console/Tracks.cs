@@ -27,6 +27,15 @@ public enum Tracks
 /// <summary>Трек</summary>
 public class Track
 {
+    /// <summary>Идентификатор</summary>
+    public int Id { get; set; }
+
+    /// <summary>Уникальный идентификатор</summary>
+    public Guid Guid { get; set; }
+
+    /// <summary>путь до файла</summary>
+    public string Path { get; set; }
+
     /// <summary>Выбран</summary>
     public bool Piked { get; set; }
 
@@ -61,8 +70,10 @@ public class Track
     public DateTime Added { get; set; }
 
     /// <summary>Битрейт</summary>
-    public double Bitrate { get; set; }
+    public int Bitrate { get; set; }
 
     /// <summary>Размер</summary>
     public long Size { get; set; }
+
+    public override string ToString() => $"{Artist} - {Title} {Year}";
 }

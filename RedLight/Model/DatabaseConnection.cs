@@ -363,7 +363,7 @@ public abstract class DatabaseConnection : IDisposable
         {
             Executor.BeginSession();
             reader = Executor.RunReader(sql, Prepare(options), GetTimeout(timeout), behavior);
-            TableReader.Append(source, reader, options);
+            ListReader.Append(source, reader, options);
         }
         finally
         {
@@ -388,7 +388,7 @@ public abstract class DatabaseConnection : IDisposable
         {
             await Executor.BeginSessionAsync().ConfigureAwait(false);
             reader = await Executor.RunReaderAsync(sql, Prepare(options), GetTimeout(timeout), token, behavior).ConfigureAwait(false);
-            TableReader.Append(source, reader, options);
+            ListReader.Append(source, reader, options);
         }
         finally
         {

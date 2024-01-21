@@ -1224,6 +1224,134 @@ public static class OperatorTermsFluentApi
     /// <param name="column">Имя Колонки</param>
     /// <param name="termOperator">Оператор</param>
     /// <param name="value">Значение</param>
+    public static TermBlock WithValueColumnTerm(this TermBlock termBlock, string column, Op termOperator, TimeSpan value)
+    {
+        termBlock.AddTerm(new OperatorTermTimeSpan(
+            termBlock, termBlock.Connection.Naming.GetName(column), termOperator, value));
+
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с значением</summary>
+    /// <param name="column">Имя колонки</param>
+    /// <param name="termOperator">Оператор</param>
+    /// <param name="value">Значение</param>
+    public static TermBlock WithValueColumnTerm<TEnum>(this TermBlock termBlock, TEnum column, Op termOperator, TimeSpan value)
+        where TEnum : Enum
+    {
+        termBlock.AddTerm(new OperatorTermTimeSpan(
+            termBlock, termBlock.Connection.Naming.GetName(column), termOperator, value));
+
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с значением</summary>
+    /// <param name="alias">Псевдоним таблицы</param>
+    /// <param name="column">Имя колонки</param>
+    /// <param name="termOperator">Оператор</param>
+    /// <param name="value">Значение</param>
+    public static TermBlock WithValueColumnTerm(this TermBlock termBlock, string alias, string column, Op termOperator, TimeSpan value)
+    {
+        termBlock.AddTerm(new OperatorTermTimeSpan(
+            termBlock, termBlock.Connection.Naming.GetNameWithAlias(alias, column), termOperator, value));
+
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с значением</summary>
+    /// <param name="alias">Псевдоним таблицы</param>
+    /// <param name="column">Имя колонки</param>
+    /// <param name="termOperator">Оператор</param>
+    /// <param name="value">Значение</param>
+    public static TermBlock WithValueColumnTerm<TEnum>(this TermBlock termBlock, string alias, TEnum column, Op termOperator, TimeSpan value)
+        where TEnum : Enum
+    {
+        termBlock.AddTerm(new OperatorTermTimeSpan(
+            termBlock, termBlock.Connection.Naming.GetNameWithAlias(alias, column), termOperator, value));
+
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с значением</summary>
+    /// <param name="rawColumn">Имя поля</param>
+    /// <param name="termOperator">Оператор</param>
+    /// <param name="value">Значение</param>
+    public static TermBlock WithValueRawColumnTerm(this TermBlock termBlock, string rawColumn, Op termOperator, TimeSpan value)
+    {
+        termBlock.AddTerm(new OperatorTermTimeSpan(
+            termBlock, rawColumn, termOperator, value));
+
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с значением</summary>
+    /// <param name="column">Имя Колонки</param>
+    /// <param name="termOperator">Оператор</param>
+    /// <param name="value">Значение</param>
+    public static TermBlock WithValueColumnTerm(this TermBlock termBlock, string column, Op termOperator, TimeSpan? value)
+    {
+        termBlock.AddTerm(new OperatorTermNullableTimeSpan(
+            termBlock, termBlock.Connection.Naming.GetName(column), termOperator, value));
+
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с значением</summary>
+    /// <param name="column">Имя колонки</param>
+    /// <param name="termOperator">Оператор</param>
+    /// <param name="value">Значение</param>
+    public static TermBlock WithValueColumnTerm<TEnum>(this TermBlock termBlock, TEnum column, Op termOperator, TimeSpan? value)
+        where TEnum : Enum
+    {
+        termBlock.AddTerm(new OperatorTermNullableTimeSpan(
+            termBlock, termBlock.Connection.Naming.GetName(column), termOperator, value));
+
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с значением</summary>
+    /// <param name="alias">Псевдоним таблицы</param>
+    /// <param name="column">Имя колонки</param>
+    /// <param name="termOperator">Оператор</param>
+    /// <param name="value">Значение</param>
+    public static TermBlock WithValueColumnTerm(this TermBlock termBlock, string alias, string column, Op termOperator, TimeSpan? value)
+    {
+        termBlock.AddTerm(new OperatorTermNullableTimeSpan(
+            termBlock, termBlock.Connection.Naming.GetNameWithAlias(alias, column), termOperator, value));
+
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с значением</summary>
+    /// <param name="alias">Псевдоним таблицы</param>
+    /// <param name="column">Имя колонки</param>
+    /// <param name="termOperator">Оператор</param>
+    /// <param name="value">Значение</param>
+    public static TermBlock WithValueColumnTerm<TEnum>(this TermBlock termBlock, string alias, TEnum column, Op termOperator, TimeSpan? value)
+        where TEnum : Enum
+    {
+        termBlock.AddTerm(new OperatorTermNullableTimeSpan(
+            termBlock, termBlock.Connection.Naming.GetNameWithAlias(alias, column), termOperator, value));
+
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с значением</summary>
+    /// <param name="rawColumn">Имя поля</param>
+    /// <param name="termOperator">Оператор</param>
+    /// <param name="value">Значение</param>
+    public static TermBlock WithValueRawColumnTerm(this TermBlock termBlock, string rawColumn, Op termOperator, TimeSpan? value)
+    {
+        termBlock.AddTerm(new OperatorTermNullableTimeSpan(
+            termBlock, rawColumn, termOperator, value));
+
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с значением</summary>
+    /// <param name="column">Имя Колонки</param>
+    /// <param name="termOperator">Оператор</param>
+    /// <param name="value">Значение</param>
     public static TermBlock WithValueColumnTerm(this TermBlock termBlock, string column, Op termOperator, Guid value)
     {
         termBlock.AddTerm(new OperatorTermGuid(

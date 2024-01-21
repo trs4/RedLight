@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Common;
 using System.Runtime.CompilerServices;
 using IcyRain.Tables;
@@ -16,54 +15,11 @@ internal static class TableReader
         if (Types.TryGetICollectionArgumentType(type, out var elementType))
         {
             var source = Activator.CreateInstance<T>();
-            typeof(TableReader).GetMethod(nameof(Append)).MakeGenericMethod(elementType).Invoke(null, new object[] { source, reader, options });
+            typeof(ListReader).GetMethod(nameof(ListReader.Append)).MakeGenericMethod(elementType).Invoke(null, new object[] { source, reader, options });
             return source;
         }
         else
             throw new NotSupportedException();
-    }
-
-    [MethodImpl(Flags.HotPath)]
-    public static void Append<T>(ICollection<T> source, DbDataReader reader, QueryOptions options)
-    {
-        if (source is List<T> list)
-            AppendCore(list, reader, options);
-        else if (source is HashSet<T> hashSet)
-            AppendCore(hashSet, reader, options);
-        else if (source is ICollection<T> collection)
-            AppendCore(collection, reader, options);
-        else
-            throw new NotSupportedException();
-    }
-
-    private static void AppendCore<T>(List<T> source, DbDataReader reader, QueryOptions options)
-    {
-        bool multipleResult = options?.MultipleResult ?? false;
-
-        do
-        {
-            ScalarReadAction<T>.Instance.Read(source, reader);
-        } while (multipleResult && reader.NextResult());
-    }
-
-    private static void AppendCore<T>(HashSet<T> source, DbDataReader reader, QueryOptions options)
-    {
-        bool multipleResult = options?.MultipleResult ?? false;
-
-        do
-        {
-            ScalarReadAction<T>.Instance.Read(source, reader);
-        } while (multipleResult && reader.NextResult());
-    }
-
-    private static void AppendCore<T>(ICollection<T> source, DbDataReader reader, QueryOptions options)
-    {
-        bool multipleResult = options?.MultipleResult ?? false;
-
-        do
-        {
-            ScalarReadAction<T>.Instance.Read(source, reader);
-        } while (multipleResult && reader.NextResult());
     }
 
     [MethodImpl(Flags.HotPath)]

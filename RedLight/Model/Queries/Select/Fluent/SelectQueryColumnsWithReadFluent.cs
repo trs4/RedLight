@@ -612,6 +612,70 @@ public static class SelectQueryColumnsWithReadFluent
         where TEnum : Enum
         => query.AddColumn(name, alias, readColumn);
 
+    /// <summary>Добавляет поле выборки данных с действием чтения данного поля типа TimeSpan</summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="readColumn">Действие чтения поля типа TimeSpan</param>
+    public static SelectQuery<TResult> AddTimeSpanColumn<TResult>(
+        this SelectQuery<TResult> query, string name, Action<TResult, TimeSpan> readColumn)
+        => query.AddColumn(name, readColumn);
+
+    /// <summary>Добавляет поле выборки данных с действием чтения данного поля типа TimeSpan</summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="readColumn">Действие чтения поля типа TimeSpan</param>
+    public static SelectQuery<TResult> AddTimeSpanColumn<TResult, TEnum>(
+        this SelectQuery<TResult> query, TEnum name, Action<TResult, TimeSpan> readColumn)
+        where TEnum : Enum
+        => query.AddColumn(name, readColumn);
+
+    /// <summary>Добавляет поле выборки данных с действием чтения данного поля типа TimeSpan</summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="alias">Псевдоним поля</param>
+    /// <param name="readColumn">Действие чтения поля типа TimeSpan</param>
+    public static SelectQuery<TResult> AddTimeSpanColumn<TResult>(
+        this SelectQuery<TResult> query, string name, string alias, Action<TResult, TimeSpan> readColumn)
+        => query.AddColumn(name, alias, readColumn);
+
+    /// <summary>Добавляет поле выборки данных с действием чтения данного поля типа TimeSpan</summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="alias">Псевдоним поля</param>
+    /// <param name="readColumn">Действие чтения поля типа TimeSpan</param>
+    public static SelectQuery<TResult> AddTimeSpanColumn<TResult, TEnum>(
+        this SelectQuery<TResult> query, TEnum name, string alias, Action<TResult, TimeSpan> readColumn)
+        where TEnum : Enum
+        => query.AddColumn(name, alias, readColumn);
+
+    /// <summary>Добавляет поле выборки данных с действием чтения данного поля типа TimeSpan?</summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="readColumn">Действие чтения поля типа TimeSpan?</param>
+    public static SelectQuery<TResult> AddNullableTimeSpanColumn<TResult>(
+        this SelectQuery<TResult> query, string name, Action<TResult, TimeSpan?> readColumn)
+        => query.AddColumn(name, readColumn);
+
+    /// <summary>Добавляет поле выборки данных с действием чтения данного поля типа TimeSpan?</summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="readColumn">Действие чтения поля типа TimeSpan?</param>
+    public static SelectQuery<TResult> AddNullableTimeSpanColumn<TResult, TEnum>(
+        this SelectQuery<TResult> query, TEnum name, Action<TResult, TimeSpan?> readColumn)
+        where TEnum : Enum
+        => query.AddColumn(name, readColumn);
+
+    /// <summary>Добавляет поле выборки данных с действием чтения данного поля типа TimeSpan?</summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="alias">Псевдоним поля</param>
+    /// <param name="readColumn">Действие чтения поля типа TimeSpan?</param>
+    public static SelectQuery<TResult> AddNullableTimeSpanColumn<TResult>(
+        this SelectQuery<TResult> query, string name, string alias, Action<TResult, TimeSpan?> readColumn)
+        => query.AddColumn(name, alias, readColumn);
+
+    /// <summary>Добавляет поле выборки данных с действием чтения данного поля типа TimeSpan?</summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="alias">Псевдоним поля</param>
+    /// <param name="readColumn">Действие чтения поля типа TimeSpan?</param>
+    public static SelectQuery<TResult> AddNullableTimeSpanColumn<TResult, TEnum>(
+        this SelectQuery<TResult> query, TEnum name, string alias, Action<TResult, TimeSpan?> readColumn)
+        where TEnum : Enum
+        => query.AddColumn(name, alias, readColumn);
+
     /// <summary>Добавляет поле выборки данных с действием чтения данного поля типа Guid</summary>
     /// <param name="name">Имя поля</param>
     /// <param name="readColumn">Действие чтения поля типа Guid</param>

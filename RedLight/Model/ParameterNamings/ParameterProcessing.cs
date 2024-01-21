@@ -116,6 +116,17 @@ internal static class ParameterProcessing
         return connection.ParameterNaming.GetNameForQuery(name);
     }
 
+    public static string ConstructTimeSpan(DatabaseConnection connection, QueryOptions options, TimeSpan value)
+    {
+        if (!options.UseParameters || options.Parameters.Count == Consts.MaxQueryParameters)
+            return connection.Escaping.Escape(value);
+
+        string name = connection.ParameterNaming.GetName(options.Parameters.Count + 1);
+        var parameter = new QueryParameter(name, value, ColumnType.TimeSpan, false);
+        options.Parameters.Add(parameter);
+        return connection.ParameterNaming.GetNameForQuery(name);
+    }
+
     public static string ConstructGuid(DatabaseConnection connection, QueryOptions options, Guid value)
     {
         if (!options.UseParameters || options.Parameters.Count == Consts.MaxQueryParameters)
@@ -233,6 +244,17 @@ internal static class ParameterProcessing
 
         string name = connection.ParameterNaming.GetName(options.Parameters.Count + 1);
         var parameter = new QueryParameter(name, value, ColumnType.DateTime, true);
+        options.Parameters.Add(parameter);
+        return connection.ParameterNaming.GetNameForQuery(name);
+    }
+
+    public static string ConstructNullableTimeSpan(DatabaseConnection connection, QueryOptions options, TimeSpan? value)
+    {
+        if (!options.UseParameters || options.Parameters.Count == Consts.MaxQueryParameters)
+            return value.HasValue ? connection.Escaping.Escape(value.Value) : Consts.Null;
+
+        string name = connection.ParameterNaming.GetName(options.Parameters.Count + 1);
+        var parameter = new QueryParameter(name, value, ColumnType.TimeSpan, true);
         options.Parameters.Add(parameter);
         return connection.ParameterNaming.GetNameForQuery(name);
     }
