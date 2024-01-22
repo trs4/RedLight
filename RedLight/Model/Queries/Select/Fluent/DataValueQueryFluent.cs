@@ -9,6 +9,22 @@ namespace RedLight;
 public static class DataValueQueryFluent
 {
     /// <summary>Добавляет поле добавления данных</summary>
+    /// <param name="column">Столбец</param>
+    /// <param name="value">Значение</param>
+    public static TQuery AddColumn<TQuery>(this TQuery query, Column column, object value)
+        where TQuery : ValueQuery
+    {
+        ArgumentNullException.ThrowIfNull(column);
+
+        if (!_columnByDataType.TryGetValue(Extensions.GetHash(column), out var func))
+            throw new NotSupportedException(column.GetType().FullName);
+
+        query.AddColumnCore(func(query.Connection.Naming.GetName(column.Name), value));
+        return query;
+    }
+
+
+    /// <summary>Добавляет поле добавления данных</summary>
     /// <param name="name">Имя поля</param>
     /// <param name="columnType">Тип столбца</param>
     /// <param name="value">Значение</param>
@@ -50,9 +66,8 @@ public static class DataValueQueryFluent
         where TQuery : ValueQuery
     {
         ArgumentNullException.ThrowIfNull(dataColumn);
-        int hashCode = Extensions.GetHash(dataColumn.Type, dataColumn.IsNullable, dataColumn.IsArray);
 
-        if (!_columnByDataType.TryGetValue(hashCode, out var func))
+        if (!_readFromColumns.TryGetValue(Extensions.GetHash(dataColumn), out var func))
             throw new NotSupportedException(dataColumn.GetType().FullName);
 
         query.AddColumnCore(func(query.Connection.Naming.GetName(name), dataColumn, rowIndex));
@@ -68,9 +83,8 @@ public static class DataValueQueryFluent
         where TEnum : Enum
     {
         ArgumentNullException.ThrowIfNull(dataColumn);
-        int hashCode = Extensions.GetHash(dataColumn.Type, dataColumn.IsNullable, dataColumn.IsArray);
 
-        if (!_columnByDataType.TryGetValue(hashCode, out var func))
+        if (!_readFromColumns.TryGetValue(Extensions.GetHash(dataColumn), out var func))
             throw new NotSupportedException(dataColumn.GetType().FullName);
 
         query.AddColumnCore(func(query.Connection.Naming.GetName(name), dataColumn, rowIndex));
@@ -89,9 +103,8 @@ public static class DataValueQueryFluent
         foreach (var pair in dataTable)
         {
             var dataColumn = pair.Value;
-            int hashCode = Extensions.GetHash(dataColumn.Type, dataColumn.IsNullable, dataColumn.IsArray);
 
-            if (!_columnByDataType.TryGetValue(hashCode, out var func))
+            if (!_readFromColumns.TryGetValue(Extensions.GetHash(dataColumn), out var func))
                 throw new NotSupportedException(dataColumn.GetType().FullName);
 
             query.AddColumnCore(func(query.Connection.Naming.GetName(pair.Key), dataColumn, rowIndex));
@@ -115,9 +128,8 @@ public static class DataValueQueryFluent
                 continue;
 
             var dataColumn = pair.Value;
-            int hashCode = Extensions.GetHash(dataColumn.Type, dataColumn.IsNullable, dataColumn.IsArray);
 
-            if (!_columnByDataType.TryGetValue(hashCode, out var func))
+            if (!_readFromColumns.TryGetValue(Extensions.GetHash(dataColumn), out var func))
                 throw new NotSupportedException(dataColumn.GetType().FullName);
 
             query.AddColumnCore(func(query.Connection.Naming.GetName(pair.Key), dataColumn, rowIndex));
@@ -182,6 +194,36 @@ public static class DataValueQueryFluent
 
     #region Internal
 
+    private static readonly FrozenDictionary<int, Func<string, object, ValueColumn>> _columnByDataType
+        = new Dictionary<int, Func<string, object, ValueColumn>>()
+        {
+            { Extensions.GetHash(DataType.Boolean), (name, value) => new BoolValueColumn(name, (bool)value) },
+            { Extensions.GetHash(DataType.Boolean, isNullable: true), (name, value) => new NullableBoolValueColumn(name, (bool?)value) },
+            { Extensions.GetHash(DataType.Byte), (name, value) => new ByteValueColumn(name, (byte)value) },
+            { Extensions.GetHash(DataType.Byte, isNullable: true), (name, value) => new NullableByteValueColumn(name, (byte?)value) },
+            { Extensions.GetHash(DataType.Byte, isArray: true), (name, value) => new ByteArrayValueColumn(name, (byte[])value) },
+            { Extensions.GetHash(DataType.Int16), (name, value) => new ShortValueColumn(name, (short)value) },
+            { Extensions.GetHash(DataType.Int16, isNullable: true), (name, value) => new NullableShortValueColumn(name, (short?)value) },
+            { Extensions.GetHash(DataType.Int32), (name, value) => new IntValueColumn(name, (int)value) },
+            { Extensions.GetHash(DataType.Int32, isNullable: true), (name, value) => new NullableIntValueColumn(name, (int?)value) },
+            { Extensions.GetHash(DataType.Int64), (name, value) => new LongValueColumn(name, (long)value) },
+            { Extensions.GetHash(DataType.Int64, isNullable: true), (name, value) => new NullableLongValueColumn(name, (long?)value) },
+            { Extensions.GetHash(DataType.Single), (name, value) => new FloatValueColumn(name, (float)value) },
+            { Extensions.GetHash(DataType.Single, isNullable: true), (name, value) => new NullableFloatValueColumn(name, (float?)value) },
+            { Extensions.GetHash(DataType.Double), (name, value) => new DoubleValueColumn(name, (double)value) },
+            { Extensions.GetHash(DataType.Double, isNullable: true), (name, value) => new NullableDoubleValueColumn(name, (double?)value) },
+            { Extensions.GetHash(DataType.Decimal), (name, value) => new DecimalValueColumn(name, (decimal)value) },
+            { Extensions.GetHash(DataType.Decimal, isNullable: true), (name, value) => new NullableDecimalValueColumn(name, (decimal?)value) },
+            { Extensions.GetHash(DataType.String), (name, value) => new StringValueColumn(name, (string)value) },
+            { Extensions.GetHash(DataType.String, isNullable: true), (name, value) => new StringValueColumn(name, (string)value) },
+            { Extensions.GetHash(DataType.DateTime), (name, value) => new DateTimeValueColumn(name, (DateTime)value) },
+            { Extensions.GetHash(DataType.DateTime, isNullable: true), (name, value) => new NullableDateTimeValueColumn(name, (DateTime?)value) },
+            { Extensions.GetHash(DataType.TimeSpan), (name, value) => new TimeSpanValueColumn(name, (TimeSpan)value) },
+            { Extensions.GetHash(DataType.TimeSpan, isNullable: true), (name, value) => new NullableTimeSpanValueColumn(name, (TimeSpan?)value) },
+            { Extensions.GetHash(DataType.Guid), (name, value) => new GuidValueColumn(name, (Guid)value) },
+            { Extensions.GetHash(DataType.Guid, isNullable: true), (name, value) => new NullableGuidValueColumn(name, (Guid?)value) },
+        }.ToFrozenDictionary();
+
     private static readonly FrozenDictionary<Type, Func<string, object, ValueColumn>> _columnByType
         = new Dictionary<Type, Func<string, object, ValueColumn>>()
         {
@@ -211,7 +253,7 @@ public static class DataValueQueryFluent
             { typeof(Guid?), (name, value) => new NullableGuidValueColumn(name, (Guid?)value) },
         }.ToFrozenDictionary();
 
-    private static readonly FrozenDictionary<int, Func<string, DataColumn, int, ValueColumn>> _columnByDataType
+    private static readonly FrozenDictionary<int, Func<string, DataColumn, int, ValueColumn>> _readFromColumns
         = new Dictionary<int, Func<string, DataColumn, int, ValueColumn>>()
         {
             {

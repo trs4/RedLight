@@ -32,7 +32,6 @@ var nullableTypes = new[] {
     ("NullableDateTime", "DateTime?", "reader.GetDateTime(index)"),
     ("NullableTimeSpan", "TimeSpan?", "new TimeSpan(reader.GetInt64(index))"),
     ("NullableGuid", "Guid?", "reader.GetGuid(index)"),
-    ("NullableByteArray", "byte[]", "reader.GetValue(index) as byte[]"),
 }; #>
 using System;
 using System.Data.Common;

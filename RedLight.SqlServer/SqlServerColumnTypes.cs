@@ -98,6 +98,8 @@ internal sealed class SqlServerColumnTypes : ColumnTypes<SqlDbType>
             { SqlDbType.NText, AppendTypeOptions_Text },
             { SqlDbType.NVarChar, AppendTypeOptions_Text },
         }.ToFrozenDictionary();
+
+        _defaultValues = new Dictionary<ColumnType, string>().ToFrozenDictionary();
     }
 
     private void AppendTypeOptions_Decimal(StringBuilder builder, SqlDbType type, int size, int precision)

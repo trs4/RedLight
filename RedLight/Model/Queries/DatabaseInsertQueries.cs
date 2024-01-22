@@ -73,7 +73,7 @@ public abstract class DatabaseInsertQueries
             Append(query, table, (DataTable)(object)row);
         else if (type.IsClass && !type.IsSystem())
         {
-            string identityColumnName = table.IdentityColumn?.Name;
+            string identityColumnName = table.Identity?.Name;
 
             if (identityColumnName is not null)
             {
@@ -87,10 +87,10 @@ public abstract class DatabaseInsertQueries
                     if (column.Name.Equals(identityColumnName, StringComparison.OrdinalIgnoreCase))
                     {
                         query.AddReturningColumnCore(query.Connection.Naming.GetName(column.Name));
-                        query.AddReadAction(propertyInfo.PropertyType, (obj, value) => propertyInfo.SetValue(obj, value));
+                        query.AddReadAction(column, (obj, value) => propertyInfo.SetValue(obj, value));
                     }
                     else
-                        query.AddColumn(column.Name, propertyInfo.PropertyType, propertyInfo.GetValue(row));
+                        query.AddColumn(column, propertyInfo.GetValue(row));
                 }
             }
             else
@@ -102,7 +102,7 @@ public abstract class DatabaseInsertQueries
                     if (propertyInfo is null)
                         continue;
 
-                    query.AddColumn(column.Name, propertyInfo.PropertyType, propertyInfo.GetValue(row));
+                    query.AddColumn(column, propertyInfo.GetValue(row));
                 }
             }
         }
@@ -114,7 +114,7 @@ public abstract class DatabaseInsertQueries
 
     private static void Append<TResult>(InsertQuery<TResult> query, Table table, DataTable dataTable)
     {
-        string identityColumnName = table.IdentityColumn?.Name;
+        string identityColumnName = table.Identity?.Name;
         dataTable.TryGetValue(identityColumnName, out var returningColumn);
 
         if (returningColumn is not null)
@@ -122,7 +122,7 @@ public abstract class DatabaseInsertQueries
             query.AddColumns(dataTable, 0, identityColumnName);
 
             query.AddReturningColumnCore(query.Connection.Naming.GetName(identityColumnName));
-            query.AddReadAction(table.IdentityColumn.Type.GetLanguageType(), (obj, value) => returningColumn.SetObject(0, value));
+            query.AddReadAction(table.IdentityColumn, (obj, value) => returningColumn.SetObject(0, value));
         }
         else
             query.AddColumns(dataTable, 0);
@@ -187,7 +187,7 @@ public abstract class DatabaseInsertQueries
             Append(query, table, (DataTable)(object)rows);
         else if (type.IsClass && !type.IsSystem())
         {
-            string identityColumnName = table.IdentityColumn?.Name;
+            string identityColumnName = table.Identity?.Name;
 
             if (identityColumnName is not null)
             {
@@ -201,10 +201,10 @@ public abstract class DatabaseInsertQueries
                     if (column.Name.Equals(identityColumnName, StringComparison.OrdinalIgnoreCase))
                     {
                         query.AddReturningColumnCore(query.Connection.Naming.GetName(column.Name));
-                        query.AddReadAction(propertyInfo.PropertyType, (obj, value) => propertyInfo.SetValue(obj, value));
+                        query.AddReadAction(column, (obj, value) => propertyInfo.SetValue(obj, value));
                     }
                     else
-                        query.AddColumn(column.Name, propertyInfo.PropertyType, ScalarReadBuilder.Fill(propertyInfo, rows));
+                        query.AddColumn(column, ScalarReadBuilder.Fill(propertyInfo, rows));
                 }
             }
             else
@@ -216,7 +216,7 @@ public abstract class DatabaseInsertQueries
                     if (propertyInfo is null)
                         continue;
 
-                    query.AddColumn(column.Name, propertyInfo.PropertyType, ScalarReadBuilder.Fill(propertyInfo, rows));
+                    query.AddColumn(column, ScalarReadBuilder.Fill(propertyInfo, rows));
                 }
             }
         }
@@ -228,7 +228,7 @@ public abstract class DatabaseInsertQueries
 
     private static void Append<TResult>(MultiInsertQuery<TResult> query, Table table, DataTable dataTable)
     {
-        string identityColumnName = table.IdentityColumn?.Name;
+        string identityColumnName = table.Identity?.Name;
         dataTable.TryGetValue(identityColumnName, out var returningColumn);
 
         if (returningColumn is not null)
@@ -236,7 +236,7 @@ public abstract class DatabaseInsertQueries
             query.AddColumns(dataTable, identityColumnName);
 
             query.AddReturningColumnCore(query.Connection.Naming.GetName(identityColumnName));
-            query.AddReadAction(table.IdentityColumn.Type.GetLanguageType(), (obj, value) => returningColumn.SetObject(0, value));
+            query.AddReadAction(table.IdentityColumn, (obj, value) => returningColumn.SetObject(0, value));
         }
         else
             query.AddColumns(dataTable);

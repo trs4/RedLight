@@ -51,7 +51,7 @@ public abstract class DatabaseSchemaQueries
         where TEnum : Enum
     {
         var table = TableGenerator.From<TEnum>();
-        var identityColumn = table.IdentityColumn;
+        var identityColumn = table.Identity;
         var primaryKey = table.PrimaryKey;
         var query = CreateTableQuery(table.Name).AddColumns(table.Columns);
 

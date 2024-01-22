@@ -30,7 +30,7 @@ internal static class Extensions
 
         for (int i = 1; i < value.Length; i++)
             builder.Append(separator).Append(value[i]);
-        
+
         return builder;
     }
 
@@ -39,6 +39,28 @@ internal static class Extensions
         naming.StrictEscapedTrim(builder, name);
         return builder;
     }
+
+    [MethodImpl(Flags.HotPath)]
+    public static int GetHash(DataColumn dataColumn) => GetHash(dataColumn.Type, dataColumn.IsNullable, dataColumn.IsArray);
+
+    [MethodImpl(Flags.HotPath)]
+    public static int GetHash(Column column) => column.Type switch
+    {
+        ColumnType.Boolean => GetHash(DataType.Boolean, isNullable: column.Nullable),
+        ColumnType.Byte => GetHash(DataType.Byte, isNullable: column.Nullable),
+        ColumnType.Short => GetHash(DataType.Int16, isNullable: column.Nullable),
+        ColumnType.Integer => GetHash(DataType.Int32, isNullable: column.Nullable),
+        ColumnType.Long => GetHash(DataType.Int64, isNullable: column.Nullable),
+        ColumnType.Float => GetHash(DataType.Single, isNullable: column.Nullable),
+        ColumnType.Double => GetHash(DataType.Double, isNullable: column.Nullable),
+        ColumnType.Decimal => GetHash(DataType.Decimal, isNullable: column.Nullable),
+        ColumnType.String => GetHash(DataType.String, isNullable: column.Nullable),
+        ColumnType.Guid => GetHash(DataType.Guid, isNullable: column.Nullable),
+        ColumnType.DateTime => GetHash(DataType.DateTime, isNullable: column.Nullable),
+        ColumnType.TimeSpan => GetHash(DataType.TimeSpan, isNullable: column.Nullable),
+        ColumnType.ByteArray => GetHash(DataType.Byte, isArray: true),
+        _ => throw new NotSupportedException(column.Type.ToString()),
+    };
 
     [MethodImpl(Flags.HotPath)]
     public static int GetHash(DataType type, bool isNullable = false, bool isArray = false)

@@ -25,6 +25,7 @@ internal abstract class ColumnTypes<TDataType> : ColumnTypes
     protected FrozenDictionary<TDataType, ColumnType> _dataTypes;
     protected FrozenDictionary<TDataType, int> _maxSizes;
     protected FrozenDictionary<TDataType, Action<StringBuilder, TDataType, int, int>> _appendTypeOptions;
+    protected FrozenDictionary<ColumnType, string> _defaultValues;
 
     private readonly FrozenDictionary<ColumnType, Func<object, object>> _converts = new Dictionary<ColumnType, Func<object, object>>
     {
@@ -50,6 +51,9 @@ internal abstract class ColumnTypes<TDataType> : ColumnTypes
 
     public TDataType GetDataType(ColumnType type)
         => _types.TryGetValue(type, out var dbType) ? dbType : throw new NotSupportedException(type.ToString());
+
+    public string GetDefaultValue(ColumnType type)
+        => _defaultValues.TryGetValue(type, out string defaultValue) ? defaultValue : null;
 
     public sealed override string GetDataTypeName(ColumnType type) => _typeNames[GetDataType(type)];
 

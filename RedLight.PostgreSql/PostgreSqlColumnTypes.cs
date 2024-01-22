@@ -93,6 +93,8 @@ internal sealed class PostgreSqlColumnTypes : ColumnTypes<NpgsqlDbType>
             { NpgsqlDbType.Real, AppendTypeOptions_Float },
             { NpgsqlDbType.Timestamp, AppendTypeOptions_DateTime },
         }.ToFrozenDictionary();
+
+        _defaultValues = new Dictionary<ColumnType, string>().ToFrozenDictionary();
     }
 
     private void AppendTypeOptions_DateTime(StringBuilder builder, NpgsqlDbType type, int size, int precision)

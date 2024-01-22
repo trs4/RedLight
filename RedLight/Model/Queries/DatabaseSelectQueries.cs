@@ -84,7 +84,7 @@ public abstract class DatabaseSelectQueries
                     continue;
 
                 query.AddColumn(column.Name, alias);
-                query.AddReadAction(propertyInfo.PropertyType, (obj, value) => propertyInfo.SetValue(obj, value));
+                query.AddReadAction(column, (obj, value) => propertyInfo.SetValue(obj, value));
             }
         }
         else

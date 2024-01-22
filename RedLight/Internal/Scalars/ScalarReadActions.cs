@@ -128,8 +128,3 @@ internal sealed class ScalarReadActionNullableGuid : ScalarReadAction<Guid?>
     public override Guid? Read(DbDataReader reader, int index) => reader.IsDBNull(index) ? null : reader.GetGuid(index);
 }
 
-internal sealed class ScalarReadActionNullableByteArray : ScalarReadAction<byte[]>
-{
-    public override byte[] Read(DbDataReader reader, int index) => reader.IsDBNull(index) ? null : reader.GetValue(index) as byte[];
-}
-

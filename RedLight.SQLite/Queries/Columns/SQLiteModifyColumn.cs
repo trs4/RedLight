@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace RedLight.SQLite;
 
@@ -15,7 +16,13 @@ internal sealed class SQLiteModifyColumn : ModifyColumn
         SQLiteColumnTypes.Instance.AppendTypeOptions(builder, dbType, Size, Precision);
 
         if (!Nullable)
+        {
             builder.Append(" NOT NULL");
+            string defaultValue = DefaultValue ?? SQLiteColumnTypes.Instance.GetDefaultValue(Type);
+
+            if (!String.IsNullOrEmpty(defaultValue))
+                builder.Append(" DEFAULT ").Append(defaultValue);
+        }
     }
 
 }

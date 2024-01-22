@@ -140,5 +140,5 @@ public abstract class InsertQuery<TResult> : InsertQuery
     internal void AddReadAction<T>(Action<TResult, T> readAction) => ScalarReadBuilder.Add(ref _readActions, readAction);
 
     [MethodImpl(Flags.HotPath)]
-    internal void AddReadAction(Type type, Action<TResult, object> readAction) => ScalarReadBuilder.Add(ref _readActions, type, readAction);
+    internal void AddReadAction(Column column, Action<TResult, object> readAction) => ScalarReadBuilder.Add(ref _readActions, column, readAction);
 }

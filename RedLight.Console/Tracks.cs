@@ -15,7 +15,7 @@ public enum Tracks
     [Column(ColumnType.String, size: 255)] Album,
     [Column(ColumnType.DateTime)] Created,
     [Column(ColumnType.DateTime)] Added,
-    [Column(ColumnType.Double)] Bitrate,
+    [Column(ColumnType.Integer)] Bitrate,
     [Column(ColumnType.Long)] Size,
     [Column(ColumnType.String, size: 255)] RootFolder,
     [Column(ColumnType.String, size: 255)] RelationFolder,

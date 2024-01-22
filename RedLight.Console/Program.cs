@@ -1,6 +1,8 @@
 ﻿using RedLight;
 using RedLight.Console;
 
+File.Delete(@"C:\Users\evolution\Music\Sunrise\MediaLibrary.db");
+
 //string connectionString = @"Provider=SQLite;Data Source='C:\GitHubProjects\RedLight\test.db'"; // SQLite
 string connectionString = @"Provider=SQLite;Data Source='C:\Users\evolution\Music\Sunrise\MediaLibrary.db'"; // SQLite
 using var connection = DatabaseConnection.Create(connectionString);
@@ -34,18 +36,25 @@ var tracks = new List<Track>()
 var track = tracks[0];
 
 //var r1 = connection.Select.CreateWithParseQuery<List<Track>, Tracks>("t");
-var r2 = connection.Select.CreateWithParseQuery<Track, Tracks>("t").Sql;
+//var r2 = connection.Select.CreateWithParseQuery<Track, Tracks>("t").Sql;
 
-var r3 = connection.Insert.CreateQuery<Track, Tracks>()
-    .AddColumn(Tracks.Guid, track.Guid)
-    .AddColumn(Tracks.Title, track.Title)
-    .AddIntReturningColumn(Tracks.Id, (t, value) => t.Id = value)
-    .Sql;
+//var r3 = connection.Insert.CreateQuery<Track, Tracks>()
+//    .AddColumn(Tracks.Guid, track.Guid)
+//    .AddColumn(Tracks.Title, track.Title)
+//    .AddIntReturningColumn(Tracks.Id, (t, value) => t.Id = value)
+//    .Sql;
 
-var r4 = connection.Insert.CreateWithParseQuery<Track, Tracks>(track).Sql;
-var r5 = connection.Insert.CreateWithParseMultiQuery<Track, Tracks>(tracks).Sql;
+//var r4 = connection.Insert.CreateWithParseQuery<Track, Tracks>(track).Sql;
+//var r5 = connection.Insert.CreateWithParseMultiQuery<Track, Tracks>(tracks).Sql;
+
+connection.Schema.CreateTableWithParseQuery<Tracks>().Run();
+
+connection.Insert.CreateWithParseQuery<Track, Tracks>(track).Fill(); // Duration (TimeSpan) - integer
+connection.Insert.CreateWithParseMultiQuery<Track, Tracks>(tracks).Fill();
 //List<Track> r3 = connection.Select.CreateWithParseQuery<Track, Tracks>("t").Get();
 //var q1 = TableGenerator.From<ColumnType>();
+
+List<Track> r6 = connection.Select.CreateWithParseQuery<Track, Tracks>().Get();
 
 Console.WriteLine("Exit");
 Console.ReadLine();

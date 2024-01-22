@@ -15,7 +15,7 @@ public abstract class ScalarReadAction<T> : IScalarReadAction
         { typeof(bool?), () => new ScalarReadActionNullableBool() },
         { typeof(byte), () => new ScalarReadActionByte() },
         { typeof(byte?), () => new ScalarReadActionNullableByte() },
-        { typeof(byte[]), () => new ScalarReadActionNullableByteArray() },
+        { typeof(byte[]), () => new ScalarReadActionByteArray() },
         { typeof(short), () => new ScalarReadActionShort() },
         { typeof(short?), () => new ScalarReadActionNullableShort() },
         { typeof(int), () => new ScalarReadActionInt() },

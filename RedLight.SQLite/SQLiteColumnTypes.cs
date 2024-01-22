@@ -123,6 +123,22 @@ internal sealed class SQLiteColumnTypes : ColumnTypes<DbType>
         }.ToFrozenDictionary();
 
         _appendTypeOptions = new Dictionary<DbType, Action<StringBuilder, DbType, int, int>>().ToFrozenDictionary();
+
+        _defaultValues = new Dictionary<ColumnType, string>()
+        {
+            { ColumnType.Boolean, "'0'" },
+            { ColumnType.Byte, "0" },
+            { ColumnType.Short, "0" },
+            { ColumnType.Integer, "0" },
+            { ColumnType.Long, "0" },
+            { ColumnType.Float, "0" },
+            { ColumnType.Double, "0" },
+            { ColumnType.Decimal, "0" },
+            { ColumnType.String, "''" },
+            { ColumnType.Guid, $"'{Guid.Empty}'" },
+            { ColumnType.DateTime, "(datetime(current_timestamp))" },
+            { ColumnType.TimeSpan, "0" },
+        }.ToFrozenDictionary();
     }
 
 }

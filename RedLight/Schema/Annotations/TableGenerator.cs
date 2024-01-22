@@ -6,10 +6,6 @@ namespace RedLight;
 /// <summary>Генератор описания таблицы</summary>
 public static class TableGenerator
 {
-    private static readonly Type _columnAttributeType = typeof(ColumnAttribute);
-    private static readonly Type _identityColumnAttributeType = typeof(IdentityColumnAttribute);
-    private static readonly Type _primaryKeyAttributeType = typeof(PrimaryKeyAttribute);
-
     /// <summary>Получает описание таблицы из перечисления</summary>
     /// <typeparam name="T">Перечисление таблицы с полями</typeparam>
     /// <returns>Описание таблицы</returns>
@@ -29,7 +25,9 @@ public static class TableGenerator
                 if (!field.IsStatic)
                     continue;
 
-                var attribute = field.GetCustomAttributes(_columnAttributeType, false).OfType<ColumnAttribute>().FirstOrDefault();
+                var attributes = field.GetCustomAttributes(false);
+                var attribute = attributes.OfType<ColumnAttribute>().FirstOrDefault();
+                IdentityColumnAttribute identityAttribute = null;
                 Column column;
 
                 if (attribute is not null)
@@ -38,22 +36,35 @@ public static class TableGenerator
                         attribute.DefaultValue, attribute.DefaultConstraint);
                 }
                 else
-                    column = table.AddColumn(field.Name, ColumnType.String);
-
-                if (table.IdentityColumn is null)
                 {
-                    var identityColumnAttribute = field.GetCustomAttributes(_identityColumnAttributeType, true).OfType<IdentityColumnAttribute>().FirstOrDefault();
+                    identityAttribute = attributes.OfType<IdentityColumnAttribute>().FirstOrDefault();
 
-                    if (identityColumnAttribute is not null)
-                        table.IdentityColumn = identityColumnAttribute.ForTable(column);
+                    if (identityAttribute is not null)
+                        column = table.AddColumn(identityAttribute.Name ?? field.Name, identityAttribute.Type);
+                    else
+                        column = table.AddColumn(field.Name, ColumnType.String);
+                }
+
+                if (table.Identity is null)
+                {
+                    identityAttribute ??= attributes.OfType<IdentityColumnAttribute>().FirstOrDefault();
+
+                    if (identityAttribute is not null)
+                    {
+                        table.IdentityColumn = column;
+                        table.Identity = identityAttribute.ForTable(column);
+                    }
                 }
 
                 if (table.PrimaryKey is null)
                 {
-                    var primaryKeyAttribute = field.GetCustomAttributes(_primaryKeyAttributeType, true).OfType<PrimaryKeyAttribute>().FirstOrDefault();
+                    var primaryKeyAttribute = attributes.OfType<PrimaryKeyAttribute>().FirstOrDefault();
 
                     if (primaryKeyAttribute is not null)
+                    {
+                        table.PrimaryKeyColumn = column;
                         table.PrimaryKey = primaryKeyAttribute.ForTable(column);
+                    }
                 }
             }
 
