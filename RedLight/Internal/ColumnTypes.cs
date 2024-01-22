@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Text;
 
@@ -18,12 +19,17 @@ internal abstract class ColumnTypes
 internal abstract class ColumnTypes<TDataType> : ColumnTypes
     where TDataType : Enum
 {
-    protected Dictionary<TDataType, string> _typeNames;
-    protected Dictionary<string, TDataType> _nameTypes; // IgnoreCase
-    protected Dictionary<ColumnType, TDataType> _types;
-    protected Dictionary<TDataType, ColumnType> _dataTypes;
-    protected Dictionary<TDataType, int> _maxSizes;
-    protected Dictionary<TDataType, Action<StringBuilder, TDataType, int, int>> _appendTypeOptions;
+    protected FrozenDictionary<TDataType, string> _typeNames;
+    protected FrozenDictionary<string, TDataType> _nameTypes; // IgnoreCase
+    protected FrozenDictionary<ColumnType, TDataType> _types;
+    protected FrozenDictionary<TDataType, ColumnType> _dataTypes;
+    protected FrozenDictionary<TDataType, int> _maxSizes;
+    protected FrozenDictionary<TDataType, Action<StringBuilder, TDataType, int, int>> _appendTypeOptions;
+
+    private readonly FrozenDictionary<ColumnType, Func<object, object>> _converts = new Dictionary<ColumnType, Func<object, object>>
+    {
+        { ColumnType.TimeSpan, value => ((TimeSpan)value).Ticks },
+    }.ToFrozenDictionary();
 
     public sealed override ColumnType GetType(object dataType)
     {
@@ -58,6 +64,14 @@ internal abstract class ColumnTypes<TDataType> : ColumnTypes
     {
         if (_appendTypeOptions.TryGetValue(dataType, out var buildAction))
             buildAction(builder, dataType, size, precision);
+    }
+
+    public object GetValue(QueryParameter parameter)
+    {
+        if (parameter.Nullable && parameter.Value is null)
+            return DBNull.Value;
+
+        return _converts.TryGetValue(parameter.Type, out var convert) ? convert(parameter.Value) : parameter.Value;
     }
 
 }

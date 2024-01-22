@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Frozen;
+﻿using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using RedLight.Internal;
@@ -13,9 +12,6 @@ internal class ParameterNaming
 
     public ParameterNaming(string preffix)
     {
-        if (String.IsNullOrEmpty(preffix) || preffix.IndexOf(' ') > -1)
-            throw new ArgumentNullException(nameof(preffix));
-
         var names = new Dictionary<int, string>(Consts.MaxQueryParameters);
 
         for (int i = 1; i <= Consts.MaxQueryParameters; i++)

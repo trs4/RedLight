@@ -13,6 +13,9 @@ internal sealed class SQLiteModifyColumn : ModifyColumn
         var dbType = SQLiteColumnTypes.Instance.GetDataType(Type);
         builder.Append(Name).Append(' ').Append(SQLiteColumnTypes.Instance.GetDataTypeName(dbType));
         SQLiteColumnTypes.Instance.AppendTypeOptions(builder, dbType, Size, Precision);
+
+        if (!Nullable)
+            builder.Append(" NOT NULL");
     }
 
 }

@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Frozen;
+using System.Collections.Generic;
 using System.Data;
+using System.Text;
 using RedLight.Internal;
 
 namespace RedLight.SQLite;
@@ -10,7 +13,7 @@ internal sealed class SQLiteColumnTypes : ColumnTypes<DbType>
 
     private SQLiteColumnTypes()
     {
-        _typeNames = new()
+        _typeNames = new Dictionary<DbType, string>()
         {
             { DbType.AnsiString, "TEXT" },
             { DbType.Binary, "BLOB" },
@@ -38,9 +41,9 @@ internal sealed class SQLiteColumnTypes : ColumnTypes<DbType>
             { DbType.Xml, "TEXT" },
             { DbType.DateTime2, "DATETIME" },
             { DbType.DateTimeOffset, "DATETIME" },
-        };
+        }.ToFrozenDictionary();
 
-        _nameTypes = new(StringComparer.OrdinalIgnoreCase)
+        _nameTypes = new Dictionary<string, DbType>(StringComparer.OrdinalIgnoreCase)
         {
             { "BOOLEAN", DbType.Boolean },
             { "INTEGER", DbType.Int32 },
@@ -49,9 +52,9 @@ internal sealed class SQLiteColumnTypes : ColumnTypes<DbType>
             { "TEXT", DbType.String },
             { "DATETIME", DbType.DateTime },
             { "DATE", DbType.Date },
-        };
+        }.ToFrozenDictionary();
 
-        _types = new()
+        _types = new Dictionary<ColumnType, DbType>()
         {
             { ColumnType.Boolean, DbType.Boolean },
             { ColumnType.Byte, DbType.Byte },
@@ -64,11 +67,11 @@ internal sealed class SQLiteColumnTypes : ColumnTypes<DbType>
             { ColumnType.String, DbType.String },
             { ColumnType.DateTime, DbType.DateTime },
             { ColumnType.Guid, DbType.Guid },
-            { ColumnType.TimeSpan, DbType.UInt64 },
+            { ColumnType.TimeSpan, DbType.Int64 },
             { ColumnType.ByteArray, DbType.Binary },
-        };
+        }.ToFrozenDictionary();
 
-        _dataTypes = new()
+        _dataTypes = new Dictionary<DbType, ColumnType>()
         {
             { DbType.AnsiString, ColumnType.String },
             { DbType.Binary, ColumnType.ByteArray },
@@ -96,9 +99,9 @@ internal sealed class SQLiteColumnTypes : ColumnTypes<DbType>
             { DbType.Xml, ColumnType.String },
             { DbType.DateTime2, ColumnType.DateTime },
             { DbType.DateTimeOffset, ColumnType.DateTime },
-        };
+        }.ToFrozenDictionary();
 
-        _maxSizes = new()
+        _maxSizes = new Dictionary<DbType, int>()
         {
             { DbType.AnsiString, 8000 },
             { DbType.Binary, 8000 },
@@ -117,9 +120,9 @@ internal sealed class SQLiteColumnTypes : ColumnTypes<DbType>
             { DbType.UInt16, 2 },
             { DbType.UInt32, 4 },
             { DbType.UInt64, 8 },
-        };
+        }.ToFrozenDictionary();
 
-        _appendTypeOptions = [];
+        _appendTypeOptions = new Dictionary<DbType, Action<StringBuilder, DbType, int, int>>().ToFrozenDictionary();
     }
 
 }

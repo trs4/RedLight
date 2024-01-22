@@ -1,5 +1,4 @@
-﻿using System;
-using System.Data.Common;
+﻿using System.Data.Common;
 using System.Data.SQLite;
 using RedLight.Internal;
 
@@ -27,7 +26,7 @@ internal sealed class SQLiteExecutor : Executor
 
         return new SQLiteParameter(parameter.Name, dataType, maxSize)
         {
-            Value = parameter.Value ?? DBNull.Value,
+            Value = SQLiteColumnTypes.Instance.GetValue(parameter),
             IsNullable = parameter.Nullable,
         };
     }

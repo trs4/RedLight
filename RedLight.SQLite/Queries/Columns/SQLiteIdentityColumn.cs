@@ -13,6 +13,7 @@ internal sealed class SQLiteIdentityColumn : IdentityColumn
         int size = Type == ColumnType.Long ? sizeof(long) : sizeof(int);
         builder.Append("\r\n    ").Append(Name).Append(' ').Append(SQLiteColumnTypes.Instance.GetDataTypeName(dbType));
         SQLiteColumnTypes.Instance.AppendTypeOptions(builder, dbType, size, -1);
+        builder.Append(" NOT NULL");
     }
 
 }

@@ -97,29 +97,42 @@ public abstract class MultiInsertQuery<TResult> : MultiInsertQuery
 
     protected MultiInsertQuery(DatabaseConnection connection, string tableName) : base(connection, tableName) { }
 
+    internal IReadOnlyCollection<TResult> Data { get; set; }
+
     /// <summary>Выполняет запрос с получением результата в данном формате</summary>
     /// <returns>Результат заданного типа</returns>
     public List<TResult> Get()
     {
         var (sql, context) = BuildSql();
-
-        var readAction = new Func<DbDataReader, List<TResult>>(reader
-            => DataReader.Read(reader, context, _readActions, () => _returningColumns));
-
+        var readAction = new Func<DbDataReader, List<TResult>>(reader => DataReader.Read(reader, context, _readActions, () => _returningColumns));
         return Connection.Get(sql, readAction, context, Timeout);
     }
 
     /// <summary>Выполняет запрос с получением результата в данном формате</summary>
     /// <param name="token">Оповещение отмены задачи</param>
     /// <returns>Результат заданного типа</returns>
-    public async Task<List<TResult>> GetAsync(CancellationToken token = default)
+    public Task<List<TResult>> GetAsync(CancellationToken token = default)
     {
         var (sql, context) = BuildSql();
+        var readAction = new Func<DbDataReader, List<TResult>>(reader => DataReader.Read(reader, context, _readActions, () => _returningColumns));
+        return Connection.GetAsync(sql, readAction, context, Timeout, token);
+    }
 
-        var readAction = new Func<DbDataReader, List<TResult>>(reader
-            => DataReader.Read(reader, context, _readActions, () => _returningColumns));
+    /// <summary>Выполняет запрос с заполнением результата</summary>
+    public void Fill()
+    {
+        var (sql, context) = BuildSql();
+        var readAction = new Action<DbDataReader>(reader => DataReader.Fill(Data, reader, context, _readActions, () => _returningColumns));
+        Connection.Get(sql, readAction, context, Timeout);
+    }
 
-        return await Connection.GetAsync(sql, readAction, context, Timeout, token).ConfigureAwait(false);
+    /// <summary>Выполняет запрос с заполнением результата</summary>
+    /// <param name="token">Оповещение отмены задачи</param>
+    public Task FillAsync(CancellationToken token = default)
+    {
+        var (sql, context) = BuildSql();
+        var readAction = new Action<DbDataReader>(reader => DataReader.Fill(Data, reader, context, _readActions, () => _returningColumns));
+        return Connection.GetAsync(sql, readAction, context, Timeout, token);
     }
 
     [MethodImpl(Flags.HotPath)]

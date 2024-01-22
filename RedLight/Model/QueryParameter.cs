@@ -1,13 +1,11 @@
-﻿using System;
-
-namespace RedLight;
+﻿namespace RedLight;
 
 /// <summary>Параметр запроса</summary>
 public sealed class QueryParameter
 {
-    public QueryParameter(string name, object value, ColumnType type, bool nullable = true, int maxSize = -1)
+    internal QueryParameter(string name, object value, ColumnType type, bool nullable = true, int maxSize = -1)
     {
-        Name = String.IsNullOrEmpty(name) || name.Contains(' ') ? throw new ArgumentNullException(nameof(name)) : name;
+        Name = name;
         Type = type;
         Nullable = nullable;
         MaxSize = maxSize;

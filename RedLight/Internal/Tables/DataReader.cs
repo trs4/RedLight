@@ -50,4 +50,45 @@ internal static class DataReader
         return result;
     }
 
+    [MethodImpl(Flags.HotPath)]
+    public static void Fill<TResult>(IReadOnlyCollection<TResult> data, DbDataReader reader, QueryOptions options,
+        List<Action<TResult, DbDataReader>> readActions, Func<IEnumerable<string>> getColumns)
+    {
+        bool multipleResult = options?.MultipleResult ?? false;
+        using var enumerator = data.GetEnumerator();
+
+        do
+        {
+            while (reader.Read())
+            {
+                if (!enumerator.MoveNext())
+                    throw new InvalidOperationException(nameof(enumerator));
+
+                var obj = enumerator.Current;
+
+                if (readActions.IsNullOrEmpty())
+                {
+                    var propertyNames = getColumns().Select(f => f.Substring(1, f.Length - 2));
+                    int index = -1;
+
+                    foreach (string propertyName in propertyNames)
+                    {
+                        index++;
+                        var propertyInfo = typeof(TResult).GetProperty(propertyName);
+
+                        if (propertyInfo is null)
+                            continue;
+
+                        propertyInfo.SetValue(obj, ScalarReadBuilder.Read(propertyInfo.PropertyType, reader, index));
+                    }
+                }
+                else
+                {
+                    foreach (var readAction in readActions)
+                        readAction(obj, reader);
+                }
+            }
+        } while (multipleResult && reader.NextResult());
+    }
+
 }

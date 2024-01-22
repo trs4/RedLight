@@ -55,7 +55,7 @@ internal sealed class ScalarReadActionDateTime : ScalarReadAction<DateTime>
 
 internal sealed class ScalarReadActionTimeSpan : ScalarReadAction<TimeSpan>
 {
-    public override TimeSpan Read(DbDataReader reader, int index) => (TimeSpan)reader.GetValue(index);
+    public override TimeSpan Read(DbDataReader reader, int index) => new TimeSpan(reader.GetInt64(index));
 }
 
 internal sealed class ScalarReadActionGuid : ScalarReadAction<Guid>
@@ -108,6 +108,11 @@ internal sealed class ScalarReadActionNullableDecimal : ScalarReadAction<decimal
     public override decimal? Read(DbDataReader reader, int index) => reader.IsDBNull(index) ? null : reader.GetDecimal(index);
 }
 
+internal sealed class ScalarReadActionNullableString : ScalarReadAction<string>
+{
+    public override string Read(DbDataReader reader, int index) => reader.IsDBNull(index) ? null : reader.GetString(index);
+}
+
 internal sealed class ScalarReadActionNullableDateTime : ScalarReadAction<DateTime?>
 {
     public override DateTime? Read(DbDataReader reader, int index) => reader.IsDBNull(index) ? null : reader.GetDateTime(index);
@@ -115,11 +120,16 @@ internal sealed class ScalarReadActionNullableDateTime : ScalarReadAction<DateTi
 
 internal sealed class ScalarReadActionNullableTimeSpan : ScalarReadAction<TimeSpan?>
 {
-    public override TimeSpan? Read(DbDataReader reader, int index) => reader.IsDBNull(index) ? null : (TimeSpan)reader.GetValue(index);
+    public override TimeSpan? Read(DbDataReader reader, int index) => reader.IsDBNull(index) ? null : new TimeSpan(reader.GetInt64(index));
 }
 
 internal sealed class ScalarReadActionNullableGuid : ScalarReadAction<Guid?>
 {
     public override Guid? Read(DbDataReader reader, int index) => reader.IsDBNull(index) ? null : reader.GetGuid(index);
+}
+
+internal sealed class ScalarReadActionNullableByteArray : ScalarReadAction<byte[]>
+{
+    public override byte[] Read(DbDataReader reader, int index) => reader.IsDBNull(index) ? null : reader.GetValue(index) as byte[];
 }
 

@@ -13,6 +13,9 @@ internal sealed class PostgreSqlModifyColumn : ModifyColumn
         var dbType = PostgreSqlColumnTypes.Instance.GetDataType(Type);
         builder.Append(Name).Append(' ').Append(PostgreSqlColumnTypes.Instance.GetDataTypeName(dbType));
         PostgreSqlColumnTypes.Instance.AppendTypeOptions(builder, dbType, Size, Precision);
+
+        if (!Nullable)
+            builder.Append(" NOT NULL");
     }
 
 }

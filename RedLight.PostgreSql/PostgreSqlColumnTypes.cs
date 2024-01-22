@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Frozen;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NpgsqlTypes;
@@ -12,11 +14,12 @@ internal sealed class PostgreSqlColumnTypes : ColumnTypes<NpgsqlDbType>
 
     private PostgreSqlColumnTypes()
     {
-        _typeNames = Enum.GetValues<NpgsqlDbType>().ToDictionary(v => v, v => Enum.GetName(v).ToLower());
-        _nameTypes = _typeNames.ToDictionary(p => p.Value, p => p.Key, StringComparer.OrdinalIgnoreCase);
-        _nameTypes.Add("character", NpgsqlDbType.Varchar);
+        _typeNames = Enum.GetValues<NpgsqlDbType>().ToDictionary(v => v, v => Enum.GetName(v).ToLower()).ToFrozenDictionary();
+        var nameTypes = _typeNames.ToDictionary(p => p.Value, p => p.Key, StringComparer.OrdinalIgnoreCase);
+        nameTypes.Add("character", NpgsqlDbType.Varchar);
+        _nameTypes = nameTypes.ToFrozenDictionary();
 
-        _types = new()
+        _types = new Dictionary<ColumnType, NpgsqlDbType>()
         {
             { ColumnType.Boolean, NpgsqlDbType.Boolean },
             { ColumnType.Byte, NpgsqlDbType.Smallint },
@@ -31,9 +34,9 @@ internal sealed class PostgreSqlColumnTypes : ColumnTypes<NpgsqlDbType>
             { ColumnType.Guid, NpgsqlDbType.Uuid },
             { ColumnType.TimeSpan, NpgsqlDbType.Bigint },
             { ColumnType.ByteArray, NpgsqlDbType.Bytea },
-        };
+        }.ToFrozenDictionary();
 
-        _dataTypes = new()
+        _dataTypes = new Dictionary<NpgsqlDbType, ColumnType>()
         {
             { NpgsqlDbType.Bigint, ColumnType.Long },
             { NpgsqlDbType.Double, ColumnType.Double },
@@ -57,9 +60,9 @@ internal sealed class PostgreSqlColumnTypes : ColumnTypes<NpgsqlDbType>
             { NpgsqlDbType.Uuid, ColumnType.Guid },
             { NpgsqlDbType.Xml, ColumnType.String },
             { NpgsqlDbType.Json, ColumnType.String },
-        };
+        }.ToFrozenDictionary();
 
-        _maxSizes = new()
+        _maxSizes = new Dictionary<NpgsqlDbType, int>()
         {
             { NpgsqlDbType.Array, 2147483647 },
             { NpgsqlDbType.Text, 1073741823 },
@@ -76,9 +79,9 @@ internal sealed class PostgreSqlColumnTypes : ColumnTypes<NpgsqlDbType>
             { NpgsqlDbType.Real, 4 },
             { NpgsqlDbType.Smallint, 2 },
             { NpgsqlDbType.Bit, 1 },
-        };
+        }.ToFrozenDictionary();
 
-        _appendTypeOptions = new()
+        _appendTypeOptions = new Dictionary<NpgsqlDbType, Action<StringBuilder, NpgsqlDbType, int, int>>()
         {
             { NpgsqlDbType.Numeric, AppendTypeOptions_Decimal },
             { NpgsqlDbType.Money, AppendTypeOptions_Decimal },
@@ -89,7 +92,7 @@ internal sealed class PostgreSqlColumnTypes : ColumnTypes<NpgsqlDbType>
             { NpgsqlDbType.Name, AppendTypeOptions_Text },
             { NpgsqlDbType.Real, AppendTypeOptions_Float },
             { NpgsqlDbType.Timestamp, AppendTypeOptions_DateTime },
-        };
+        }.ToFrozenDictionary();
     }
 
     private void AppendTypeOptions_DateTime(StringBuilder builder, NpgsqlDbType type, int size, int precision)

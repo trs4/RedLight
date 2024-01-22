@@ -45,7 +45,7 @@ internal sealed class SqlServerExecutor : Executor
 
         return new SqlParameter(parameter.Name, dataType, maxSize)
         {
-            Value = parameter.Value ?? DBNull.Value,
+            Value = SqlServerColumnTypes.Instance.GetValue(parameter),
             IsNullable = parameter.Nullable,
         };
     }

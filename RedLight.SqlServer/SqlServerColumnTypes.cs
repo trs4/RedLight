@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Frozen;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -12,10 +14,10 @@ internal sealed class SqlServerColumnTypes : ColumnTypes<SqlDbType>
 
     private SqlServerColumnTypes()
     {
-        _typeNames = Enum.GetValues<SqlDbType>().ToDictionary(v => v, v => Enum.GetName(v).ToLower());
-        _nameTypes = _typeNames.ToDictionary(p => p.Value, p => p.Key, StringComparer.OrdinalIgnoreCase);
+        _typeNames = Enum.GetValues<SqlDbType>().ToDictionary(v => v, v => Enum.GetName(v).ToLower()).ToFrozenDictionary();
+        _nameTypes = _typeNames.ToDictionary(p => p.Value, p => p.Key, StringComparer.OrdinalIgnoreCase).ToFrozenDictionary();
 
-        _types = new()
+        _types = new Dictionary<ColumnType, SqlDbType>()
         {
             { ColumnType.Boolean, SqlDbType.Bit }, // Can be 0, 1, or nullNothingnullptra null reference
             { ColumnType.Byte, SqlDbType.TinyInt }, // 8-bit unsigned integer
@@ -30,9 +32,9 @@ internal sealed class SqlServerColumnTypes : ColumnTypes<SqlDbType>
             { ColumnType.Guid, SqlDbType.UniqueIdentifier },
             { ColumnType.TimeSpan, SqlDbType.BigInt },
             { ColumnType.ByteArray, SqlDbType.VarBinary }, // Variable-length stream of binary data ranging between 1 and 8,000 bytes
-        };
+        }.ToFrozenDictionary();
 
-        _dataTypes = new()
+        _dataTypes = new Dictionary<SqlDbType, ColumnType>()
         {
             { SqlDbType.Bit, ColumnType.Boolean },
             { SqlDbType.TinyInt, ColumnType.Byte },
@@ -60,9 +62,9 @@ internal sealed class SqlServerColumnTypes : ColumnTypes<SqlDbType>
             { SqlDbType.Binary, ColumnType.ByteArray },
             { SqlDbType.VarBinary, ColumnType.ByteArray },
             { SqlDbType.Image, ColumnType.ByteArray },
-        };
+        }.ToFrozenDictionary();
 
-        _maxSizes = new()
+        _maxSizes = new Dictionary<SqlDbType, int>()
         {
             { SqlDbType.Text, 2147483647 }, // String
             { SqlDbType.VarChar, 2147483647 }, // String
@@ -87,15 +89,15 @@ internal sealed class SqlServerColumnTypes : ColumnTypes<SqlDbType>
             { SqlDbType.SmallInt, 2 },
             { SqlDbType.Bit, 1 },
             { SqlDbType.TinyInt, 1 },
-        };
+        }.ToFrozenDictionary();
 
-        _appendTypeOptions = new()
+        _appendTypeOptions = new Dictionary<SqlDbType, Action<StringBuilder, SqlDbType, int, int>>()
         {
             { SqlDbType.Decimal, AppendTypeOptions_Decimal },
             { SqlDbType.VarBinary, AppendTypeOptions_Text },
             { SqlDbType.NText, AppendTypeOptions_Text },
             { SqlDbType.NVarChar, AppendTypeOptions_Text },
-        };
+        }.ToFrozenDictionary();
     }
 
     private void AppendTypeOptions_Decimal(StringBuilder builder, SqlDbType type, int size, int precision)

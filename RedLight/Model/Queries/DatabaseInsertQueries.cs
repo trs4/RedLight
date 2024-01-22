@@ -64,6 +64,7 @@ public abstract class DatabaseInsertQueries
         ArgumentNullException.ThrowIfNull(row);
         var table = TableGenerator.From<TEnum>();
         var query = CreateQuery<TResult, TEnum>();
+        query.Data = row;
         var type = typeof(TResult);
 
         if (type == typeof(DataSet))
@@ -177,6 +178,7 @@ public abstract class DatabaseInsertQueries
         ArgumentNullException.ThrowIfNull(rows);
         var table = TableGenerator.From<TEnum>();
         var query = CreateMultiQuery<TResult, TEnum>();
+        query.Data = rows;
         var type = typeof(TResult);
 
         if (type == typeof(DataSet))

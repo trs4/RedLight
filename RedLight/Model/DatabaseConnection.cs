@@ -280,6 +280,55 @@ public abstract class DatabaseConnection : IDisposable
     /// <param name="readAction">Действие чтения данных</param>
     /// <param name="options">Опции запроса</param>
     /// <param name="timeout">Максимальное время ожидания выполнения команды</param>
+    public void Get(string sql, Action<DbDataReader> readAction, QueryOptions options = null, int timeout = 0)
+    {
+        ArgumentNullException.ThrowIfNull(readAction);
+        var behavior = (options?.MultipleResult ?? false) ? CommandBehavior.Default : CommandBehavior.SingleResult;
+        DbDataReader reader = null;
+
+        try
+        {
+            Executor.BeginSession();
+            reader = Executor.RunReader(sql, Prepare(options), GetTimeout(timeout), behavior);
+            readAction(reader);
+        }
+        finally
+        {
+            (reader as IDisposable)?.Dispose();
+            Executor.EndSession();
+        }
+    }
+
+    /// <summary>Выполняет запрос с получением результата в данном формате</summary>
+    /// <param name="sql">Текст запроса</param>
+    /// <param name="readAction">Действие чтения данных</param>
+    /// <param name="options">Опции запроса</param>
+    /// <param name="timeout">Максимальное время ожидания выполнения команды</param>
+    /// <param name="token">Оповещение отмены задачи</param>
+    public async Task GetAsync(string sql, Action<DbDataReader> readAction, QueryOptions options = null, int timeout = 0, CancellationToken token = default)
+    {
+        ArgumentNullException.ThrowIfNull(readAction);
+        var behavior = (options?.MultipleResult ?? false) ? CommandBehavior.Default : CommandBehavior.SingleResult;
+        DbDataReader reader = null;
+
+        try
+        {
+            await Executor.BeginSessionAsync().ConfigureAwait(false);
+            reader = await Executor.RunReaderAsync(sql, Prepare(options), GetTimeout(timeout), token, behavior).ConfigureAwait(false);
+            readAction(reader);
+        }
+        finally
+        {
+            (reader as IDisposable)?.Dispose();
+            Executor.EndSession();
+        }
+    }
+
+    /// <summary>Выполняет запрос с получением результата в данном формате</summary>
+    /// <param name="sql">Текст запроса</param>
+    /// <param name="readAction">Действие чтения данных</param>
+    /// <param name="options">Опции запроса</param>
+    /// <param name="timeout">Максимальное время ожидания выполнения команды</param>
     /// <returns>Результат заданного типа</returns>
     public T Get<T>(string sql, Func<DbDataReader, T> readAction, QueryOptions options = null, int timeout = 0)
     {
