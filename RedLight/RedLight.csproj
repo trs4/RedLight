@@ -38,6 +38,10 @@
 
   <ItemGroup>
 	<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+	<None Update="Model\Queries\Fluent\WhereQueryColumnsFluent.tt">
+	  <LastGenOutput>WhereQueryColumnsFluent.cs</LastGenOutput>
+	  <Generator>TextTemplatingFileGenerator</Generator>
+	</None>
 	<None Update="Model\Queries\Select\Fluent\SelectQueryColumnsWithReadFluent.tt">
 	  <Generator>TextTemplatingFileGenerator</Generator>
 	  <LastGenOutput>SelectQueryColumnsWithReadFluent.cs</LastGenOutput>
@@ -126,6 +130,11 @@
 	  <DesignTime>True</DesignTime>
 	  <AutoGen>True</AutoGen>
 	  <DependentUpon>ValueColumns.tt</DependentUpon>
+	</Compile>
+	<Compile Update="Model\Queries\Fluent\WhereQueryColumnsFluent.cs">
+	  <DependentUpon>WhereQueryColumnsFluent.tt</DependentUpon>
+	  <DesignTime>True</DesignTime>
+	  <AutoGen>True</AutoGen>
 	</Compile>
 	<Compile Update="Model\Queries\Insert\Fluent\InsertQueryColumnsFluent.cs">
 	  <DesignTime>True</DesignTime>

@@ -39,4 +39,18 @@ public static class WhereQueryFluent
         return query;
     }
 
+    /// <summary>Добавляет условие по полю с значением</summary>
+    /// <param name="column">Имя поля</param>
+    /// <param name="termOperator">Оператор</param>
+    /// <param name="valueColumn">Описание поля значения</param>
+    /// <param name="value">Значение</param>
+    public static TQuery WithRawTerm<TQuery>(this TQuery query, string column, Op termOperator, Column valueColumn, object value)
+        where TQuery : WhereQuery
+    {
+        string escapedColumnName = query.Connection.Naming.GetName(column);
+        string escapedValue = query.Connection.Escaping.Escape(valueColumn, value);
+        query.Where.AddTerm(new RawOperatorTerm(query, escapedColumnName, termOperator, escapedValue));
+        return query;
+    }
+
 }
