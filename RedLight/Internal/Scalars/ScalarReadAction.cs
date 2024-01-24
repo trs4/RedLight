@@ -49,24 +49,24 @@ public abstract class ScalarReadAction<T> : IScalarReadAction
 
     public static ScalarReadAction<T> Instance { get; }
 
-    public abstract T Read(DbDataReader reader, int index);
+    public abstract T Read(DatabaseConnection connection, DbDataReader reader, int index);
 
-    public void Read(List<T> source, DbDataReader reader)
+    public void Read(DatabaseConnection connection, List<T> source, DbDataReader reader)
     {
         while (reader.Read())
-            source.Add(Read(reader, 0));
+            source.Add(Read(connection, reader, 0));
     }
 
-    public void Read(HashSet<T> source, DbDataReader reader)
+    public void Read(DatabaseConnection connection, HashSet<T> source, DbDataReader reader)
     {
         while (reader.Read())
-            source.Add(Read(reader, 0));
+            source.Add(Read(connection, reader, 0));
     }
 
-    public void Read(ICollection<T> source, DbDataReader reader)
+    public void Read(DatabaseConnection connection, ICollection<T> source, DbDataReader reader)
     {
         while (reader.Read())
-            source.Add(Read(reader, 0));
+            source.Add(Read(connection, reader, 0));
     }
 
     public IList Fill<TResult>(PropertyInfo propertyInfo, IReadOnlyCollection<TResult> rows)
@@ -79,5 +79,5 @@ public abstract class ScalarReadAction<T> : IScalarReadAction
         return result;
     }
 
-    object IScalarReadAction.Read(DbDataReader reader, int index) => Read(reader, index);
+    object IScalarReadAction.Read(DatabaseConnection connection, DbDataReader reader, int index) => Read(connection, reader, index);
 }

@@ -14,7 +14,7 @@
     ("Double", "double", "reader.GetDouble(index)"),
     ("Decimal", "decimal", "reader.GetDecimal(index)"),
     ("String", "string", "reader.GetString(index)"), 
-    ("DateTime", "DateTime", "reader.GetDateTime(index)"),
+    ("DateTime", "DateTime", "connection.ConvertToLocal(reader.GetDateTime(index))"),
     ("TimeSpan", "TimeSpan", "new TimeSpan(reader.GetInt64(index))"),
     ("Guid", "Guid", "reader.GetGuid(index)"),
     ("ByteArray", "byte[]", "reader.GetValue(index) as byte[]"),
@@ -29,7 +29,7 @@ var nullableTypes = new[] {
     ("NullableDouble", "double?", "reader.GetDouble(index)"),
     ("NullableDecimal", "decimal?", "reader.GetDecimal(index)"),
     ("NullableString", "string", "reader.GetString(index)"), 
-    ("NullableDateTime", "DateTime?", "reader.GetDateTime(index)"),
+    ("NullableDateTime", "DateTime?", "connection.ConvertToLocal(reader.GetDateTime(index))"),
     ("NullableTimeSpan", "TimeSpan?", "new TimeSpan(reader.GetInt64(index))"),
     ("NullableGuid", "Guid?", "reader.GetGuid(index)"),
 }; #>
@@ -41,14 +41,14 @@ namespace RedLight.Internal;
 <# foreach (var p in types) { #>
 internal sealed class ScalarReadAction<#= p.Item1 #> : ScalarReadAction<<#= p.Item2 #>>
 {
-    public override <#= p.Item2 #> Read(DbDataReader reader, int index) => <#= p.Item3 #>;
+    public override <#= p.Item2 #> Read(DatabaseConnection connection, DbDataReader reader, int index) => <#= p.Item3 #>;
 }
 
 <# } #>
 <# foreach (var p in nullableTypes) { #>
 internal sealed class ScalarReadAction<#= p.Item1 #> : ScalarReadAction<<#= p.Item2 #>>
 {
-    public override <#= p.Item2 #> Read(DbDataReader reader, int index) => reader.IsDBNull(index) ? null : <#= p.Item3 #>;
+    public override <#= p.Item2 #> Read(DatabaseConnection connection, DbDataReader reader, int index) => reader.IsDBNull(index) ? null : <#= p.Item3 #>;
 }
 
 <# } #>

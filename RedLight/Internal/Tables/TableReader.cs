@@ -23,7 +23,7 @@ internal static class TableReader
     }
 
     [MethodImpl(Flags.HotPath)]
-    public static DataSet CreateDataSet(DbDataReader reader, QueryOptions options)
+    public static DataSet CreateDataSet(DatabaseConnection connection, DbDataReader reader, QueryOptions options)
     {
         bool multipleResult = options?.MultipleResult ?? false;
         var dataSet = new DataSet();
@@ -32,7 +32,7 @@ internal static class TableReader
         do
         {
             var dataTable = dataSet.AddTable((++tableNumber).ToString());
-            var readAction = new RowReadAction(dataTable, reader);
+            var readAction = new RowReadAction(connection, dataTable, reader);
 
             while (reader.Read())
                 readAction.Read();
@@ -42,11 +42,11 @@ internal static class TableReader
     }
 
     [MethodImpl(Flags.HotPath)]
-    public static DataTable CreateDataTable(DbDataReader reader, QueryOptions options)
+    public static DataTable CreateDataTable(DatabaseConnection connection, DbDataReader reader, QueryOptions options)
     {
         bool multipleResult = options?.MultipleResult ?? false;
         var dataTable = new DataTable();
-        var readAction = new RowReadAction(dataTable, reader);
+        var readAction = new RowReadAction(connection, dataTable, reader);
 
         do
         {

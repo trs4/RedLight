@@ -21,8 +21,21 @@ internal static class Extensions
 
     public static bool IsNullable(this Type source) => source.IsGenericType && source.GetGenericTypeDefinition() == typeof(Nullable<>);
 
-    public static object Convert(this DatabaseConnection connection, DateTime value)
-        => connection.Parameters.AutoConvertDatesInUTC && value.Kind == DateTimeKind.Local ? value.ToUniversalTime() : value;
+    public static DateTime ConvertToLocal(this DatabaseConnection connection, DateTime value) => value.Kind switch
+    {
+        DateTimeKind.Unspecified => connection.Parameters.AutoConvertDatesInUTC
+            ? new DateTime(value.Ticks, DateTimeKind.Utc).ToLocalTime() : new DateTime(value.Ticks, DateTimeKind.Local),
+        DateTimeKind.Utc => value.ToLocalTime(),
+        _ => value,
+    };
+
+    public static DateTime ConvertToParameter(this DatabaseConnection connection, DateTime value)
+    {
+        if (connection.Parameters.AutoConvertDatesInUTC && value.Kind == DateTimeKind.Local)
+            value = value.ToUniversalTime();
+
+        return value.Kind == DateTimeKind.Unspecified ? value : new DateTime(value.Ticks, DateTimeKind.Unspecified);
+    }
 
     public static IReadOnlyList<string> NotNull(IReadOnlyList<string> value)
     {

@@ -7,42 +7,42 @@ namespace RedLight.Internal;
 
 public sealed class RowReadAction
 {
-    private readonly static Dictionary<Type, Func<DataTable, int, string, ColumnReadAction>> _columns = new()
+    private readonly static Dictionary<Type, Func<DatabaseConnection, DataTable, int, string, ColumnReadAction>> _columns = new()
     {
-        { typeof(bool), (dataTable, index, name) => new ColumnReadActionBool(dataTable, index, name) },
-        { typeof(byte), (dataTable, index, name) => new ColumnReadActionByte(dataTable, index, name) },
-        { typeof(short), (dataTable, index, name) => new ColumnReadActionShort(dataTable, index, name) },
-        { typeof(int), (dataTable, index, name) => new ColumnReadActionInt(dataTable, index, name) },
-        { typeof(long), (dataTable, index, name) => new ColumnReadActionLong(dataTable, index, name) },
-        { typeof(float), (dataTable, index, name) => new ColumnReadActionFloat(dataTable, index, name) },
-        { typeof(double), (dataTable, index, name) => new ColumnReadActionDouble(dataTable, index, name) },
-        { typeof(decimal), (dataTable, index, name) => new ColumnReadActionDecimal(dataTable, index, name) },
-        { typeof(string), (dataTable, index, name) => new ColumnReadActionString(dataTable, index, name) },
-        { typeof(DateTime), (dataTable, index, name) => new ColumnReadActionDateTime(dataTable, index, name) },
-        { typeof(Guid), (dataTable, index, name) => new ColumnReadActionGuid(dataTable, index, name) },
-        { typeof(byte[]), (dataTable, index, name) => new ColumnReadActionByteArray(dataTable, index, name) },
+        { typeof(bool), (connection, dataTable, index, name) => new ColumnReadActionBool(connection, dataTable, index, name) },
+        { typeof(byte), (connection, dataTable, index, name) => new ColumnReadActionByte(connection, dataTable, index, name) },
+        { typeof(short), (connection, dataTable, index, name) => new ColumnReadActionShort(connection, dataTable, index, name) },
+        { typeof(int), (connection, dataTable, index, name) => new ColumnReadActionInt(connection, dataTable, index, name) },
+        { typeof(long), (connection, dataTable, index, name) => new ColumnReadActionLong(connection, dataTable, index, name) },
+        { typeof(float), (connection, dataTable, index, name) => new ColumnReadActionFloat(connection, dataTable, index, name) },
+        { typeof(double), (connection, dataTable, index, name) => new ColumnReadActionDouble(connection, dataTable, index, name) },
+        { typeof(decimal), (connection, dataTable, index, name) => new ColumnReadActionDecimal(connection, dataTable, index, name) },
+        { typeof(string), (connection, dataTable, index, name) => new ColumnReadActionString(connection, dataTable, index, name) },
+        { typeof(DateTime), (connection, dataTable, index, name) => new ColumnReadActionDateTime(connection, dataTable, index, name) },
+        { typeof(Guid), (connection, dataTable, index, name) => new ColumnReadActionGuid(connection, dataTable, index, name) },
+        { typeof(byte[]), (connection, dataTable, index, name) => new ColumnReadActionByteArray(connection, dataTable, index, name) },
     };
 
-    private readonly static Dictionary<Type, Func<DataTable, int, string, ColumnReadAction>> _nullableColumns = new()
+    private readonly static Dictionary<Type, Func<DatabaseConnection, DataTable, int, string, ColumnReadAction>> _nullableColumns = new()
     {
-        { typeof(bool), (dataTable, index, name) => new ColumnReadActionNullableBool(dataTable, index, name) },
-        { typeof(byte), (dataTable, index, name) => new ColumnReadActionNullableByte(dataTable, index, name) },
-        { typeof(short), (dataTable, index, name) => new ColumnReadActionNullableShort(dataTable, index, name) },
-        { typeof(int), (dataTable, index, name) => new ColumnReadActionNullableInt(dataTable, index, name) },
-        { typeof(long), (dataTable, index, name) => new ColumnReadActionNullableLong(dataTable, index, name) },
-        { typeof(float), (dataTable, index, name) => new ColumnReadActionNullableFloat(dataTable, index, name) },
-        { typeof(double), (dataTable, index, name) => new ColumnReadActionNullableDouble(dataTable, index, name) },
-        { typeof(decimal), (dataTable, index, name) => new ColumnReadActionNullableDecimal(dataTable, index, name) },
-        { typeof(string), (dataTable, index, name) => new ColumnReadActionNullableString(dataTable, index, name) },
-        { typeof(DateTime), (dataTable, index, name) => new ColumnReadActionNullableDateTime(dataTable, index, name) },
-        { typeof(Guid), (dataTable, index, name) => new ColumnReadActionNullableGuid(dataTable, index, name) },
+        { typeof(bool), (connection, dataTable, index, name) => new ColumnReadActionNullableBool(connection, dataTable, index, name) },
+        { typeof(byte), (connection, dataTable, index, name) => new ColumnReadActionNullableByte(connection, dataTable, index, name) },
+        { typeof(short), (connection, dataTable, index, name) => new ColumnReadActionNullableShort(connection, dataTable, index, name) },
+        { typeof(int), (connection, dataTable, index, name) => new ColumnReadActionNullableInt(connection, dataTable, index, name) },
+        { typeof(long), (connection, dataTable, index, name) => new ColumnReadActionNullableLong(connection, dataTable, index, name) },
+        { typeof(float), (connection, dataTable, index, name) => new ColumnReadActionNullableFloat(connection, dataTable, index, name) },
+        { typeof(double), (connection, dataTable, index, name) => new ColumnReadActionNullableDouble(connection, dataTable, index, name) },
+        { typeof(decimal), (connection, dataTable, index, name) => new ColumnReadActionNullableDecimal(connection, dataTable, index, name) },
+        { typeof(string), (connection, dataTable, index, name) => new ColumnReadActionNullableString(connection, dataTable, index, name) },
+        { typeof(DateTime), (connection, dataTable, index, name) => new ColumnReadActionNullableDateTime(connection, dataTable, index, name) },
+        { typeof(Guid), (connection, dataTable, index, name) => new ColumnReadActionNullableGuid(connection, dataTable, index, name) },
     };
 
     private readonly DataTable _dataTable;
     private readonly DbDataReader _reader;
     private readonly ColumnReadAction[] _readActions;
 
-    public RowReadAction(DataTable dataTable, DbDataReader reader)
+    public RowReadAction(DatabaseConnection connection, DataTable dataTable, DbDataReader reader)
     {
         _dataTable = dataTable ?? throw new ArgumentNullException(nameof(dataTable));
         _reader = reader ?? throw new ArgumentNullException(nameof(reader));
@@ -59,14 +59,14 @@ public sealed class RowReadAction
             if (nullable)
             {
                 if (_nullableColumns.TryGetValue(columnType, out var columnFunc))
-                    _readActions[rowIndex] = columnFunc(dataTable, rowIndex, columnName);
+                    _readActions[rowIndex] = columnFunc(connection, dataTable, rowIndex, columnName);
                 else
                     throw new InvalidOperationException($"{columnName}: {columnType.FullName}");
             }
             else
             {
                 if (_columns.TryGetValue(columnType, out var columnFunc))
-                    _readActions[rowIndex] = columnFunc(dataTable, rowIndex, columnName);
+                    _readActions[rowIndex] = columnFunc(connection, dataTable, rowIndex, columnName);
                 else
                     throw new InvalidOperationException($"{columnName}: {columnType.FullName}");
             }

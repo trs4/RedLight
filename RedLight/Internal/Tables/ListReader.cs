@@ -8,45 +8,45 @@ namespace RedLight.Internal;
 internal static class ListReader
 {
     [MethodImpl(Flags.HotPath)]
-    public static void Append<T>(ICollection<T> source, DbDataReader reader, QueryOptions options)
+    public static void Append<T>(DatabaseConnection connection, ICollection<T> source, DbDataReader reader, QueryOptions options)
     {
         if (source is List<T> list)
-            AppendCore(list, reader, options);
+            AppendCore(connection, list, reader, options);
         else if (source is HashSet<T> hashSet)
-            AppendCore(hashSet, reader, options);
+            AppendCore(connection, hashSet, reader, options);
         else if (source is ICollection<T> collection)
-            AppendCore(collection, reader, options);
+            AppendCore(connection, collection, reader, options);
         else
             throw new NotSupportedException();
     }
 
-    private static void AppendCore<T>(List<T> source, DbDataReader reader, QueryOptions options)
+    private static void AppendCore<T>(DatabaseConnection connection, List<T> source, DbDataReader reader, QueryOptions options)
     {
         bool multipleResult = options?.MultipleResult ?? false;
 
         do
         {
-            ScalarReadAction<T>.Instance.Read(source, reader);
+            ScalarReadAction<T>.Instance.Read(connection, source, reader);
         } while (multipleResult && reader.NextResult());
     }
 
-    private static void AppendCore<T>(HashSet<T> source, DbDataReader reader, QueryOptions options)
+    private static void AppendCore<T>(DatabaseConnection connection, HashSet<T> source, DbDataReader reader, QueryOptions options)
     {
         bool multipleResult = options?.MultipleResult ?? false;
 
         do
         {
-            ScalarReadAction<T>.Instance.Read(source, reader);
+            ScalarReadAction<T>.Instance.Read(connection, source, reader);
         } while (multipleResult && reader.NextResult());
     }
 
-    private static void AppendCore<T>(ICollection<T> source, DbDataReader reader, QueryOptions options)
+    private static void AppendCore<T>(DatabaseConnection connection, ICollection<T> source, DbDataReader reader, QueryOptions options)
     {
         bool multipleResult = options?.MultipleResult ?? false;
 
         do
         {
-            ScalarReadAction<T>.Instance.Read(source, reader);
+            ScalarReadAction<T>.Instance.Read(connection, source, reader);
         } while (multipleResult && reader.NextResult());
     }
 

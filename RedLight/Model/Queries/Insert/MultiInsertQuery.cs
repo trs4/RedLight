@@ -34,7 +34,6 @@ public abstract class MultiInsertQuery : DataMultiValueQuery
         builder.Append("INSERT INTO ").Append(TableName).Append(" (");
         ColumnBuilder.Build(builder, _columns, f => f.Name);
         builder.Append(")\r\n");
-
     }
 
     [MethodImpl(Flags.HotPath)]
@@ -104,7 +103,7 @@ public abstract class MultiInsertQuery<TResult> : MultiInsertQuery
     public List<TResult> Get()
     {
         var (sql, context) = BuildSql();
-        var readAction = new Func<DbDataReader, List<TResult>>(reader => DataReader.Read(reader, context, _readActions, () => _returningColumns));
+        var readAction = new Func<DbDataReader, List<TResult>>(reader => DataReader.Read(Connection, reader, context, _readActions, () => _returningColumns));
         return Connection.Get(sql, readAction, context, Timeout);
     }
 
@@ -114,7 +113,7 @@ public abstract class MultiInsertQuery<TResult> : MultiInsertQuery
     public Task<List<TResult>> GetAsync(CancellationToken token = default)
     {
         var (sql, context) = BuildSql();
-        var readAction = new Func<DbDataReader, List<TResult>>(reader => DataReader.Read(reader, context, _readActions, () => _returningColumns));
+        var readAction = new Func<DbDataReader, List<TResult>>(reader => DataReader.Read(Connection, reader, context, _readActions, () => _returningColumns));
         return Connection.GetAsync(sql, readAction, context, Timeout, token);
     }
 
@@ -122,7 +121,7 @@ public abstract class MultiInsertQuery<TResult> : MultiInsertQuery
     public void Fill()
     {
         var (sql, context) = BuildSql();
-        var readAction = new Action<DbDataReader>(reader => DataReader.Fill(Data, reader, context, _readActions, () => _returningColumns));
+        var readAction = new Action<DbDataReader>(reader => DataReader.Fill(Connection, Data, reader, context, _readActions, () => _returningColumns));
         Connection.Get(sql, readAction, context, Timeout);
     }
 
@@ -131,13 +130,13 @@ public abstract class MultiInsertQuery<TResult> : MultiInsertQuery
     public Task FillAsync(CancellationToken token = default)
     {
         var (sql, context) = BuildSql();
-        var readAction = new Action<DbDataReader>(reader => DataReader.Fill(Data, reader, context, _readActions, () => _returningColumns));
+        var readAction = new Action<DbDataReader>(reader => DataReader.Fill(Connection, Data, reader, context, _readActions, () => _returningColumns));
         return Connection.GetAsync(sql, readAction, context, Timeout, token);
     }
 
     [MethodImpl(Flags.HotPath)]
-    internal void AddReadAction<T>(Action<TResult, T> readAction) => ScalarReadBuilder.Add(ref _readActions, readAction);
+    internal void AddReadAction<T>(Action<TResult, T> readAction) => ScalarReadBuilder.Add(Connection, ref _readActions, readAction);
 
     [MethodImpl(Flags.HotPath)]
-    internal void AddReadAction(Column column, Action<TResult, object> readAction) => ScalarReadBuilder.Add(ref _readActions, column, readAction);
+    internal void AddReadAction(Column column, Action<TResult, object> readAction) => ScalarReadBuilder.Add(Connection, ref _readActions, column, readAction);
 }

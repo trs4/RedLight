@@ -44,16 +44,18 @@ internal static class ScalarReadBuilder
     private static readonly ConcurrentDictionary<Type, IScalarReadAction> _readActionsByType = [];
 
     [MethodImpl(Flags.HotPath)]
-    public static void Add<TResult, T>(ref List<Action<TResult, DbDataReader>> readActions, Action<TResult, T> readAction)
+    public static void Add<TResult, T>(DatabaseConnection connection, ref List<Action<TResult, DbDataReader>> readActions,
+        Action<TResult, T> readAction)
     {
         readActions ??= [];
         int index = readActions.Count;
         var action = ScalarReadAction<T>.Instance;
-        readActions.Add((obj, reader) => readAction(obj, action.Read(reader, index)));
+        readActions.Add((obj, reader) => readAction(obj, action.Read(connection, reader, index)));
     }
 
     [MethodImpl(Flags.HotPath)]
-    public static void Add<TResult>(ref List<Action<TResult, DbDataReader>> readActions, Column column, Action<TResult, object> readAction)
+    public static void Add<TResult>(DatabaseConnection connection, ref List<Action<TResult, DbDataReader>> readActions,
+        Column column, Action<TResult, object> readAction)
     {
         readActions ??= [];
         int index = readActions.Count;
@@ -61,19 +63,20 @@ internal static class ScalarReadBuilder
         if (!_actionsByType.TryGetValue(Extensions.GetHash(column), out var action))
             throw new NotSupportedException(column.GetType().FullName);
 
-        readActions.Add((obj, reader) => readAction(obj, action.Read(reader, index)));
+        readActions.Add((obj, reader) => readAction(obj, action.Read(connection, reader, index)));
     }
 
     [MethodImpl(Flags.HotPath)]
-    public static void Add<TResult>(ref List<Action<TResult, DbDataReader>> readActions, Type type, Action<TResult, object> readAction)
+    public static void Add<TResult>(DatabaseConnection connection, ref List<Action<TResult, DbDataReader>> readActions,
+        Type type, Action<TResult, object> readAction)
     {
         readActions ??= [];
         int index = readActions.Count;
         var action = Get(type);
-        readActions.Add((obj, reader) => readAction(obj, action.Read(reader, index)));
+        readActions.Add((obj, reader) => readAction(obj, action.Read(connection, reader, index)));
     }
 
-    public static object Read(Type type, DbDataReader reader, int index) => Get(type).Read(reader, index);
+    public static object Read(DatabaseConnection connection, Type type, DbDataReader reader, int index) => Get(type).Read(connection, reader, index);
 
     public static IList Fill<TResult>(PropertyInfo propertyInfo, IReadOnlyCollection<TResult> rows) => Get(propertyInfo.PropertyType).Fill(propertyInfo, rows);
 

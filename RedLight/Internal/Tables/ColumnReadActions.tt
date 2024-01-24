@@ -14,7 +14,7 @@
     ("Double", "Double", "reader.GetDouble(_index)"),
     ("Decimal", "Decimal", "reader.GetDecimal(_index)"),
     ("String", "String", "reader.GetString(_index)"), 
-    ("DateTime", "DateTime", "reader.GetDateTime(_index)"),
+    ("DateTime", "DateTime", "_connection.ConvertToLocal(reader.GetDateTime(_index))"),
     ("Guid", "Guid", "reader.GetGuid(_index)"),
     ("ByteArray", "ByteArray", "reader.GetValue(_index) as byte[]"),
 };
@@ -28,7 +28,7 @@ var nullableTypes = new[] {
     ("NullableDouble", "NullableDouble", "reader.GetDouble(_index)"),
     ("NullableDecimal", "NullableDecimal", "reader.GetDecimal(_index)"),
     ("NullableString", "NullableString", "reader.GetString(_index)"),
-    ("NullableDateTime", "NullableDateTime", "reader.GetDateTime(_index)"),
+    ("NullableDateTime", "NullableDateTime", "_connection.ConvertToLocal(reader.GetDateTime(_index))"),
     ("NullableGuid", "NullableGuid", "reader.GetGuid(_index)"),
 }; #>
 using System.Data.Common;
@@ -41,8 +41,8 @@ internal sealed class ColumnReadAction<#= p.Item1 #> : ColumnReadAction
 {
     private readonly <#= p.Item2 #>DataColumn _column;
 
-    public ColumnReadAction<#= p.Item1 #>(DataTable dataTable, int index, string name)
-        : base(index)
+    public ColumnReadAction<#= p.Item1 #>(DatabaseConnection connection, DataTable dataTable, int index, string name)
+        : base(connection, index)
         => _column = dataTable.Add<#= p.Item2 #>Column(name);
 
     public override void Read(DbDataReader reader, int row) => _column.Set(row, <#= p.Item3 #>);
@@ -56,8 +56,8 @@ internal sealed class ColumnReadAction<#= p.Item1 #> : ColumnReadAction
 {
     private readonly <#= p.Item2 #>DataColumn _column;
 
-    public ColumnReadAction<#= p.Item1 #>(DataTable dataTable, int index, string name)
-        : base(index)
+    public ColumnReadAction<#= p.Item1 #>(DatabaseConnection connection, DataTable dataTable, int index, string name)
+        : base(connection, index)
         => _column = dataTable.Add<#= p.Item2 #>Column(name);
 
     public override void Read(DbDataReader reader, int row)

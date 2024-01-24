@@ -169,7 +169,7 @@ public abstract class DatabaseConnection : IDisposable
             {
                 Executor.BeginSession();
                 reader = Executor.RunReader(sql, Prepare(options), GetTimeout(timeout), behavior);
-                return (T)(object)TableReader.CreateDataSet(reader, options);
+                return (T)(object)TableReader.CreateDataSet(this, reader, options);
             }
             finally
             {
@@ -186,7 +186,7 @@ public abstract class DatabaseConnection : IDisposable
             {
                 Executor.BeginSession();
                 reader = Executor.RunReader(sql, Prepare(options), GetTimeout(timeout), behavior);
-                return (T)(object)TableReader.CreateDataTable(reader, options);
+                return (T)(object)TableReader.CreateDataTable(this, reader, options);
             }
             finally
             {
@@ -240,7 +240,7 @@ public abstract class DatabaseConnection : IDisposable
             {
                 await Executor.BeginSessionAsync().ConfigureAwait(false);
                 reader = await Executor.RunReaderAsync(sql, Prepare(options), GetTimeout(timeout), token, behavior).ConfigureAwait(false);
-                return (T)(object)TableReader.CreateDataSet(reader, options);
+                return (T)(object)TableReader.CreateDataSet(this, reader, options);
             }
             finally
             {
@@ -257,7 +257,7 @@ public abstract class DatabaseConnection : IDisposable
             {
                 await Executor.BeginSessionAsync().ConfigureAwait(false);
                 reader = await Executor.RunReaderAsync(sql, Prepare(options), GetTimeout(timeout), token, behavior).ConfigureAwait(false);
-                return (T)(object)TableReader.CreateDataTable(reader, options);
+                return (T)(object)TableReader.CreateDataTable(this, reader, options);
             }
             finally
             {
@@ -412,7 +412,7 @@ public abstract class DatabaseConnection : IDisposable
         {
             Executor.BeginSession();
             reader = Executor.RunReader(sql, Prepare(options), GetTimeout(timeout), behavior);
-            ListReader.Append(source, reader, options);
+            ListReader.Append(this, source, reader, options);
         }
         finally
         {
@@ -437,7 +437,7 @@ public abstract class DatabaseConnection : IDisposable
         {
             await Executor.BeginSessionAsync().ConfigureAwait(false);
             reader = await Executor.RunReaderAsync(sql, Prepare(options), GetTimeout(timeout), token, behavior).ConfigureAwait(false);
-            ListReader.Append(source, reader, options);
+            ListReader.Append(this, source, reader, options);
         }
         finally
         {

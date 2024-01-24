@@ -9,5 +9,5 @@ public interface IScalarReadAction
 {
     IList Fill<TResult>(PropertyInfo propertyInfo, IReadOnlyCollection<TResult> rows);
 
-    object Read(DbDataReader reader, int index);
+    object Read(DatabaseConnection connection, DbDataReader reader, int index);
 }

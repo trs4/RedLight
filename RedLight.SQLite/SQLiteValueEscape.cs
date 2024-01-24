@@ -13,9 +13,7 @@ internal sealed class SQLiteValueEscape : ValueEscape
         if (Connection.Parameters.AutoConvertDatesInUTC && value.Kind == DateTimeKind.Local)
             value = value.ToUniversalTime();
 
-        return value.Kind == DateTimeKind.Utc
-            ? $"datetime('{value.ToLocalTime():yyyy-MM-dd HH:mm:ss.fff tt zzz}')"
-            : $"datetime('{value:yyyy-MM-dd HH:mm:ss.fff}')";
+        return $"datetime('{value:yyyy-MM-dd HH:mm:ss.fff}')";
     }
 
     public override string Escape(Guid value) => $"'{value}'";

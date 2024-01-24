@@ -222,7 +222,7 @@ public abstract class SelectQuery<TResult> : SelectQuery, IUnionQuery
         var (sql, options) = BuildSql(); // Не занимаем соединение с сервером
 
         var readAction = new Func<DbDataReader, List<TResult>>(reader
-            => DataReader.Read(reader, options, _readActions, () => _columns.OfType<SelectColumn>().Select(f => f.Name)));
+            => DataReader.Read(Connection, reader, options, _readActions, () => _columns.OfType<SelectColumn>().Select(f => f.Name)));
 
         return Connection.Get(sql, readAction, options, Timeout);
     }
@@ -235,14 +235,14 @@ public abstract class SelectQuery<TResult> : SelectQuery, IUnionQuery
         var (sql, options) = BuildSql(); // Не занимаем соединение с сервером
 
         var readAction = new Func<DbDataReader, List<TResult>>(reader
-            => DataReader.Read(reader, options, _readActions, () => _columns.OfType<SelectColumn>().Select(f => f.Name)));
+            => DataReader.Read(Connection, reader, options, _readActions, () => _columns.OfType<SelectColumn>().Select(f => f.Name)));
 
         return await Connection.GetAsync(sql, readAction, options, Timeout, token).ConfigureAwait(false);
     }
 
     [MethodImpl(Flags.HotPath)]
-    internal void AddReadAction<T>(Action<TResult, T> readAction) => ScalarReadBuilder.Add(ref _readActions, readAction);
+    internal void AddReadAction<T>(Action<TResult, T> readAction) => ScalarReadBuilder.Add(Connection, ref _readActions, readAction);
 
     [MethodImpl(Flags.HotPath)]
-    internal void AddReadAction(Column column, Action<TResult, object> readAction) => ScalarReadBuilder.Add(ref _readActions, column, readAction);
+    internal void AddReadAction(Column column, Action<TResult, object> readAction) => ScalarReadBuilder.Add(Connection, ref _readActions, column, readAction);
 }

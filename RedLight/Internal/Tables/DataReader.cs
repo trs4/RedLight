@@ -9,7 +9,7 @@ namespace RedLight.Internal;
 internal static class DataReader
 {
     [MethodImpl(Flags.HotPath)]
-    public static List<TResult> Read<TResult>(DbDataReader reader, QueryOptions options,
+    public static List<TResult> Read<TResult>(DatabaseConnection connection, DbDataReader reader, QueryOptions options,
         List<Action<TResult, DbDataReader>> readActions, Func<IEnumerable<string>> getColumns)
     {
         bool multipleResult = options?.MultipleResult ?? false;
@@ -34,7 +34,7 @@ internal static class DataReader
                         if (propertyInfo is null)
                             continue;
 
-                        propertyInfo.SetValue(obj, ScalarReadBuilder.Read(propertyInfo.PropertyType, reader, index));
+                        propertyInfo.SetValue(obj, ScalarReadBuilder.Read(connection, propertyInfo.PropertyType, reader, index));
                     }
                 }
                 else
@@ -51,7 +51,7 @@ internal static class DataReader
     }
 
     [MethodImpl(Flags.HotPath)]
-    public static void Fill<TResult>(IReadOnlyCollection<TResult> data, DbDataReader reader, QueryOptions options,
+    public static void Fill<TResult>(DatabaseConnection connection, IReadOnlyCollection<TResult> data, DbDataReader reader, QueryOptions options,
         List<Action<TResult, DbDataReader>> readActions, Func<IEnumerable<string>> getColumns)
     {
         bool multipleResult = options?.MultipleResult ?? false;
@@ -79,7 +79,7 @@ internal static class DataReader
                         if (propertyInfo is null)
                             continue;
 
-                        propertyInfo.SetValue(obj, ScalarReadBuilder.Read(propertyInfo.PropertyType, reader, index));
+                        propertyInfo.SetValue(obj, ScalarReadBuilder.Read(connection, propertyInfo.PropertyType, reader, index));
                     }
                 }
                 else
