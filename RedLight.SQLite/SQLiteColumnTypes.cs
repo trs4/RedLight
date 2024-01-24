@@ -66,7 +66,7 @@ internal sealed class SQLiteColumnTypes : ColumnTypes<DbType>
             { ColumnType.Decimal, DbType.Decimal },
             { ColumnType.String, DbType.String },
             { ColumnType.DateTime, DbType.DateTime },
-            { ColumnType.Guid, DbType.Guid },
+            { ColumnType.Guid, DbType.String },
             { ColumnType.TimeSpan, DbType.Int64 },
             { ColumnType.ByteArray, DbType.Binary },
         }.ToFrozenDictionary();
