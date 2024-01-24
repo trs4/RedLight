@@ -1,14 +1,11 @@
 ﻿namespace RedLight;
 
 /// <summary>Параметр запроса</summary>
-public sealed class QueryParameter
+public abstract class QueryParameter
 {
-    internal QueryParameter(string name, object value, ColumnType type, bool nullable = true, int maxSize = -1)
+    protected QueryParameter(string name, object value)
     {
         Name = name;
-        Type = type;
-        Nullable = nullable;
-        MaxSize = maxSize;
         Value = value;
     }
 
@@ -16,13 +13,13 @@ public sealed class QueryParameter
     public string Name { get; }
 
     /// <summary>Тип</summary>
-    public ColumnType Type { get; }
+    public abstract ColumnType Type { get; }
 
     /// <summary>Поддерживает пустые значения</summary>
-    public bool Nullable { get; }
+    public abstract bool Nullable { get; }
 
     /// <summary>Максимально допустимый размер значения</summary>
-    public int MaxSize { get; }
+    public int MaxSize { get; set; } = -1;
 
     /// <summary>Значение</summary>
     public object Value { get; }

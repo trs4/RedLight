@@ -8,9 +8,15 @@ internal sealed class SQLiteValueEscape : ValueEscape
 
     public override string Escape(string value) => $"'{value}'";
 
-    public override string Escape(DateTime value) => value.Kind == DateTimeKind.Utc
-        ? $"datetime('{value.ToLocalTime():yyyy-MM-dd HH:mm:ss.fff tt zzz}')"
-        : $"datetime('{value:yyyy-MM-dd HH:mm:ss.fff}')";
+    public override string Escape(DateTime value)
+    {
+        if (Connection.Parameters.AutoConvertDatesInUTC && value.Kind == DateTimeKind.Local)
+            value = value.ToUniversalTime();
+
+        return value.Kind == DateTimeKind.Utc
+            ? $"datetime('{value.ToLocalTime():yyyy-MM-dd HH:mm:ss.fff tt zzz}')"
+            : $"datetime('{value:yyyy-MM-dd HH:mm:ss.fff}')";
+    }
 
     public override string Escape(Guid value) => $"'{value}'";
 

@@ -26,7 +26,7 @@ internal sealed class SQLiteExecutor : Executor
 
         return new SQLiteParameter(parameter.Name, dataType, maxSize)
         {
-            Value = SQLiteColumnTypes.Instance.GetValue(parameter),
+            Value = parameter.Value,
             IsNullable = parameter.Nullable,
         };
     }

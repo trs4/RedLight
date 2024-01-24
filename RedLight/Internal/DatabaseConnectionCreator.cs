@@ -90,4 +90,10 @@ internal static class DatabaseConnectionCreator
         return true;
     }
 
+    public static string GetApplicationName(DbConnectionStringBuilder builder)
+        => TryGetValue(builder, nameof(DatabaseConnectionParameters.ApplicationName), out string value) ? value : null;
+
+    public static bool GetAutoConvertDatesInUTC(DbConnectionStringBuilder builder)
+        => !TryGetValue(builder, nameof(DatabaseConnectionParameters.AutoConvertDatesInUTC), out string value)
+        || value.Equals(Boolean.TrueString, StringComparison.OrdinalIgnoreCase);
 }

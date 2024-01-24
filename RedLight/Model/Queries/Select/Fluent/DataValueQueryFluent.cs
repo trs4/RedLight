@@ -214,7 +214,7 @@ public static class DataValueQueryFluent
             { Extensions.GetHash(DataType.Double, isNullable: true), (name, value) => new NullableDoubleValueColumn(name, (double?)value) },
             { Extensions.GetHash(DataType.Decimal), (name, value) => new DecimalValueColumn(name, (decimal)value) },
             { Extensions.GetHash(DataType.Decimal, isNullable: true), (name, value) => new NullableDecimalValueColumn(name, (decimal?)value) },
-            { Extensions.GetHash(DataType.String), (name, value) => new StringValueColumn(name, (string)value) },
+            { Extensions.GetHash(DataType.String), (name, value) => new StringValueColumn(name, (string)value ?? string.Empty) },
             { Extensions.GetHash(DataType.String, isNullable: true), (name, value) => new StringValueColumn(name, (string)value) },
             { Extensions.GetHash(DataType.DateTime), (name, value) => new DateTimeValueColumn(name, (DateTime)value) },
             { Extensions.GetHash(DataType.DateTime, isNullable: true), (name, value) => new NullableDateTimeValueColumn(name, (DateTime?)value) },

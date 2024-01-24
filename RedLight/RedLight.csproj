@@ -12,9 +12,6 @@
 	<PackageProjectUrl>https://github.com/trs4/RedLight</PackageProjectUrl>
 	<RepositoryUrl>https://github.com/trs4/RedLight</RepositoryUrl>
   </PropertyGroup>
-  <ItemGroup>
-	<None Remove="Model\Queries\Select\Fluent\SelectQueryColumnsWithReadFluent.tt" />
-  </ItemGroup>
 
   <ItemGroup>
 	<PackageReference Include="System.Memory" Version="4.5.5" />
@@ -41,7 +38,7 @@
 
   <ItemGroup>
 	<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-	<None Include="Model\Queries\Select\Fluent\SelectQueryColumnsWithReadFluent.tt">
+	<None Update="Model\Queries\Select\Fluent\SelectQueryColumnsWithReadFluent.tt">
 	  <Generator>TextTemplatingFileGenerator</Generator>
 	  <LastGenOutput>SelectQueryColumnsWithReadFluent.cs</LastGenOutput>
 	</None>
@@ -100,6 +97,10 @@
 	<None Update="Model\Queries\Terms\OperatorTerms.tt">
 	  <Generator>TextTemplatingFileGenerator</Generator>
 	  <LastGenOutput>OperatorTerms.cs</LastGenOutput>
+	</None>
+	<None Update="Model\QueryParameters\QueryParameters.tt">
+	  <LastGenOutput>QueryParameters.cs</LastGenOutput>
+	  <Generator>TextTemplatingFileGenerator</Generator>
 	</None>
 	<Compile Update="Internal\Scalars\ScalarReadActions.cs">
 	  <DesignTime>True</DesignTime>
@@ -175,6 +176,11 @@
 	  <DesignTime>True</DesignTime>
 	  <AutoGen>True</AutoGen>
 	  <DependentUpon>OperatorTerms.tt</DependentUpon>
+	</Compile>
+	<Compile Update="Model\QueryParameters\QueryParameters.cs">
+	  <DependentUpon>QueryParameters.tt</DependentUpon>
+	  <DesignTime>True</DesignTime>
+	  <AutoGen>True</AutoGen>
 	</Compile>
   </ItemGroup>
 </Project>

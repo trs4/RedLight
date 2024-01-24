@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Frozen;
-using System.Collections.Generic;
 using System.Text;
 
 namespace RedLight.Internal;
@@ -26,11 +25,6 @@ internal abstract class ColumnTypes<TDataType> : ColumnTypes
     protected FrozenDictionary<TDataType, int> _maxSizes;
     protected FrozenDictionary<TDataType, Action<StringBuilder, TDataType, int, int>> _appendTypeOptions;
     protected FrozenDictionary<ColumnType, string> _defaultValues;
-
-    private readonly FrozenDictionary<ColumnType, Func<object, object>> _converts = new Dictionary<ColumnType, Func<object, object>>
-    {
-        { ColumnType.TimeSpan, value => ((TimeSpan)value).Ticks },
-    }.ToFrozenDictionary();
 
     public sealed override ColumnType GetType(object dataType)
     {
@@ -68,14 +62,6 @@ internal abstract class ColumnTypes<TDataType> : ColumnTypes
     {
         if (_appendTypeOptions.TryGetValue(dataType, out var buildAction))
             buildAction(builder, dataType, size, precision);
-    }
-
-    public object GetValue(QueryParameter parameter)
-    {
-        if (parameter.Nullable && parameter.Value is null)
-            return DBNull.Value;
-
-        return _converts.TryGetValue(parameter.Type, out var convert) ? convert(parameter.Value) : parameter.Value;
     }
 
 }

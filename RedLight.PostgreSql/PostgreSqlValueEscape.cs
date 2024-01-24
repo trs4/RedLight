@@ -13,7 +13,13 @@ internal sealed class PostgreSqlValueEscape : ValueEscape
 
     public override string Escape(double value) => value.ToString("G17", CultureInfo.InvariantCulture);
 
-    public override string Escape(DateTime value) => $"'{value:O}'::timestamp{(value.Kind == DateTimeKind.Utc ? "tz" : String.Empty)}";
+    public override string Escape(DateTime value)
+    {
+        if (Connection.Parameters.AutoConvertDatesInUTC && value.Kind == DateTimeKind.Local)
+            value = value.ToUniversalTime();
+
+        return $"'{value:O}'::timestamp{(value.Kind == DateTimeKind.Utc ? "tz" : String.Empty)}";
+    }
 
     public override string Escape(Guid value) => $"'{value}'::uuid";
 

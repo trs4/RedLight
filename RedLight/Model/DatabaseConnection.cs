@@ -469,12 +469,14 @@ public abstract class DatabaseConnection : IDisposable
         if (paddingCount == 0)
             return;
 
-        var type = options.Parameters[^1].Type;
+        var lastParameter = options.Parameters[^1];
+        var type = lastParameter.Type;
+        bool nullable = lastParameter.Nullable;
 
         for (int i = 0; i < paddingCount; i++)
         {
             string name = ParameterNaming.GetName(options.Parameters.Count + 1);
-            var parameter = new QueryParameter(name, null, type);
+            var parameter = new RawQueryParameter(name, null, type, nullable);
             options.Parameters.Add(parameter);
         }
     }

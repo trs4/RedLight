@@ -12,7 +12,7 @@ internal static class ParameterProcessing
             return connection.Escaping.Escape(value);
 
         string name = connection.ParameterNaming.GetName(options.Parameters.Count + 1);
-        var parameter = new QueryParameter(name, value, ColumnType.Boolean, false);
+        var parameter = new BoolQueryParameter(name, value);
         options.Parameters.Add(parameter);
         return connection.ParameterNaming.GetNameForQuery(name);
     }
@@ -23,7 +23,7 @@ internal static class ParameterProcessing
             return connection.Escaping.Escape(value);
 
         string name = connection.ParameterNaming.GetName(options.Parameters.Count + 1);
-        var parameter = new QueryParameter(name, value, ColumnType.Byte, false);
+        var parameter = new ByteQueryParameter(name, value);
         options.Parameters.Add(parameter);
         return connection.ParameterNaming.GetNameForQuery(name);
     }
@@ -34,7 +34,7 @@ internal static class ParameterProcessing
             return connection.Escaping.Escape(value);
 
         string name = connection.ParameterNaming.GetName(options.Parameters.Count + 1);
-        var parameter = new QueryParameter(name, value, ColumnType.Short, false);
+        var parameter = new ShortQueryParameter(name, value);
         options.Parameters.Add(parameter);
         return connection.ParameterNaming.GetNameForQuery(name);
     }
@@ -45,7 +45,7 @@ internal static class ParameterProcessing
             return connection.Escaping.Escape(value);
 
         string name = connection.ParameterNaming.GetName(options.Parameters.Count + 1);
-        var parameter = new QueryParameter(name, value, ColumnType.Integer, false);
+        var parameter = new IntQueryParameter(name, value);
         options.Parameters.Add(parameter);
         return connection.ParameterNaming.GetNameForQuery(name);
     }
@@ -56,7 +56,7 @@ internal static class ParameterProcessing
             return connection.Escaping.Escape(value);
 
         string name = connection.ParameterNaming.GetName(options.Parameters.Count + 1);
-        var parameter = new QueryParameter(name, value, ColumnType.Long, false);
+        var parameter = new LongQueryParameter(name, value);
         options.Parameters.Add(parameter);
         return connection.ParameterNaming.GetNameForQuery(name);
     }
@@ -67,7 +67,7 @@ internal static class ParameterProcessing
             return connection.Escaping.Escape(value);
 
         string name = connection.ParameterNaming.GetName(options.Parameters.Count + 1);
-        var parameter = new QueryParameter(name, value, ColumnType.Float, false);
+        var parameter = new FloatQueryParameter(name, value);
         options.Parameters.Add(parameter);
         return connection.ParameterNaming.GetNameForQuery(name);
     }
@@ -78,7 +78,7 @@ internal static class ParameterProcessing
             return connection.Escaping.Escape(value);
 
         string name = connection.ParameterNaming.GetName(options.Parameters.Count + 1);
-        var parameter = new QueryParameter(name, value, ColumnType.Double, false);
+        var parameter = new DoubleQueryParameter(name, value);
         options.Parameters.Add(parameter);
         return connection.ParameterNaming.GetNameForQuery(name);
     }
@@ -89,7 +89,7 @@ internal static class ParameterProcessing
             return connection.Escaping.Escape(value);
 
         string name = connection.ParameterNaming.GetName(options.Parameters.Count + 1);
-        var parameter = new QueryParameter(name, value, ColumnType.Decimal, false);
+        var parameter = new DecimalQueryParameter(name, value);
         options.Parameters.Add(parameter);
         return connection.ParameterNaming.GetNameForQuery(name);
     }
@@ -100,7 +100,7 @@ internal static class ParameterProcessing
             return connection.Escaping.Escape(value);
 
         string name = connection.ParameterNaming.GetName(options.Parameters.Count + 1);
-        var parameter = new QueryParameter(name, value, ColumnType.String, false);
+        var parameter = new StringQueryParameter(name, value);
         options.Parameters.Add(parameter);
         return connection.ParameterNaming.GetNameForQuery(name);
     }
@@ -111,7 +111,7 @@ internal static class ParameterProcessing
             return connection.Escaping.Escape(value);
 
         string name = connection.ParameterNaming.GetName(options.Parameters.Count + 1);
-        var parameter = new QueryParameter(name, value, ColumnType.DateTime, false);
+        var parameter = new DateTimeQueryParameter(connection, name, value);
         options.Parameters.Add(parameter);
         return connection.ParameterNaming.GetNameForQuery(name);
     }
@@ -122,7 +122,7 @@ internal static class ParameterProcessing
             return connection.Escaping.Escape(value);
 
         string name = connection.ParameterNaming.GetName(options.Parameters.Count + 1);
-        var parameter = new QueryParameter(name, value, ColumnType.TimeSpan, false);
+        var parameter = new TimeSpanQueryParameter(name, value);
         options.Parameters.Add(parameter);
         return connection.ParameterNaming.GetNameForQuery(name);
     }
@@ -133,7 +133,7 @@ internal static class ParameterProcessing
             return connection.Escaping.Escape(value);
 
         string name = connection.ParameterNaming.GetName(options.Parameters.Count + 1);
-        var parameter = new QueryParameter(name, value, ColumnType.Guid, false);
+        var parameter = new GuidQueryParameter(name, value);
         options.Parameters.Add(parameter);
         return connection.ParameterNaming.GetNameForQuery(name);
     }
@@ -144,7 +144,7 @@ internal static class ParameterProcessing
             return connection.Escaping.Escape(value);
 
         string name = connection.ParameterNaming.GetName(options.Parameters.Count + 1);
-        var parameter = new QueryParameter(name, value, ColumnType.ByteArray, false);
+        var parameter = new ByteArrayQueryParameter(name, value);
         options.Parameters.Add(parameter);
         return connection.ParameterNaming.GetNameForQuery(name);
     }
@@ -155,7 +155,7 @@ internal static class ParameterProcessing
             return value.HasValue ? connection.Escaping.Escape(value.Value) : Consts.Null;
 
         string name = connection.ParameterNaming.GetName(options.Parameters.Count + 1);
-        var parameter = new QueryParameter(name, value, ColumnType.Boolean, true);
+        var parameter = new NullableBoolQueryParameter(name, value);
         options.Parameters.Add(parameter);
         return connection.ParameterNaming.GetNameForQuery(name);
     }
@@ -166,7 +166,7 @@ internal static class ParameterProcessing
             return value.HasValue ? connection.Escaping.Escape(value.Value) : Consts.Null;
 
         string name = connection.ParameterNaming.GetName(options.Parameters.Count + 1);
-        var parameter = new QueryParameter(name, value, ColumnType.Byte, true);
+        var parameter = new NullableByteQueryParameter(name, value);
         options.Parameters.Add(parameter);
         return connection.ParameterNaming.GetNameForQuery(name);
     }
@@ -177,7 +177,7 @@ internal static class ParameterProcessing
             return value.HasValue ? connection.Escaping.Escape(value.Value) : Consts.Null;
 
         string name = connection.ParameterNaming.GetName(options.Parameters.Count + 1);
-        var parameter = new QueryParameter(name, value, ColumnType.Short, true);
+        var parameter = new NullableShortQueryParameter(name, value);
         options.Parameters.Add(parameter);
         return connection.ParameterNaming.GetNameForQuery(name);
     }
@@ -188,7 +188,7 @@ internal static class ParameterProcessing
             return value.HasValue ? connection.Escaping.Escape(value.Value) : Consts.Null;
 
         string name = connection.ParameterNaming.GetName(options.Parameters.Count + 1);
-        var parameter = new QueryParameter(name, value, ColumnType.Integer, true);
+        var parameter = new NullableIntQueryParameter(name, value);
         options.Parameters.Add(parameter);
         return connection.ParameterNaming.GetNameForQuery(name);
     }
@@ -199,7 +199,7 @@ internal static class ParameterProcessing
             return value.HasValue ? connection.Escaping.Escape(value.Value) : Consts.Null;
 
         string name = connection.ParameterNaming.GetName(options.Parameters.Count + 1);
-        var parameter = new QueryParameter(name, value, ColumnType.Long, true);
+        var parameter = new NullableLongQueryParameter(name, value);
         options.Parameters.Add(parameter);
         return connection.ParameterNaming.GetNameForQuery(name);
     }
@@ -210,7 +210,7 @@ internal static class ParameterProcessing
             return value.HasValue ? connection.Escaping.Escape(value.Value) : Consts.Null;
 
         string name = connection.ParameterNaming.GetName(options.Parameters.Count + 1);
-        var parameter = new QueryParameter(name, value, ColumnType.Float, true);
+        var parameter = new NullableFloatQueryParameter(name, value);
         options.Parameters.Add(parameter);
         return connection.ParameterNaming.GetNameForQuery(name);
     }
@@ -221,7 +221,7 @@ internal static class ParameterProcessing
             return value.HasValue ? connection.Escaping.Escape(value.Value) : Consts.Null;
 
         string name = connection.ParameterNaming.GetName(options.Parameters.Count + 1);
-        var parameter = new QueryParameter(name, value, ColumnType.Double, true);
+        var parameter = new NullableDoubleQueryParameter(name, value);
         options.Parameters.Add(parameter);
         return connection.ParameterNaming.GetNameForQuery(name);
     }
@@ -232,7 +232,7 @@ internal static class ParameterProcessing
             return value.HasValue ? connection.Escaping.Escape(value.Value) : Consts.Null;
 
         string name = connection.ParameterNaming.GetName(options.Parameters.Count + 1);
-        var parameter = new QueryParameter(name, value, ColumnType.Decimal, true);
+        var parameter = new NullableDecimalQueryParameter(name, value);
         options.Parameters.Add(parameter);
         return connection.ParameterNaming.GetNameForQuery(name);
     }
@@ -243,7 +243,7 @@ internal static class ParameterProcessing
             return value.HasValue ? connection.Escaping.Escape(value.Value) : Consts.Null;
 
         string name = connection.ParameterNaming.GetName(options.Parameters.Count + 1);
-        var parameter = new QueryParameter(name, value, ColumnType.DateTime, true);
+        var parameter = new NullableDateTimeQueryParameter(connection, name, value);
         options.Parameters.Add(parameter);
         return connection.ParameterNaming.GetNameForQuery(name);
     }
@@ -254,7 +254,7 @@ internal static class ParameterProcessing
             return value.HasValue ? connection.Escaping.Escape(value.Value) : Consts.Null;
 
         string name = connection.ParameterNaming.GetName(options.Parameters.Count + 1);
-        var parameter = new QueryParameter(name, value, ColumnType.TimeSpan, true);
+        var parameter = new NullableTimeSpanQueryParameter(name, value);
         options.Parameters.Add(parameter);
         return connection.ParameterNaming.GetNameForQuery(name);
     }
@@ -265,7 +265,7 @@ internal static class ParameterProcessing
             return value.HasValue ? connection.Escaping.Escape(value.Value) : Consts.Null;
 
         string name = connection.ParameterNaming.GetName(options.Parameters.Count + 1);
-        var parameter = new QueryParameter(name, value, ColumnType.Guid, true);
+        var parameter = new NullableGuidQueryParameter(name, value);
         options.Parameters.Add(parameter);
         return connection.ParameterNaming.GetNameForQuery(name);
     }

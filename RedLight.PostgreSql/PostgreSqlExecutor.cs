@@ -42,7 +42,7 @@ internal sealed class PostgreSqlExecutor : Executor
 
         return new NpgsqlParameter(parameter.Name, dataType, maxSize)
         {
-            Value = PostgreSqlColumnTypes.Instance.GetValue(parameter),
+            Value = parameter.Value,
             IsNullable = parameter.Nullable,
         };
     }

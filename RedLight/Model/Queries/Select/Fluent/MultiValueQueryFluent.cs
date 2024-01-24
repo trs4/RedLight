@@ -202,7 +202,7 @@ public static class MultiValueQueryFluent
             { Extensions.GetHash(DataType.Double, isNullable: true), (name, value) => new NullableDoubleMultiValueColumn(name, (IReadOnlyList<double?>)value) },
             { Extensions.GetHash(DataType.Decimal), (name, value) => new DecimalMultiValueColumn(name, (IReadOnlyList<decimal>)value) },
             { Extensions.GetHash(DataType.Decimal, isNullable: true), (name, value) => new NullableDecimalMultiValueColumn(name, (IReadOnlyList<decimal?>)value) },
-            { Extensions.GetHash(DataType.String), (name, value) => new StringMultiValueColumn(name, (IReadOnlyList<string>)value) },
+            { Extensions.GetHash(DataType.String), (name, value) => new StringMultiValueColumn(name, Extensions.NotNull((IReadOnlyList<string>)value)) },
             { Extensions.GetHash(DataType.String, isNullable: true), (name, value) => new StringMultiValueColumn(name, (IReadOnlyList<string>)value) },
             { Extensions.GetHash(DataType.DateTime), (name, value) => new DateTimeMultiValueColumn(name, (IReadOnlyList<DateTime>)value) },
             { Extensions.GetHash(DataType.DateTime, isNullable: true), (name, value) => new NullableDateTimeMultiValueColumn(name, (IReadOnlyList<DateTime?>)value) },

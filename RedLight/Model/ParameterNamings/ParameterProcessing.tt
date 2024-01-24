@@ -5,32 +5,32 @@
 <#@ import namespace="System.Collections.Generic" #>
 <#@ output extension=".cs" #>
 <# var types = new [] { 
-    ("Bool", "bool", "Boolean"),
-    ("Byte", "byte", "Byte"),
-    ("Short", "short", "Short"),
-    ("Int", "int", "Integer"), 
-    ("Long", "long", "Long"),
-    ("Float", "float", "Float"),
-    ("Double", "double", "Double"),
-    ("Decimal", "decimal", "Decimal"),
-    ("String", "string", "String"), 
-    ("DateTime", "DateTime", "DateTime"),
-    ("TimeSpan", "TimeSpan", "TimeSpan"),
-    ("Guid", "Guid", "Guid"),
-    ("ByteArray", "byte[]", "ByteArray"),
+    ("Bool", "bool", "Boolean", ""),
+    ("Byte", "byte", "Byte", ""),
+    ("Short", "short", "Short", ""),
+    ("Int", "int", "Integer", ""), 
+    ("Long", "long", "Long", ""),
+    ("Float", "float", "Float", ""),
+    ("Double", "double", "Double", ""),
+    ("Decimal", "decimal", "Decimal", ""),
+    ("String", "string", "String", ""), 
+    ("DateTime", "DateTime", "DateTime", "connection, "),
+    ("TimeSpan", "TimeSpan", "TimeSpan", ""),
+    ("Guid", "Guid", "Guid", ""),
+    ("ByteArray", "byte[]", "ByteArray", ""),
 };
 var nullableTypes = new [] { 
-    ("NullableBool", "bool?", "Boolean"),
-    ("NullableByte", "byte?", "Byte"),
-    ("NullableShort", "short?", "Short"),
-    ("NullableInt", "int?", "Integer"), 
-    ("NullableLong", "long?", "Long"),
-    ("NullableFloat", "float?", "Float"),
-    ("NullableDouble", "double?", "Double"),
-    ("NullableDecimal", "decimal?", "Decimal"),
-    ("NullableDateTime", "DateTime?", "DateTime"),
-    ("NullableTimeSpan", "TimeSpan?", "TimeSpan"),
-    ("NullableGuid", "Guid?", "Guid"),
+    ("NullableBool", "bool?", "Boolean", ""),
+    ("NullableByte", "byte?", "Byte", ""),
+    ("NullableShort", "short?", "Short", ""),
+    ("NullableInt", "int?", "Integer", ""), 
+    ("NullableLong", "long?", "Long", ""),
+    ("NullableFloat", "float?", "Float", ""),
+    ("NullableDouble", "double?", "Double", ""),
+    ("NullableDecimal", "decimal?", "Decimal", ""),
+    ("NullableDateTime", "DateTime?", "DateTime", "connection, "),
+    ("NullableTimeSpan", "TimeSpan?", "TimeSpan", ""),
+    ("NullableGuid", "Guid?", "Guid", ""),
 }; #>
 using System;
 using RedLight.Internal;
@@ -47,7 +47,7 @@ internal static class ParameterProcessing
             return connection.Escaping.Escape(value);
 
         string name = connection.ParameterNaming.GetName(options.Parameters.Count + 1);
-        var parameter = new QueryParameter(name, value, ColumnType.<#= p.Item3 #>, false);
+        var parameter = new <#= p.Item1 #>QueryParameter(<#= p.Item4 #>name, value);
         options.Parameters.Add(parameter);
         return connection.ParameterNaming.GetNameForQuery(name);
     }
@@ -60,7 +60,7 @@ internal static class ParameterProcessing
             return value.HasValue ? connection.Escaping.Escape(value.Value) : Consts.Null;
 
         string name = connection.ParameterNaming.GetName(options.Parameters.Count + 1);
-        var parameter = new QueryParameter(name, value, ColumnType.<#= p.Item3 #>, true);
+        var parameter = new <#= p.Item1 #>QueryParameter(<#= p.Item4 #>name, value);
         options.Parameters.Add(parameter);
         return connection.ParameterNaming.GetNameForQuery(name);
     }

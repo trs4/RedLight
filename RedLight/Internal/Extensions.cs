@@ -21,6 +21,36 @@ internal static class Extensions
 
     public static bool IsNullable(this Type source) => source.IsGenericType && source.GetGenericTypeDefinition() == typeof(Nullable<>);
 
+    public static object Convert(this DatabaseConnection connection, DateTime value)
+        => connection.Parameters.AutoConvertDatesInUTC && value.Kind == DateTimeKind.Local ? value.ToUniversalTime() : value;
+
+    public static IReadOnlyList<string> NotNull(IReadOnlyList<string> value)
+    {
+        if (CanExit(value))
+            return value;
+
+        var result = new List<string>(value.Count);
+
+        foreach (string item in value)
+            result.Add(item ?? string.Empty);
+
+        return result;
+    }
+
+    private static bool CanExit(IReadOnlyList<string> value)
+    {
+        if (value.Count == 0)
+            return true;
+
+        foreach (string item in value)
+        {
+            if (item is null)
+                return false;
+        }
+
+        return true;
+    }
+
     public static StringBuilder AppendJoin(this StringBuilder builder, string separator, params string[] value)
     {
         if (value.Length == 0)
