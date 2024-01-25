@@ -44,7 +44,7 @@ public abstract class WhereQuery : RunQuery
     [MethodImpl(Flags.HotPath)]
     protected void BuildWhereBlock(StringBuilder builder, QueryOptions options, TermBlock additionalBlockTerm)
     {
-        if (_where?.Count > 0 || additionalBlockTerm != null)
+        if (_where?.Count > 0 || additionalBlockTerm is not null)
             Where.BuildSql(builder, options, Consts.Where, additionalBlockTerm);
     }
 

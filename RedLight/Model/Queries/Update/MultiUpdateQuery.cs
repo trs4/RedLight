@@ -13,7 +13,7 @@ public abstract class MultiUpdateQuery : MultiValueQuery
     protected readonly List<string> _onColumns = new(8);
 
     /// <summary>Задаёт поля, для которых имя поля в запросе не совпадает с именем поля в таблице данных</summary>
-    protected readonly List<UpdateColumn> _replaceColumns = new();
+    protected readonly List<UpdateColumn> _replaceColumns = [];
 
     protected MultiUpdateQuery(DatabaseConnection connection, string tableName)
         : base(connection, tableName, connection.Naming.GetName(Consts.TableAlias))
@@ -31,7 +31,7 @@ public abstract class MultiUpdateQuery : MultiValueQuery
     internal void AddReplaceColumnCore(string column, string dataColumn)
         => _replaceColumns.Add(new UpdateColumn(column, dataColumn));
 
-    protected (Dictionary<string, string> columns, TermBlock onTerm) PrepareColumns()
+    protected (Dictionary<string, string> columns, TermBlock onTerm) PrepareColumns(string tableName)
     {
         // Формируем список пар полей между таблицей куда будем записывать и таблицей откуда берём данные
         var columns = _columns.ToDictionary(f => f.Name, f => f.Name);
@@ -43,7 +43,7 @@ public abstract class MultiUpdateQuery : MultiValueQuery
 
         foreach (string column in _onColumns)
         {
-            onTerm.WithRawTerm(Naming.GetRawNameWithAlias(Alias, column),
+            onTerm.WithRawTerm(Naming.GetRawNameWithAlias(tableName, column),
                 Op.Equal, Naming.GetRawNameWithAlias(DataAlias, column));
 
             columns.Remove(column);

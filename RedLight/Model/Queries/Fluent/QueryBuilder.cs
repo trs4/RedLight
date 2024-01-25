@@ -19,6 +19,18 @@ internal static class QueryBuilder
     }
 
     [MethodImpl(Flags.HotPath)]
+    public static void BuildLiteBlock(StringBuilder builder, QueryOptions options, DatabaseConnection connection, List<MultiValueColumn> columns,
+        string tableName, int startIndex, int packetSize)
+    {
+        int number = 0;
+        builder.Append("SELECT ");
+        ColumnBuilder.Build(builder, columns, f => builder.Append(tableName).Append(".[column").Append(++number).Append("] ").Append(f.Name));
+        builder.Append(" FROM (\r\n");
+        BuildValues(builder, connection, columns, startIndex, packetSize);
+        builder.Append("\r\n) AS ").Append(tableName);
+    }
+
+    [MethodImpl(Flags.HotPath)]
     public static void BuildPacketBlock(StringBuilder builder, QueryOptions options, DatabaseConnection connection, List<MultiValueColumn> columns,
         string tableName, int packetSize, int packetCount, int rowCount)
     {

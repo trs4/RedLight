@@ -42,18 +42,18 @@ public abstract class DatabaseDeleteQueries
     {
         ArgumentNullException.ThrowIfNull(row);
         var table = TableGenerator.From<TEnum>();
-        string columnName = table.Identity.Name ?? throw new InvalidOperationException(nameof(table.Identity));
+        string identityColumnName = table.Identity.Name ?? throw new InvalidOperationException(nameof(table.Identity));
         var query = CreateQuery<TEnum>();
         var type = typeof(TResult);
 
         if (type == typeof(DataSet))
-            Append(query, table, columnName, ((DataSet)(object)row).Values.First());
+            Append(query, table, identityColumnName, ((DataSet)(object)row).Values.First());
         else if (type == typeof(DataTable))
-            Append(query, table, columnName, (DataTable)(object)row);
+            Append(query, table, identityColumnName, (DataTable)(object)row);
         else if (type.IsClass && !type.IsSystem())
         {
-            var propertyInfo = type.GetProperty(columnName) ?? throw new InvalidOperationException(columnName);
-            query.WithRawTerm(columnName, Op.Equal, table.IdentityColumn, propertyInfo.GetValue(row));
+            var identityPropertyInfo = type.GetProperty(identityColumnName) ?? throw new InvalidOperationException(identityColumnName);
+            query.WithRawTerm(identityColumnName, Op.Equal, table.IdentityColumn, identityPropertyInfo.GetValue(row));
         }
         else
             throw new NotImplementedException();
@@ -61,15 +61,15 @@ public abstract class DatabaseDeleteQueries
         return query;
     }
 
-    private static void Append(DeleteQuery query, Table table, string columnName, DataTable dataTable)
+    private static void Append(DeleteQuery query, Table table, string identityColumnName, DataTable dataTable)
     {
-        if (!dataTable.TryGetValue(columnName, out var dataColumn))
-            throw new InvalidOperationException(columnName);
+        if (!dataTable.TryGetValue(identityColumnName, out var dataColumn))
+            throw new InvalidOperationException(identityColumnName);
 
-        query.WithRawTerm(columnName, Op.Equal, table.IdentityColumn, dataColumn.GetObject(0)); // %%TODO
+        query.WithRawTerm(identityColumnName, Op.Equal, table.IdentityColumn, dataColumn.GetObject(0)); // %%TODO
     }
 
-    /// <summary>Создаёт запрос добавления множественных данных</summary>
+    /// <summary>Создаёт запрос удаления множественных данных</summary>
     /// <typeparam name="TResult">Тип результата</typeparam>
     /// <typeparam name="TEnum">Имя таблицы</typeparam>
     /// <param name="rows">Вставляемый объект</param>
@@ -78,25 +78,25 @@ public abstract class DatabaseDeleteQueries
     {
         ArgumentNullException.ThrowIfNull(rows);
         var table = TableGenerator.From<TEnum>();
-        string columnName = table.Identity.Name ?? throw new InvalidOperationException(nameof(table.Identity));
+        string identityColumnName = table.Identity.Name ?? throw new InvalidOperationException(nameof(table.Identity));
         var query = CreateQuery<TEnum>();
         var type = typeof(TResult);
 
         if (type == typeof(DataSet))
-            AppendValues(query, table, columnName, ((DataSet)(object)rows).Values.First());
+            AppendValues(query, table, identityColumnName, ((DataSet)(object)rows).Values.First());
         else if (type == typeof(DataTable))
-            AppendValues(query, table, columnName, (DataTable)(object)rows);
+            AppendValues(query, table, identityColumnName, (DataTable)(object)rows);
         else if (type.IsClass && !type.IsSystem())
         {
-            var propertyInfo = type.GetProperty(columnName) ?? throw new InvalidOperationException(columnName);
+            var identityPropertyInfo = type.GetProperty(identityColumnName) ?? throw new InvalidOperationException(identityColumnName);
             var dataType = DataType.Int32; // %%TODO
             var dataColumn = DataColumn.Create(dataType, rows.Count);
             int index = 0;
 
             foreach (var row in rows)
-                dataColumn.SetObject(index++, propertyInfo.GetValue(row));
+                dataColumn.SetObject(index++, identityPropertyInfo.GetValue(row));
 
-            query.Where.WithValuesColumnTerm(columnName, dataColumn, rows.Count);
+            query.Where.WithValuesColumnTerm(identityColumnName, dataColumn, rows.Count);
         }
         else
             throw new NotImplementedException();
@@ -104,12 +104,12 @@ public abstract class DatabaseDeleteQueries
         return query;
     }
 
-    private static void AppendValues(DeleteQuery query, Table table, string columnName, DataTable dataTable)
+    private static void AppendValues(DeleteQuery query, Table table, string identityColumnName, DataTable dataTable)
     {
-        if (!dataTable.TryGetValue(columnName, out var dataColumn))
-            throw new InvalidOperationException(columnName);
+        if (!dataTable.TryGetValue(identityColumnName, out var dataColumn))
+            throw new InvalidOperationException(identityColumnName);
 
-        query.Where.WithValuesColumnTerm(columnName, dataColumn, dataTable.RowCount);
+        query.Where.WithValuesColumnTerm(identityColumnName, dataColumn, dataTable.RowCount);
     }
 
 

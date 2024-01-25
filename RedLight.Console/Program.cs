@@ -28,9 +28,12 @@ using var connection = DatabaseConnection.Create(connectionString);
 
 var tracks = new List<Track>()
 {
-    new Track() { Guid = Guid.NewGuid(), Path = "test1", Title = "q1", Year = 2024, Duration = DateTime.Now.TimeOfDay, Artist = "w1", Created = DateTime.Now, Size = 4 },
-    new Track() { Guid = Guid.NewGuid(), Path = "test2", Title = "q2", Year = 2024, Duration = DateTime.Now.TimeOfDay, Artist = "w2", Created = DateTime.Now, Size = 5 },
-    new Track() { Guid = Guid.NewGuid(), Path = "test3", Title = "q3", Year = 2024, Duration = DateTime.Now.TimeOfDay, Artist = "w3", Created = DateTime.Now, Size = 7 },
+    new Track() { Guid = Guid.NewGuid(), Path = "test1", Title = "q1", Year = 2024, Duration = DateTime.Now.TimeOfDay, Artist = "w1",
+        Created = DateTime.Now, Size = 4 },
+    new Track() { Guid = Guid.NewGuid(), Path = "test2", Title = "q2", Year = 2024, Duration = DateTime.Now.TimeOfDay, Artist = "w2",
+        Created = DateTime.Now.AddDays(1), Size = 5 },
+    new Track() { Guid = Guid.NewGuid(), Path = "test3", Title = "q3", Year = 2024, Duration = DateTime.Now.TimeOfDay, Artist = "w3",
+        Created = DateTime.Now.AddDays(2), Size = 7 },
 };
 
 var track = tracks[0];
@@ -54,7 +57,25 @@ connection.Insert.CreateWithParseMultiQuery<Track, Tracks>(tracks).Fill();
 //List<Track> r3 = connection.Select.CreateWithParseQuery<Track, Tracks>("t").Get();
 //var q1 = TableGenerator.From<ColumnType>();
 
-List<Track> r6 = connection.Select.CreateWithParseQuery<Track, Tracks>().Get();
+List<Track> tracks2 = connection.Select.CreateWithParseQuery<Track, Tracks>().Get();
+var track2 = tracks2[0];
+
+foreach (var t in tracks2)
+{
+    t.Genre = "test";
+    t.Added = DateTime.Now.AddDays(10);
+}
+
+//var r20 = connection.Update.CreateWithParseQuery<Track, Tracks>(track2).Sql;
+var r21 = connection.Update.CreateWithParseMultiQuery<Track, Tracks>(tracks2).Sql;
+//var r22 = connection.Update.CreateWithParseQuery<Track, Tracks>(track2).Run();
+var r23 = connection.Update.CreateWithParseMultiQuery<Track, Tracks>(tracks2).Run();
+
+
+//var r10 = connection.Delete.CreateWithParseQuery<Track, Tracks>(track).Sql;
+//var r11 = connection.Delete.CreateWithParseQuery<Track, Tracks>(tracks).Sql;
+//var r12 = connection.Delete.CreateWithParseQuery<Track, Tracks>(track).Run();
+//var r13 = connection.Delete.CreateWithParseQuery<Track, Tracks>(tracks).Run();
 
 Console.WriteLine("Exit");
 Console.ReadLine();

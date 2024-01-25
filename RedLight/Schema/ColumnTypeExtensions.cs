@@ -2,7 +2,7 @@
 
 namespace RedLight;
 
-/// <summary>Расширения для тип колонки</summary>
+/// <summary>Расширения для типа колонки</summary>
 public static class ColumnTypeExtensions
 {
     /// <summary>Получить тип колонки</summary>

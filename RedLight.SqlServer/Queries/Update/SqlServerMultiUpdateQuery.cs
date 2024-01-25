@@ -9,7 +9,7 @@ internal sealed class SqlServerMultiUpdateQuery : MultiUpdateQuery
 
     protected override void BuildPackets(StringBuilder builder, QueryOptions options, int packetSize, int packetCount, int rowCount)
     {
-        var (columns, onTerm) = PrepareColumns();
+        var (columns, onTerm) = PrepareColumns(Alias);
         builder.Append("UPDATE ").Append(Alias).Append("\r\n    SET ");
 
         ColumnBuilder.Build(builder, columns,
