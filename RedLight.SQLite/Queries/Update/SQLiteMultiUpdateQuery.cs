@@ -25,5 +25,5 @@ internal sealed class SQLiteMultiUpdateQuery : MultiUpdateQuery
 
     protected override void BuildPacketBlock(StringBuilder builder, QueryOptions options,
         int packetSize, int packetCount, int rowCount)
-        => QueryBuilder.BuildPacketBlock(builder, options, Connection, _columns, DataAlias, packetSize, packetCount, rowCount);
+        => QueryBuilder.BuildPacketLiteBlock(builder, options, Connection, _columns, DataAlias, packetSize, packetCount, rowCount);
 }

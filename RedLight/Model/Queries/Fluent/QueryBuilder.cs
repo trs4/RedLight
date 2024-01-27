@@ -49,6 +49,24 @@ internal static class QueryBuilder
     }
 
     [MethodImpl(Flags.HotPath)]
+    public static void BuildPacketLiteBlock(StringBuilder builder, QueryOptions options, DatabaseConnection connection, List<MultiValueColumn> columns,
+        string tableName, int packetSize, int packetCount, int rowCount)
+    {
+        builder.Append("SELECT * FROM ( /* count: ").Append(rowCount).Append(" packet size: ").Append(packetSize).Append(" */\r\n");
+        int startIndex = 0;
+
+        for (int packetIndex = 0; packetIndex < packetCount; packetIndex++)
+        {
+            BuildLiteBlock(builder, options, connection, columns, tableName, startIndex, packetSize);
+            builder.Append("\r\n  UNION ALL\r\n");
+            startIndex += packetCount;
+        }
+
+        BuildLiteBlock(builder, options, connection, columns, tableName, startIndex, rowCount - startIndex);
+        builder.Append("\r\n) AS ").Append(tableName);
+    }
+
+    [MethodImpl(Flags.HotPath)]
     public static void BuildValues(StringBuilder builder, DatabaseConnection connection, List<MultiValueColumn> columns,
         int startIndex, int packetSize)
     {
