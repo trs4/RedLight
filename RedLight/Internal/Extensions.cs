@@ -148,4 +148,7 @@ internal static class Extensions
     public static string TrimWhitespaces(this string name) => name[0] == ' ' || name[^1] == ' ' ? name.Trim() : name;
 
     public static int GetPacketCount(int count, int packetSize) => (int)Math.Ceiling((double)count / packetSize);
+
+    public static HashSet<string> GetExcludedColumnNames(IReadOnlyCollection<string> excludedColumns)
+        => excludedColumns is null ? null : (excludedColumns as HashSet<string> ?? new HashSet<string>(excludedColumns, StringComparer.OrdinalIgnoreCase));
 }

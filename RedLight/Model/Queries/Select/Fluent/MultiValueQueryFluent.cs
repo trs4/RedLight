@@ -115,15 +115,43 @@ public static class MultiValueQueryFluent
 
     /// <summary>Добавляет поле добавления данных</summary>
     /// <param name="dataTable">Таблица данных</param>
-    /// <param name="excludeColumnName">Исключаемый столбец</param>
-    public static TQuery AddColumns<TQuery>(this TQuery query, DataTable dataTable, string excludeColumnName)
+    /// <param name="excludedColumnName">Исключаемый столбец</param>
+    public static TQuery AddColumns<TQuery>(this TQuery query, DataTable dataTable, string excludedColumnName)
+        where TQuery : MultiValueQuery
+    {
+        ArgumentNullException.ThrowIfNull(dataTable);
+        ArgumentNullException.ThrowIfNull(excludedColumnName);
+
+        foreach (var pair in dataTable)
+        {
+            if (pair.Key.Equals(excludedColumnName, StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            var dataColumn = pair.Value;
+
+            if (!_readFromColumns.TryGetValue(Extensions.GetHash(dataColumn), out var func))
+                throw new NotSupportedException(dataColumn.GetType().FullName);
+
+            query.AddColumnCore(func(query.Connection.Naming.GetName(pair.Key), dataColumn, dataTable.RowCount));
+        }
+
+        return query;
+    }
+
+    /// <summary>Добавляет поле добавления данных</summary>
+    /// <param name="dataTable">Таблица данных</param>
+    /// <param name="excludedColumnNames">Исключить колонки</param>
+    public static TQuery AddColumns<TQuery>(this TQuery query, DataTable dataTable, HashSet<string> excludedColumnNames)
         where TQuery : MultiValueQuery
     {
         ArgumentNullException.ThrowIfNull(dataTable);
 
+        if (excludedColumnNames?.Count == 0)
+            return query.AddColumns(dataTable);
+
         foreach (var pair in dataTable)
         {
-            if (pair.Key.Equals(excludeColumnName, StringComparison.OrdinalIgnoreCase))
+            if (excludedColumnNames.Contains(pair.Key))
                 continue;
 
             var dataColumn = pair.Value;
