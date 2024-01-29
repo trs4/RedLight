@@ -1,4 +1,5 @@
 ﻿using System;
+using RedLight.Internal;
 
 namespace RedLight.SQLite;
 
@@ -6,7 +7,16 @@ internal sealed class SQLiteValueEscape : ValueEscape
 {
     public SQLiteValueEscape(DatabaseConnection connection) : base(connection) { }
 
-    public override string Escape(string value) => $"'{value}'";
+    public override string Escape(string value)
+    {
+        if (value is null)
+            return Consts.Null;
+
+        if (value.Contains('\''))
+            value = value.Replace("'", "''");
+
+        return $"'{value}'";
+    }
 
     public override string Escape(DateTime value)
     {
