@@ -55,8 +55,6 @@ public abstract class MultiUpdateQuery : MultiValueQuery
             {
                 if (columns.ContainsKey(column.DataColumn)) // Проверяем чтобы не добавить лишние поля
                     columns[column.DataColumn] = column.Column;
-                else
-                    throw new InvalidOperationException($"Column '{column.DataColumn}' not found");
             }
         }
 
