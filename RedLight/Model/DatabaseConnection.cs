@@ -152,7 +152,7 @@ public abstract class DatabaseConnection : IDisposable
             {
                 Executor.BeginSession();
                 reader = Executor.RunReader(sql, Prepare(options), GetTimeout(timeout), behavior);
-                return TableReader.Create<T>(reader, options);
+                return TableReader.Create<T>(this, reader, options);
             }
             finally
             {
@@ -223,7 +223,7 @@ public abstract class DatabaseConnection : IDisposable
             {
                 await Executor.BeginSessionAsync().ConfigureAwait(false);
                 reader = await Executor.RunReaderAsync(sql, Prepare(options), GetTimeout(timeout), token, behavior).ConfigureAwait(false);
-                return TableReader.Create<T>(reader, options);
+                return TableReader.Create<T>(this, reader, options);
             }
             finally
             {

@@ -15,7 +15,7 @@ internal static class Extensions
     [MethodImpl(Flags.HotPath)]
     public static bool IsNullOrEmpty<T>(this List<T> source) => source is null || source.Count == 0;
 
-    public static bool IsCollection(this Type source) => source.GetInterfaces().Any(t => t.IsGenericType && t == typeof(ICollection<>));
+    public static bool IsCollection(this Type source) => source.GetInterfaces().Any(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(ICollection<>));
 
     public static bool IsSystem(this Type source) => source.Namespace is not null && source.Namespace.StartsWith("System");
 

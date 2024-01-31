@@ -8,14 +8,14 @@ namespace RedLight.Internal;
 internal static class TableReader
 {
     [MethodImpl(Flags.HotPath)]
-    public static T Create<T>(DbDataReader reader, QueryOptions options)
+    public static T Create<T>(DatabaseConnection connection, DbDataReader reader, QueryOptions options)
     {
         var type = typeof(T);
 
         if (Types.TryGetICollectionArgumentType(type, out var elementType))
         {
             var source = Activator.CreateInstance<T>();
-            typeof(ListReader).GetMethod(nameof(ListReader.Append)).MakeGenericMethod(elementType).Invoke(null, new object[] { source, reader, options });
+            typeof(ListReader).GetMethod(nameof(ListReader.Append)).MakeGenericMethod(elementType).Invoke(null, new object[] { connection, source, reader, options });
             return source;
         }
         else

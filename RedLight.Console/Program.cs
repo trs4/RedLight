@@ -57,6 +57,8 @@ connection.Insert.CreateWithParseMultiQuery<Track, Tracks>(tracks).Fill();
 //List<Track> r3 = connection.Select.CreateWithParseQuery<Track, Tracks>("t").Get();
 //var q1 = TableGenerator.From<ColumnType>();
 
+//List<string> tracks3 = connection.Select.CreateQuery(nameof(Tracks)).AddColumn(Tracks.Title).Get<List<string>>();
+
 List<Track> tracks2 = connection.Select.CreateWithParseQuery<Track, Tracks>().Get();
 var track2 = tracks2[0];
 
