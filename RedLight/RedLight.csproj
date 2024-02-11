@@ -42,6 +42,10 @@
 	  <LastGenOutput>WhereQueryColumnsFluent.cs</LastGenOutput>
 	  <Generator>TextTemplatingFileGenerator</Generator>
 	</None>
+	<None Update="Model\Queries\Select\Fluent\SelectQueryGetOneFluent.tt">
+	  <LastGenOutput>SelectQueryGetOneFluent.cs</LastGenOutput>
+	  <Generator>TextTemplatingFileGenerator</Generator>
+	</None>
 	<None Update="Model\Queries\Select\Fluent\SelectQueryColumnsWithReadFluent.tt">
 	  <Generator>TextTemplatingFileGenerator</Generator>
 	  <LastGenOutput>SelectQueryColumnsWithReadFluent.cs</LastGenOutput>
@@ -154,6 +158,11 @@
 	  <DesignTime>True</DesignTime>
 	  <AutoGen>True</AutoGen>
 	  <DependentUpon>MultiValueQueryColumnsFluent.tt</DependentUpon>
+	</Compile>
+	<Compile Update="Model\Queries\Select\Fluent\SelectQueryGetOneFluent.cs">
+	  <DependentUpon>SelectQueryGetOneFluent.tt</DependentUpon>
+	  <DesignTime>True</DesignTime>
+	  <AutoGen>True</AutoGen>
 	</Compile>
 	<Compile Update="Model\Queries\Select\Fluent\SelectQueryColumnsWithReadFluent.cs">
 	  <DesignTime>True</DesignTime>

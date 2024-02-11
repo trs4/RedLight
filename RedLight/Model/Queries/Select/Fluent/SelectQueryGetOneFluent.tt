@@ -1,0 +1,67 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+<# var types = new [] { 
+    ("Bool", "bool"),
+    ("Byte", "byte"),
+    ("Short", "short"),
+    ("Int", "int"), 
+    ("Long", "long"),
+    ("Float", "float"),
+    ("Double", "double"),
+    ("Decimal", "decimal"),
+    ("String", "string"),
+    ("DateTime", "DateTime"),
+    ("TimeSpan", "TimeSpan"),
+    ("Guid", "Guid"),
+}; #>
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace RedLight;
+
+public static class SelectQueryGetOneFluent
+{
+<# foreach (var p in types) { #>
+    /// <summary>Выполняет запрос с получением результата в данном формате</summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="value">Значение</param>
+    /// <returns>Результат заданного типа</returns>
+    public static TResult GetOne<TResult>(
+        this SelectQuery<TResult> query, string name, <#= p.Item2 #> value)
+        => query.TakeFirst().WithTerm(name, Op.Equal, value).GetOne();
+
+    /// <summary>Выполняет запрос с получением результата в данном формате</summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="value">Значение</param>
+    /// <param name="token">Оповещение отмены задачи</param>
+    /// <returns>Результат заданного типа</returns>
+    public static Task<TResult> GetOneAsync<TResult>(
+        this SelectQuery<TResult> query, string name, <#= p.Item2 #> value, CancellationToken token = default)
+        => query.TakeFirst().WithTerm(name, Op.Equal, value).GetOneAsync(token);
+        
+    /// <summary>Выполняет запрос с получением результата в данном формате</summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="value">Значение</param>
+    /// <returns>Результат заданного типа</returns>
+    public static TResult GetOne<TResult, TEnum>(
+        this SelectQuery<TResult> query, TEnum name, <#= p.Item2 #> value)
+        where TEnum : Enum
+        => query.TakeFirst().WithTerm(name, Op.Equal, value).GetOne();
+
+    /// <summary>Выполняет запрос с получением результата в данном формате</summary>
+    /// <param name="name">Имя поля</param>
+    /// <param name="value">Значение</param>
+    /// <param name="token">Оповещение отмены задачи</param>
+    /// <returns>Результат заданного типа</returns>
+    public static Task<TResult> GetOneAsync<TResult, TEnum>(
+        this SelectQuery<TResult> query, TEnum name, <#= p.Item2 #> value, CancellationToken token = default)
+        where TEnum : Enum
+        => query.TakeFirst().WithTerm(name, Op.Equal, value).GetOneAsync(token);
+
+<# } #>
+}
