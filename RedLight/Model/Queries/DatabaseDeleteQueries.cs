@@ -53,10 +53,10 @@ public abstract class DatabaseDeleteQueries
         else if (type.IsClass && !type.IsSystem())
         {
             var identityPropertyInfo = type.GetProperty(identityColumnName) ?? throw new InvalidOperationException(identityColumnName);
-            query.WithRawTerm(identityColumnName, Op.Equal, table.IdentityColumn, identityPropertyInfo.GetValue(row));
+            query.WithTerm(identityColumnName, Op.Equal, table.IdentityColumn, identityPropertyInfo.GetValue(row));
         }
         else
-            throw new NotImplementedException();
+            query.WithTerm(identityColumnName, Op.Equal, table.IdentityColumn, row);
 
         return query;
     }
@@ -66,7 +66,7 @@ public abstract class DatabaseDeleteQueries
         if (!dataTable.TryGetValue(identityColumnName, out var dataColumn))
             throw new InvalidOperationException(identityColumnName);
 
-        query.WithRawTerm(identityColumnName, Op.Equal, table.IdentityColumn, dataColumn.GetObject(0)); // %%TODO
+        query.WithTerm(identityColumnName, Op.Equal, table.IdentityColumn, dataColumn.GetObject(0)); // %%TODO
     }
 
     /// <summary>Создаёт запрос удаления множественных данных</summary>
@@ -83,9 +83,9 @@ public abstract class DatabaseDeleteQueries
         var type = typeof(TResult);
 
         if (type == typeof(DataSet))
-            AppendValues(query, table, identityColumnName, ((DataSet)(object)rows).Values.First());
+            AppendValues(query, table, identityColumnName, ((DataSet)(object)rows.First()).Values.First()); // %%TODO
         else if (type == typeof(DataTable))
-            AppendValues(query, table, identityColumnName, (DataTable)(object)rows);
+            AppendValues(query, table, identityColumnName, (DataTable)(object)rows.First()); // %%TODO
         else if (type.IsClass && !type.IsSystem())
         {
             var identityPropertyInfo = type.GetProperty(identityColumnName) ?? throw new InvalidOperationException(identityColumnName);
@@ -99,7 +99,7 @@ public abstract class DatabaseDeleteQueries
             query.Where.WithValuesColumnTerm(identityColumnName, dataColumn, rows.Count);
         }
         else
-            throw new NotImplementedException();
+            query.Where.WithValuesTerm(identityColumnName, rows);
 
         return query;
     }

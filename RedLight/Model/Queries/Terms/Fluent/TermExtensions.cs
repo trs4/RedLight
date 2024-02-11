@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using IcyRain.Tables;
+using RedLight.Internal;
 
 namespace RedLight;
 
@@ -262,6 +264,37 @@ public static class TermExtensions
         return termBlock;
     }
 
+
+    /// <summary>Добавляет условие по полю с значениями</summary>
+    /// <param name="columnName">Имя поля</param>
+    /// <param name="values">Значения</param>
+    public static TermBlock WithValuesTerm<TValue>(this TermBlock termBlock, string columnName, IReadOnlyCollection<TValue> values)
+    {
+        columnName = termBlock.Connection.Naming.GetName(columnName);
+
+        if (termBlock.Owner is WhereQuery q && q.Alias is not null)
+            columnName = Naming.GetRawNameWithAlias(q.Alias, columnName);
+
+        termBlock.AddTerm(InTermAction<TValue>.Instance.Create(termBlock.Owner, columnName, values));
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с значениями</summary>
+    /// <param name="columnName">Имя поля</param>
+    /// <param name="values">Значения</param>
+    public static TermBlock WithValuesTerm<TValue, TEnum>(this TermBlock termBlock, TEnum columnName, IReadOnlyCollection<TValue> values)
+        where TEnum : Enum
+    {
+        string escapedColumnName = termBlock.Connection.Naming.GetName(columnName);
+
+        if (termBlock.Owner is WhereQuery q && q.Alias is not null)
+            escapedColumnName = Naming.GetRawNameWithAlias(q.Alias, escapedColumnName);
+
+        termBlock.AddTerm(InTermAction<TValue>.Instance.Create(termBlock.Owner, escapedColumnName, values));
+        return termBlock;
+    }
+
+
     /// <summary>Добавляет условие по полю с значениями</summary>
     /// <param name="columnName">Имя поля</param>
     /// <param name="dataColumn">Столбец данных</param>
@@ -323,6 +356,41 @@ public static class TermExtensions
         term.Not = true;
         return termBlock;
     }
+
+
+    /// <summary>Добавляет условие по полю с значениями</summary>
+    /// <param name="columnName">Имя поля</param>
+    /// <param name="values">Значения</param>
+    public static TermBlock WithNotValuesTerm<TValue>(this TermBlock termBlock, string columnName, IReadOnlyCollection<TValue> values)
+    {
+        columnName = termBlock.Connection.Naming.GetName(columnName);
+
+        if (termBlock.Owner is WhereQuery q && q.Alias is not null)
+            columnName = Naming.GetRawNameWithAlias(q.Alias, columnName);
+
+        var term = InTermAction<TValue>.Instance.Create(termBlock.Owner, columnName, values);
+        term.Not = true;
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с значениями</summary>
+    /// <param name="columnName">Имя поля</param>
+    /// <param name="values">Значения</param>
+    public static TermBlock WithNotValuesTerm<TValue, TEnum>(this TermBlock termBlock, TEnum columnName, IReadOnlyCollection<TValue> values)
+        where TEnum : Enum
+    {
+        string escapedColumnName = termBlock.Connection.Naming.GetName(columnName);
+
+        if (termBlock.Owner is WhereQuery q && q.Alias is not null)
+            escapedColumnName = Naming.GetRawNameWithAlias(q.Alias, escapedColumnName);
+
+        var term = InTermAction<TValue>.Instance.Create(termBlock.Owner, escapedColumnName, values);
+        term.Not = true;
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
 
     internal static InTerm CreateColumn(Query owner, string name, DataColumn dataColumn, int rowCount)
         => dataColumn.IsNullable ? CreateNullableColumnCore(owner, name, dataColumn, rowCount) : CreateColumnCore(owner, name, dataColumn, rowCount);

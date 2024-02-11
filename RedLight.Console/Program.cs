@@ -59,23 +59,23 @@ connection.Insert.CreateWithParseMultiQuery<Track, Tracks>(tracks).Fill();
 
 //List<string> tracks3 = connection.Select.CreateQuery(nameof(Tracks)).AddColumn(Tracks.Title).Get<List<string>>();
 
-List<Track> tracks2 = connection.Select.CreateWithParseQuery<Track, Tracks>().Get();
-var track2 = tracks2[0];
+//List<Track> tracks2 = connection.Select.CreateWithParseQuery<Track, Tracks>().Get();
+//var track2 = tracks2[0];
 
-foreach (var t in tracks2)
-{
-    t.Genre = "test";
-    t.Added = DateTime.Now.AddDays(10);
-}
+//foreach (var t in tracks2)
+//{
+//    t.Genre = "test";
+//    t.Added = DateTime.Now.AddDays(10);
+//}
 
 //var r20 = connection.Update.CreateWithParseQuery<Track, Tracks>(track2).Sql;
-var r21 = connection.Update.CreateWithParseMultiQuery<Track, Tracks>(tracks2).Sql;
+//var r21 = connection.Update.CreateWithParseMultiQuery<Track, Tracks>(tracks2).Sql;
 //var r22 = connection.Update.CreateWithParseQuery<Track, Tracks>(track2).Run();
-var r23 = connection.Update.CreateWithParseMultiQuery<Track, Tracks>(tracks2).Run();
+//var r23 = connection.Update.CreateWithParseMultiQuery<Track, Tracks>(tracks2).Run();
 
 
-//var r10 = connection.Delete.CreateWithParseQuery<Track, Tracks>(track).Sql;
-//var r11 = connection.Delete.CreateWithParseQuery<Track, Tracks>(tracks).Sql;
+var r10 = connection.Delete.CreateWithParseQuery<int, Tracks>(track.Id).Sql;
+var r11 = connection.Delete.CreateWithParseQuery<int, Tracks>(tracks.Select(t => t.Id).ToList()).Sql;
 //var r12 = connection.Delete.CreateWithParseQuery<Track, Tracks>(track).Run();
 //var r13 = connection.Delete.CreateWithParseQuery<Track, Tracks>(tracks).Run();
 

@@ -54,7 +54,7 @@ public abstract class DatabaseUpdateQueries
         else if (type.IsClass && !type.IsSystem())
         {
             var identityPropertyInfo = type.GetProperty(identityColumnName) ?? throw new InvalidOperationException(identityColumnName);
-            query.WithRawTerm(identityColumnName, Op.Equal, table.IdentityColumn, identityPropertyInfo.GetValue(row));
+            query.WithTerm(identityColumnName, Op.Equal, table.IdentityColumn, identityPropertyInfo.GetValue(row));
 
             foreach (var column in table.Columns)
             {
@@ -80,7 +80,7 @@ public abstract class DatabaseUpdateQueries
         if (!dataTable.TryGetValue(identityColumnName, out var dataColumn))
             throw new InvalidOperationException(identityColumnName);
 
-        query.WithRawTerm(identityColumnName, Op.Equal, table.IdentityColumn, dataColumn.GetObject(0)); // %%TODO
+        query.WithTerm(identityColumnName, Op.Equal, table.IdentityColumn, dataColumn.GetObject(0)); // %%TODO
 
         foreach (var column in table.Columns)
         {
@@ -128,9 +128,9 @@ public abstract class DatabaseUpdateQueries
         var type = typeof(TResult);
 
         if (type == typeof(DataSet))
-            Append(query, table, identityColumnName, ((DataSet)(object)rows).Values.First(), excludedColumnNames);
+            Append(query, table, identityColumnName, ((DataSet)(object)rows.First()).Values.First(), excludedColumnNames); // %%TODO
         else if (type == typeof(DataTable))
-            Append(query, table, identityColumnName, (DataTable)(object)rows, excludedColumnNames);
+            Append(query, table, identityColumnName, (DataTable)(object)rows.First(), excludedColumnNames); // %%TODO
         else if (type.IsClass && !type.IsSystem())
         {
             query.OnColumn(identityColumnName);

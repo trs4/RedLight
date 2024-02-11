@@ -191,9 +191,9 @@ public abstract class DatabaseInsertQueries
         var type = typeof(TResult);
 
         if (type == typeof(DataSet))
-            Append(query, table, ((DataSet)(object)rows).Values.First(), excludedColumnNames);
+            Append(query, table, ((DataSet)(object)rows.First()).Values.First(), excludedColumnNames); // %%TODO
         else if (type == typeof(DataTable))
-            Append(query, table, (DataTable)(object)rows, excludedColumnNames);
+            Append(query, table, (DataTable)(object)rows.First(), excludedColumnNames); // %%TODO
         else if (type.IsClass && !type.IsSystem())
         {
             string identityColumnName = table.Identity?.Name;

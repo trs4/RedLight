@@ -98,6 +98,10 @@
 	  <Generator>TextTemplatingFileGenerator</Generator>
 	  <LastGenOutput>InTerms.cs</LastGenOutput>
 	</None>
+	<None Update="Model\Queries\Terms\Internal\InTermActions.tt">
+	  <Generator>TextTemplatingFileGenerator</Generator>
+	  <LastGenOutput>InTermActions.cs</LastGenOutput>
+	</None>
 	<None Update="Model\Queries\Terms\OperatorTerms.tt">
 	  <Generator>TextTemplatingFileGenerator</Generator>
 	  <LastGenOutput>OperatorTerms.cs</LastGenOutput>
@@ -180,6 +184,11 @@
 	  <DesignTime>True</DesignTime>
 	  <AutoGen>True</AutoGen>
 	  <DependentUpon>InTerms.tt</DependentUpon>
+	</Compile>
+	<Compile Update="Model\Queries\Terms\Internal\InTermActions.cs">
+	  <DesignTime>True</DesignTime>
+	  <AutoGen>True</AutoGen>
+	  <DependentUpon>InTermActions.tt</DependentUpon>
 	</Compile>
 	<Compile Update="Model\Queries\Terms\OperatorTerms.cs">
 	  <DesignTime>True</DesignTime>

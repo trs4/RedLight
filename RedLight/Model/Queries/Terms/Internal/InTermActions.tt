@@ -1,0 +1,32 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+<# var types = new [] { 
+    ("Bool", "bool"),
+    ("Byte", "byte"),
+    ("Short", "short"),
+    ("Int", "int"), 
+    ("Long", "long"),
+    ("Float", "float"),
+    ("Double", "double"),
+    ("Decimal", "decimal"),
+    ("String", "string"), 
+    ("DateTime", "DateTime"),
+    ("TimeSpan", "TimeSpan"),
+    ("Guid", "Guid"),
+}; #>
+using System;
+using System.Collections.Generic;
+
+namespace RedLight.Internal;
+
+<# foreach (var p in types) { #>
+internal sealed class InTermAction<#= p.Item1 #> : InTermAction<<#= p.Item2 #>>
+{
+    public override InTerm<<#= p.Item2 #>> Create(Query owner, string column, IReadOnlyList<<#= p.Item2 #>> values) => new InTerm<#= p.Item1 #>(owner, column, values);
+}
+
+<# } #>
