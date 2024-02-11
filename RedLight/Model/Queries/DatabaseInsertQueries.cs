@@ -58,8 +58,10 @@ public abstract class DatabaseInsertQueries
     /// <typeparam name="TResult">Тип результата</typeparam>
     /// <typeparam name="TEnum">Имя таблицы</typeparam>
     /// <param name="row">Вставляемый объект</param>
+    /// <param name="returningIdentity">Возвращать и проставлять колонку идентификатора</param>
     /// <param name="excludedColumns">Исключить колонки</param>
-    public InsertQuery<TResult> CreateWithParseQuery<TResult, TEnum>(TResult row, IReadOnlyCollection<string> excludedColumns = null)
+    public InsertQuery<TResult> CreateWithParseQuery<TResult, TEnum>(TResult row,
+        bool returningIdentity = true, IReadOnlyCollection<string> excludedColumns = null)
         where TEnum : Enum
     {
         ArgumentNullException.ThrowIfNull(row);
@@ -70,9 +72,9 @@ public abstract class DatabaseInsertQueries
         var type = typeof(TResult);
 
         if (type == typeof(DataSet))
-            Append(query, table, ((DataSet)(object)row).Values.First(), excludedColumnNames);
+            Append(query, table, ((DataSet)(object)row).Values.First(), returningIdentity, excludedColumnNames);
         else if (type == typeof(DataTable))
-            Append(query, table, (DataTable)(object)row, excludedColumnNames);
+            Append(query, table, (DataTable)(object)row, returningIdentity, excludedColumnNames);
         else if (type.IsClass && !type.IsSystem())
         {
             string identityColumnName = table.Identity?.Name;
@@ -86,7 +88,7 @@ public abstract class DatabaseInsertQueries
                     if (propertyInfo is null)
                         continue;
 
-                    if (column.Name.Equals(identityColumnName, StringComparison.OrdinalIgnoreCase))
+                    if (returningIdentity && column.Name.Equals(identityColumnName, StringComparison.OrdinalIgnoreCase))
                     {
                         query.AddReturningColumnCore(query.Connection.Naming.GetName(column.Name));
                         query.AddReadAction(column, (obj, value) => propertyInfo.SetValue(obj, value));
@@ -118,10 +120,17 @@ public abstract class DatabaseInsertQueries
         return query;
     }
 
-    private static void Append<TResult>(InsertQuery<TResult> query, Table table, DataTable dataTable, HashSet<string> excludedColumnNames)
+    private static void Append<TResult>(InsertQuery<TResult> query, Table table, DataTable dataTable,
+        bool returningIdentity, HashSet<string> excludedColumnNames)
     {
-        string identityColumnName = table.Identity?.Name;
-        dataTable.TryGetValue(identityColumnName, out var returningColumn);
+        string identityColumnName = null;
+        DataColumn returningColumn = null;
+
+        if (returningIdentity)
+        {
+            identityColumnName = table.Identity?.Name;
+            dataTable.TryGetValue(identityColumnName, out returningColumn);
+        }
 
         if (returningColumn is not null)
         {
@@ -179,8 +188,10 @@ public abstract class DatabaseInsertQueries
     /// <typeparam name="TResult">Тип результата</typeparam>
     /// <typeparam name="TEnum">Имя таблицы</typeparam>
     /// <param name="rows">Вставляемый объект</param>
+    /// <param name="returningIdentity">Возвращать и проставлять колонку идентификатора</param>
     /// <param name="excludedColumns">Исключить колонки</param>
-    public MultiInsertQuery<TResult> CreateWithParseMultiQuery<TResult, TEnum>(IReadOnlyCollection<TResult> rows, IReadOnlyCollection<string> excludedColumns = null)
+    public MultiInsertQuery<TResult> CreateWithParseMultiQuery<TResult, TEnum>(IReadOnlyCollection<TResult> rows,
+        bool returningIdentity = true, IReadOnlyCollection<string> excludedColumns = null)
         where TEnum : Enum
     {
         ArgumentNullException.ThrowIfNull(rows);
@@ -191,9 +202,9 @@ public abstract class DatabaseInsertQueries
         var type = typeof(TResult);
 
         if (type == typeof(DataSet))
-            Append(query, table, ((DataSet)(object)rows.First()).Values.First(), excludedColumnNames); // %%TODO
+            Append(query, table, ((DataSet)(object)rows.First()).Values.First(), returningIdentity, excludedColumnNames); // %%TODO
         else if (type == typeof(DataTable))
-            Append(query, table, (DataTable)(object)rows.First(), excludedColumnNames); // %%TODO
+            Append(query, table, (DataTable)(object)rows.First(), returningIdentity, excludedColumnNames); // %%TODO
         else if (type.IsClass && !type.IsSystem())
         {
             string identityColumnName = table.Identity?.Name;
@@ -207,7 +218,7 @@ public abstract class DatabaseInsertQueries
                     if (propertyInfo is null)
                         continue;
 
-                    if (column.Name.Equals(identityColumnName, StringComparison.OrdinalIgnoreCase))
+                    if (returningIdentity && column.Name.Equals(identityColumnName, StringComparison.OrdinalIgnoreCase))
                     {
                         query.AddReturningColumnCore(query.Connection.Naming.GetName(column.Name));
                         query.AddReadAction(column, (obj, value) => propertyInfo.SetValue(obj, value));
@@ -239,10 +250,17 @@ public abstract class DatabaseInsertQueries
         return query;
     }
 
-    private static void Append<TResult>(MultiInsertQuery<TResult> query, Table table, DataTable dataTable, HashSet<string> excludedColumnNames)
+    private static void Append<TResult>(MultiInsertQuery<TResult> query, Table table, DataTable dataTable,
+        bool returningIdentity, HashSet<string> excludedColumnNames)
     {
-        string identityColumnName = table.Identity?.Name;
-        dataTable.TryGetValue(identityColumnName, out var returningColumn);
+        string identityColumnName = null;
+        DataColumn returningColumn = null;
+
+        if (returningIdentity)
+        {
+            identityColumnName = table.Identity?.Name;
+            dataTable.TryGetValue(identityColumnName, out returningColumn);
+        }
 
         if (returningColumn is not null)
         {

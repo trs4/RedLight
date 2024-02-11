@@ -37,6 +37,10 @@ var tracks = new List<Track>()
 };
 
 var track = tracks[0];
+int number = 1000;
+
+foreach (var t in tracks)
+    t.Id = number++;
 
 //var r1 = connection.Select.CreateWithParseQuery<List<Track>, Tracks>("t");
 //var r2 = connection.Select.CreateWithParseQuery<Track, Tracks>("t").Sql;
@@ -52,8 +56,8 @@ var track = tracks[0];
 
 connection.Schema.CreateTableWithParseQuery<Tracks>().Run();
 
-connection.Insert.CreateWithParseQuery<Track, Tracks>(track).Fill(); // Duration (TimeSpan) - integer
-connection.Insert.CreateWithParseMultiQuery<Track, Tracks>(tracks).Fill();
+//connection.Insert.CreateWithParseQuery<Track, Tracks>(track).Fill(); // Duration (TimeSpan) - integer
+connection.Insert.CreateWithParseMultiQuery<Track, Tracks>(tracks, returningIdentity: false).Fill();
 //List<Track> r3 = connection.Select.CreateWithParseQuery<Track, Tracks>("t").Get();
 //var q1 = TableGenerator.From<ColumnType>();
 
