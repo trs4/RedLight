@@ -240,6 +240,33 @@ public abstract class SelectQuery<TResult> : SelectQuery, IUnionQuery
         return await Connection.GetAsync(sql, readAction, options, Timeout, token).ConfigureAwait(false);
     }
 
+
+    /// <summary>Выполняет запрос с получением результата в данном формате</summary>
+    /// <returns>Результат заданного типа</returns>
+    public TResult GetOne()
+    {
+        var (sql, options) = BuildSql(); // Не занимаем соединение с сервером
+
+        var readAction = new Func<DbDataReader, TResult>(reader
+            => DataReader.ReadOne(Connection, reader, options, _readActions, () => _columns.OfType<SelectColumn>().Select(f => f.Name)));
+
+        return Connection.Get(sql, readAction, options, Timeout);
+    }
+
+    /// <summary>Выполняет запрос с получением результата в данном формате</summary>
+    /// <param name="token">Оповещение отмены задачи</param>
+    /// <returns>Результат заданного типа</returns>
+    public async Task<TResult> GetOneAsync(CancellationToken token = default)
+    {
+        var (sql, options) = BuildSql(); // Не занимаем соединение с сервером
+
+        var readAction = new Func<DbDataReader, TResult>(reader
+            => DataReader.ReadOne(Connection, reader, options, _readActions, () => _columns.OfType<SelectColumn>().Select(f => f.Name)));
+
+        return await Connection.GetAsync(sql, readAction, options, Timeout, token).ConfigureAwait(false);
+    }
+
+
     [MethodImpl(Flags.HotPath)]
     internal void AddReadAction<T>(Action<TResult, T> readAction) => ScalarReadBuilder.Add(Connection, ref _readActions, readAction);
 
