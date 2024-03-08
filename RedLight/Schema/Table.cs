@@ -18,6 +18,9 @@ public sealed class Table
     /// <summary>Список полей</summary>
     public IReadOnlyCollection<Column> Columns => _columns.Values;
 
+    /// <summary>Описание схемы данных</summary>
+    public Database Database { get; internal set; }
+
     internal Column IdentityColumn { get; set; } // %%TODO Отдельный тип сделать
 
     internal IdentityColumnAttribute Identity { get; set; } // %%TODO Отдельный тип сделать
@@ -26,8 +29,16 @@ public sealed class Table
 
     internal PrimaryKeyAttribute PrimaryKey { get; set; } // %%TODO Отдельный тип сделать
 
-    /// <summary>Описание схемы данных</summary>
-    public Database Database { get; internal set; }
+    internal string[] GetPrimaryKeyNames()
+    {
+        if (PrimaryKey is not null && PrimaryKey.Columns.Length > 0)
+            return PrimaryKey.Columns;
+
+        if (Identity is not null)
+            return [Identity.Name];
+
+        throw new InvalidOperationException(nameof(PrimaryKey));
+    }
 
     /// <summary>Ищет описание поля по наименованию</summary>
     /// <param name="columnName">Наименование</param>

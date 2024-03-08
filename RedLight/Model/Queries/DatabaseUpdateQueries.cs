@@ -35,32 +35,40 @@ public abstract class DatabaseUpdateQueries
     /// <summary>Создаёт запрос изменения данных</summary>
     /// <typeparam name="TResult">Тип результата</typeparam>
     /// <typeparam name="TEnum">Имя таблицы</typeparam>
-    /// <param name="row">Вставляемый объект</param>
+    /// <param name="row">Обновляемый объект</param>
     /// <param name="excludedColumns">Исключить колонки</param>
     public UpdateQuery CreateWithParseQuery<TResult, TEnum>(TResult row, IReadOnlyCollection<string> excludedColumns = null)
         where TEnum : Enum
     {
         ArgumentNullException.ThrowIfNull(row);
         var table = TableGenerator.From<TEnum>();
-        string identityColumnName = table.Identity.Name ?? throw new InvalidOperationException(nameof(table.Identity));
+        string[] primaryKeyNames = table.GetPrimaryKeyNames();
         var excludedColumnNames = Extensions.GetExcludedColumnNames(excludedColumns);
         var query = CreateQuery<TEnum>();
         var type = typeof(TResult);
 
         if (type == typeof(DataSet))
-            Append(query, table, identityColumnName, ((DataSet)(object)row).Values.First(), excludedColumnNames);
+            Append(query, table, primaryKeyNames, ((DataSet)(object)row).Values.First(), excludedColumnNames);
         else if (type == typeof(DataTable))
-            Append(query, table, identityColumnName, (DataTable)(object)row, excludedColumnNames);
+            Append(query, table, primaryKeyNames, (DataTable)(object)row, excludedColumnNames);
         else if (type.IsClass && !type.IsSystem())
         {
-            var identityPropertyInfo = type.GetProperty(identityColumnName) ?? throw new InvalidOperationException(identityColumnName);
-            query.WithTerm(identityColumnName, Op.Equal, table.IdentityColumn, identityPropertyInfo.GetValue(row));
+            var columns = new Column[primaryKeyNames.Length];
+
+            for (int i = 0; i < primaryKeyNames.Length; i++)
+            {
+                string primaryKeyName = primaryKeyNames[i];
+                var column = table.FindColumn(primaryKeyName);
+                var primaryKeyPropertyInfo = type.GetProperty(primaryKeyName) ?? throw new InvalidOperationException(primaryKeyName);
+                query.WithTerm(primaryKeyName, Op.Equal, column, primaryKeyPropertyInfo.GetValue(row));
+                columns[i] = column;
+            }
 
             foreach (var column in table.Columns)
             {
                 var propertyInfo = type.GetProperty(column.Name);
 
-                if (propertyInfo is null || column.Name.Equals(identityColumnName, StringComparison.OrdinalIgnoreCase))
+                if (propertyInfo is null || columns.Any(c => ReferenceEquals(column, c)))
                     continue;
 
                 if (excludedColumnNames?.Contains(column.Name) ?? false)
@@ -75,16 +83,25 @@ public abstract class DatabaseUpdateQueries
         return query;
     }
 
-    private static void Append(UpdateQuery query, Table table, string identityColumnName, DataTable dataTable, HashSet<string> excludedColumnNames)
+    private static void Append(UpdateQuery query, Table table, string[] primaryKeyNames, DataTable dataTable, HashSet<string> excludedColumnNames)
     {
-        if (!dataTable.TryGetValue(identityColumnName, out var dataColumn))
-            throw new InvalidOperationException(identityColumnName);
+        var columns = new Column[primaryKeyNames.Length];
 
-        query.WithTerm(identityColumnName, Op.Equal, table.IdentityColumn, dataColumn.GetObject(0)); // %%TODO
+        for (int i = 0; i < primaryKeyNames.Length; i++)
+        {
+            string primaryKeyName = primaryKeyNames[i];
+            var column = table.FindColumn(primaryKeyName);
+
+            if (!dataTable.TryGetValue(primaryKeyName, out var dataColumn))
+                throw new InvalidOperationException(primaryKeyName);
+
+            query.WithTerm(primaryKeyName, Op.Equal, column, dataColumn.GetObject(0)); // %%TODO
+            columns[i] = column;
+        }
 
         foreach (var column in table.Columns)
         {
-            if (!dataTable.TryGetValue(column.Name, out dataColumn) || column.Name.Equals(identityColumnName, StringComparison.OrdinalIgnoreCase))
+            if (!dataTable.TryGetValue(column.Name, out var dataColumn) || columns.Any(c => ReferenceEquals(column, c)))
                 continue;
 
             if (excludedColumnNames?.Contains(column.Name) ?? false)
@@ -115,7 +132,7 @@ public abstract class DatabaseUpdateQueries
     /// <summary>Создаёт запрос изменения множественных данных</summary>
     /// <typeparam name="TResult">Тип результата</typeparam>
     /// <typeparam name="TEnum">Имя таблицы</typeparam>
-    /// <param name="rows">Вставляемый объект</param>
+    /// <param name="rows">Обновляемые объекты</param>
     /// <param name="excludedColumns">Исключить колонки</param>
     public MultiUpdateQuery CreateWithParseMultiQuery<TResult, TEnum>(IReadOnlyCollection<TResult> rows, IReadOnlyCollection<string> excludedColumns = null)
         where TEnum : Enum
@@ -123,17 +140,18 @@ public abstract class DatabaseUpdateQueries
         ArgumentNullException.ThrowIfNull(rows);
         var table = TableGenerator.From<TEnum>();
         var query = CreateMultiQuery<TEnum>();
-        string identityColumnName = table.Identity.Name ?? throw new InvalidOperationException(nameof(table.Identity));
+        string[] primaryKeyNames = table.GetPrimaryKeyNames();
         var excludedColumnNames = Extensions.GetExcludedColumnNames(excludedColumns);
         var type = typeof(TResult);
 
         if (type == typeof(DataSet))
-            Append(query, table, identityColumnName, ((DataSet)(object)rows.First()).Values.First(), excludedColumnNames); // %%TODO
+            Append(query, table, primaryKeyNames, ((DataSet)(object)rows.First()).Values.First(), excludedColumnNames); // %%TODO
         else if (type == typeof(DataTable))
-            Append(query, table, identityColumnName, (DataTable)(object)rows.First(), excludedColumnNames); // %%TODO
+            Append(query, table, primaryKeyNames, (DataTable)(object)rows.First(), excludedColumnNames); // %%TODO
         else if (type.IsClass && !type.IsSystem())
         {
-            query.OnColumn(identityColumnName);
+            foreach (string primaryKeyName in primaryKeyNames)
+                query.OnColumn(primaryKeyName);
 
             foreach (var column in table.Columns)
             {
@@ -142,7 +160,7 @@ public abstract class DatabaseUpdateQueries
                 if (propertyInfo is null)
                     continue;
 
-                if (!column.Name.Equals(identityColumnName, StringComparison.OrdinalIgnoreCase))
+                if (!primaryKeyNames.Any(primaryKeyName => column.Name.Equals(primaryKeyName, StringComparison.OrdinalIgnoreCase)))
                     query.ReplaceDataColumn(column.Name, column.Name);
 
                 if (excludedColumnNames?.Contains(column.Name) ?? false)
@@ -164,16 +182,17 @@ public abstract class DatabaseUpdateQueries
         return query;
     }
 
-    private static void Append(MultiUpdateQuery query, Table table, string identityColumnName, DataTable dataTable, HashSet<string> excludedColumnNames)
+    private static void Append(MultiUpdateQuery query, Table table, string[] primaryKeyNames, DataTable dataTable, HashSet<string> excludedColumnNames)
     {
-        query.OnColumn(identityColumnName);
+        foreach (string primaryKeyName in primaryKeyNames)
+            query.OnColumn(primaryKeyName);
 
         foreach (var column in table.Columns)
         {
             if (!dataTable.TryGetValue(column.Name, out var dataColumn))
                 continue;
 
-            if (!column.Name.Equals(identityColumnName, StringComparison.OrdinalIgnoreCase))
+            if (!primaryKeyNames.Any(primaryKeyName => column.Name.Equals(primaryKeyName, StringComparison.OrdinalIgnoreCase)))
                 query.ReplaceDataColumn(column.Name, column.Name);
 
             if (excludedColumnNames?.Contains(column.Name) ?? false)

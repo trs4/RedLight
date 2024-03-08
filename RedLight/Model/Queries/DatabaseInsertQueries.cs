@@ -187,7 +187,7 @@ public abstract class DatabaseInsertQueries
     /// <summary>Создаёт запрос добавления множественных данных</summary>
     /// <typeparam name="TResult">Тип результата</typeparam>
     /// <typeparam name="TEnum">Имя таблицы</typeparam>
-    /// <param name="rows">Вставляемый объект</param>
+    /// <param name="rows">Вставляемые объекты</param>
     /// <param name="returningIdentity">Возвращать и проставлять колонку идентификатора</param>
     /// <param name="excludedColumns">Исключить колонки</param>
     public MultiInsertQuery<TResult> CreateWithParseMultiQuery<TResult, TEnum>(IReadOnlyCollection<TResult> rows,

@@ -78,10 +78,20 @@ connection.Insert.CreateWithParseMultiQuery<Track, Tracks>(tracks, returningIden
 //var r23 = connection.Update.CreateWithParseMultiQuery<Track, Tracks>(tracks2).Run();
 
 
-var r10 = connection.Delete.CreateWithParseQuery<int, Tracks>(track.Id).Sql;
-var r11 = connection.Delete.CreateWithParseQuery<int, Tracks>(tracks.Select(t => t.Id).ToList()).Sql;
+//var r10 = connection.Delete.CreateWithParseQuery<int, Tracks>(track.Id).Sql;
+//var r11 = connection.Delete.CreateWithParseQuery<int, Tracks>(tracks.Select(t => t.Id).ToList()).Sql;
 //var r12 = connection.Delete.CreateWithParseQuery<Track, Tracks>(track).Run();
 //var r13 = connection.Delete.CreateWithParseQuery<Track, Tracks>(tracks).Run();
+
+var trackReproduceds = new List<TrackReproduced>()
+{
+    new TrackReproduced(1, 2, 3),
+    new TrackReproduced(11, 21, 31),
+    new TrackReproduced(12, 22, 32),
+    new TrackReproduced(13, 23, 33),
+};
+
+var r10 = connection.Delete.CreateWithParseMultiQuery<TrackReproduced, TrackReproduceds>(trackReproduceds).Sql;
 
 Console.WriteLine("Exit");
 Console.ReadLine();

@@ -48,6 +48,7 @@ public static class WhereQueryFluent
     public static TQuery WithTerm<TQuery>(this TQuery query, string column, Op termOperator, Column valueColumn, object value)
         where TQuery : WhereQuery
     {
+        ArgumentNullException.ThrowIfNull(valueColumn);
         string escapedColumnName = query.Connection.Naming.GetName(column);
         string escapedValue = query.Connection.Escaping.EscapeData(valueColumn, value);
         query.Where.AddTerm(new RawOperatorTerm(query, escapedColumnName, termOperator, escapedValue));
@@ -63,6 +64,7 @@ public static class WhereQueryFluent
         where TQuery : WhereQuery
         where TEnum : Enum
     {
+        ArgumentNullException.ThrowIfNull(valueColumn);
         string escapedColumnName = query.Connection.Naming.GetName(column);
         string escapedValue = query.Connection.Escaping.EscapeData(valueColumn, value);
         query.Where.AddTerm(new RawOperatorTerm(query, escapedColumnName, termOperator, escapedValue));
