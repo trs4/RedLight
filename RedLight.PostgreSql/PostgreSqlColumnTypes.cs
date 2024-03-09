@@ -106,6 +106,7 @@ internal sealed class PostgreSqlColumnTypes : ColumnTypes<NpgsqlDbType>
     private void AppendTypeOptions_Decimal(StringBuilder builder, NpgsqlDbType type, int size, int precision)
     {
         int maxSize = GetMaxSize(type);
+
         if (size < 0 || size > maxSize)
             size = maxSize;
 
