@@ -129,7 +129,9 @@ public abstract class DatabaseInsertQueries
         if (returningIdentity)
         {
             identityColumnName = table.Identity?.Name;
-            dataTable.TryGetValue(identityColumnName, out returningColumn);
+
+            if (identityColumnName is not null)
+                dataTable.TryGetValue(identityColumnName, out returningColumn);
         }
 
         if (returningColumn is not null)
@@ -259,7 +261,9 @@ public abstract class DatabaseInsertQueries
         if (returningIdentity)
         {
             identityColumnName = table.Identity?.Name;
-            dataTable.TryGetValue(identityColumnName, out returningColumn);
+
+            if (identityColumnName is not null)
+                dataTable.TryGetValue(identityColumnName, out returningColumn);
         }
 
         if (returningColumn is not null)

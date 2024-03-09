@@ -185,6 +185,40 @@ public abstract class DatabaseDeleteQueries
         return query;
     }
 
+    /// <summary>Создаёт запрос удаления множественных данных</summary>
+    /// <typeparam name="TResult">Тип результата</typeparam>
+    /// <typeparam name="TEnum">Имя таблицы</typeparam>
+    /// <param name="row">Удаляемый объект</param>
+    public MultiDeleteQuery CreateWithParseMultiQuery<TResult, TEnum>(TResult row)
+        where TEnum : Enum
+    {
+        ArgumentNullException.ThrowIfNull(row);
+        var table = TableGenerator.From<TEnum>();
+        string[] primaryKeyNames = table.GetPrimaryKeyNames();
+        var query = CreateMultiQuery<TEnum>();
+        var type = typeof(TResult);
+
+        if (type == typeof(DataSet))
+            Append(query, table, primaryKeyNames, ((DataSet)(object)row).Values.First()); // %%TODO
+        else if (type == typeof(DataTable))
+            Append(query, table, primaryKeyNames, (DataTable)(object)row); // %%TODO
+        else if (type.IsClass && !type.IsSystem())
+        {
+            foreach (string primaryKeyName in primaryKeyNames)
+            {
+                var primaryKeyPropertyInfo = type.GetProperty(primaryKeyName) ?? throw new InvalidOperationException(primaryKeyName);
+                query.WithTerm(primaryKeyName, Op.Equal, table.FindColumn(primaryKeyName), primaryKeyPropertyInfo.GetValue(row));
+            }
+        }
+        else
+        {
+            foreach (string primaryKeyName in primaryKeyNames)
+                query.WithTerm(primaryKeyName, Op.Equal, table.FindColumn(primaryKeyName), row);
+        }
+
+        return query;
+    }
+
     private static void Append(MultiDeleteQuery query, Table table, string[] primaryKeyNames, DataTable dataTable)
     {
         foreach (var column in table.Columns)
