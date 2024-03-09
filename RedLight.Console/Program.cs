@@ -1,4 +1,5 @@
-﻿using RedLight;
+﻿using IcyRain.Tables;
+using RedLight;
 using RedLight.Console;
 
 File.Delete(@"C:\Users\evolution\Music\Sunrise\MediaLibrary.db");
@@ -83,15 +84,18 @@ connection.Insert.CreateWithParseMultiQuery<Track, Tracks>(tracks, returningIden
 //var r12 = connection.Delete.CreateWithParseQuery<Track, Tracks>(track).Run();
 //var r13 = connection.Delete.CreateWithParseQuery<Track, Tracks>(tracks).Run();
 
-var trackReproduceds = new List<TrackReproduced>()
-{
-    new TrackReproduced(1, 2, 3),
-    new TrackReproduced(11, 21, 31),
-    new TrackReproduced(12, 22, 32),
-    new TrackReproduced(13, 23, 33),
-};
+//var trackReproduceds = new List<TrackReproduced>()
+//{
+//    new TrackReproduced(1, 2, 3),
+//    new TrackReproduced(11, 21, 31),
+//    new TrackReproduced(12, 22, 32),
+//    new TrackReproduced(13, 23, 33),
+//};
 
-var r10 = connection.Delete.CreateWithParseMultiQuery<TrackReproduced, TrackReproduceds>(trackReproduceds).Sql;
+//var r10 = connection.Delete.CreateWithParseMultiQuery<TrackReproduced, TrackReproduceds>(trackReproduceds).Sql;
+//var r30 = connection.Select.CreateWithParseQuery<DataTable, Tracks>().Get();
+var r31 = connection.Select.CreateWithParseQuery<Tracks>().Get<DataTable>();
+var r32 = connection.Select.CreateWithParseQuery<DataTable, Tracks>().GetOne();
 
 Console.WriteLine("Exit");
 Console.ReadLine();

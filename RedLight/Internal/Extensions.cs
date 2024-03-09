@@ -24,6 +24,8 @@ internal static class Extensions
     [MethodImpl(Flags.HotPath)]
     public static IReadOnlyList<T> TakeIReadOnlyList<T>(this IEnumerable<T> source) => source as IReadOnlyList<T> ?? new List<T>(source);
 
+    public static List<T> ToList<T>(T source) => ReferenceEquals(source, default) ? new() : new() { source };
+
     public static DateTime ConvertToLocal(this DatabaseConnection connection, DateTime value) => value.Kind switch
     {
         DateTimeKind.Unspecified => connection.Parameters.AutoConvertDatesInUTC

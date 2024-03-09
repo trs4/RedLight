@@ -33,6 +33,21 @@ public abstract class DatabaseSelectQueries
         where TEnum : Enum
         => Create<DataResult>(Connection.Naming.GetNameWithSchema<TEnum>(), alias is null ? null : Connection.Naming.GetName(alias));
 
+    /// <summary>Создаёт запрос выборки данных</summary>
+    /// <typeparam name="TEnum">Имя таблицы</typeparam>
+    /// <param name="alias">Псевдоним таблицы</param>
+    public SelectQuery CreateWithParseQuery<TEnum>(string alias = null)
+        where TEnum : Enum
+    {
+        var table = TableGenerator.From<TEnum>();
+        var query = CreateQuery<DataResult>(table.Name, alias);
+
+        foreach (var column in table.Columns)
+            query.AddColumn(column.Name, alias);
+
+        return query;
+    }
+
 
     /// <summary>Создаёт запрос выборки данных</summary>
     /// <typeparam name="TResult">Тип результата</typeparam>

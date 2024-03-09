@@ -15,7 +15,7 @@ internal static class TableReader
         if (Types.TryGetICollectionArgumentType(type, out var elementType))
         {
             var source = Activator.CreateInstance<T>();
-            typeof(ListReader).GetMethod(nameof(ListReader.Append)).MakeGenericMethod(elementType).Invoke(null, new object[] { connection, source, reader, options });
+            typeof(ListReader).GetMethod(nameof(ListReader.Append)).MakeGenericMethod(elementType).Invoke(null, [connection, source, reader, options]);
             return source;
         }
         else

@@ -75,7 +75,7 @@ public sealed class RowReadAction
 
     public void Read()
     {
-        int row = ++_dataTable.RowCount;
+        int row = _dataTable.RowCount++;
 
         for (int columnIndex = 0; columnIndex < _readActions.Length; columnIndex++)
             _readActions[columnIndex].Read(_reader, row);

@@ -217,7 +217,26 @@ public abstract class SelectQuery<TResult> : SelectQuery, IUnionQuery
 
     /// <summary>Выполняет запрос с получением результата в данном формате</summary>
     /// <returns>Результат заданного типа</returns>
-    public List<TResult> Get()
+    public List<TResult> Get() => _readActions is null ? Extensions.ToList(Get<TResult>()) : GetCore();
+
+    /// <summary>Выполняет запрос с получением результата в данном формате</summary>
+    /// <param name="token">Оповещение отмены задачи</param>
+    /// <returns>Результат заданного типа</returns>
+    public async Task<List<TResult>> GetAsync(CancellationToken token = default)
+        => _readActions is null ? Extensions.ToList(await GetAsync<TResult>(token).ConfigureAwait(false)) : await GetCoreAsync(token).ConfigureAwait(false);
+
+    /// <summary>Выполняет запрос с получением результата в данном формате</summary>
+    /// <returns>Результат заданного типа</returns>
+    public TResult GetOne() => _readActions is null ? Get<TResult>() : GetOneCore();
+
+    /// <summary>Выполняет запрос с получением результата в данном формате</summary>
+    /// <param name="token">Оповещение отмены задачи</param>
+    /// <returns>Результат заданного типа</returns>
+    public async Task<TResult> GetOneAsync(CancellationToken token = default)
+        => _readActions is null ? await GetAsync<TResult>(token).ConfigureAwait(false) : await GetOneCoreAsync(token).ConfigureAwait(false);
+
+
+    private List<TResult> GetCore()
     {
         var (sql, options) = BuildSql(); // Не занимаем соединение с сервером
 
@@ -227,10 +246,7 @@ public abstract class SelectQuery<TResult> : SelectQuery, IUnionQuery
         return Connection.Get(sql, readAction, options, Timeout);
     }
 
-    /// <summary>Выполняет запрос с получением результата в данном формате</summary>
-    /// <param name="token">Оповещение отмены задачи</param>
-    /// <returns>Результат заданного типа</returns>
-    public async Task<List<TResult>> GetAsync(CancellationToken token = default)
+    private async Task<List<TResult>> GetCoreAsync(CancellationToken token)
     {
         var (sql, options) = BuildSql(); // Не занимаем соединение с сервером
 
@@ -240,10 +256,7 @@ public abstract class SelectQuery<TResult> : SelectQuery, IUnionQuery
         return await Connection.GetAsync(sql, readAction, options, Timeout, token).ConfigureAwait(false);
     }
 
-
-    /// <summary>Выполняет запрос с получением результата в данном формате</summary>
-    /// <returns>Результат заданного типа</returns>
-    public TResult GetOne()
+    private TResult GetOneCore()
     {
         var (sql, options) = BuildSql(); // Не занимаем соединение с сервером
 
@@ -253,10 +266,7 @@ public abstract class SelectQuery<TResult> : SelectQuery, IUnionQuery
         return Connection.Get(sql, readAction, options, Timeout);
     }
 
-    /// <summary>Выполняет запрос с получением результата в данном формате</summary>
-    /// <param name="token">Оповещение отмены задачи</param>
-    /// <returns>Результат заданного типа</returns>
-    public async Task<TResult> GetOneAsync(CancellationToken token = default)
+    private async Task<TResult> GetOneCoreAsync(CancellationToken token = default)
     {
         var (sql, options) = BuildSql(); // Не занимаем соединение с сервером
 

@@ -143,24 +143,7 @@ public abstract class DatabaseConnection : IDisposable
     {
         var type = typeof(T);
 
-        if (type.IsCollection())
-        {
-            var behavior = (options?.MultipleResult ?? false) ? CommandBehavior.Default : CommandBehavior.SingleResult;
-            DbDataReader reader = null;
-
-            try
-            {
-                Executor.BeginSession();
-                reader = Executor.RunReader(sql, Prepare(options), GetTimeout(timeout), behavior);
-                return TableReader.Create<T>(this, reader, options);
-            }
-            finally
-            {
-                (reader as IDisposable)?.Dispose();
-                Executor.EndSession();
-            }
-        }
-        else if (type == typeof(DataSet))
+        if (type == typeof(DataSet))
         {
             var behavior = (options?.MultipleResult ?? false) ? CommandBehavior.Default : CommandBehavior.SingleResult;
             DbDataReader reader = null;
@@ -194,6 +177,24 @@ public abstract class DatabaseConnection : IDisposable
                 Executor.EndSession();
             }
         }
+        else if (type.IsCollection())
+        {
+            var behavior = (options?.MultipleResult ?? false) ? CommandBehavior.Default : CommandBehavior.SingleResult;
+            DbDataReader reader = null;
+
+            try
+            {
+                Executor.BeginSession();
+                reader = Executor.RunReader(sql, Prepare(options), GetTimeout(timeout), behavior);
+                return TableReader.Create<T>(this, reader, options);
+            }
+            finally
+            {
+                (reader as IDisposable)?.Dispose();
+                Executor.EndSession();
+            }
+        }
+
 
         if (!type.IsSystem())
             throw new NotImplementedException();
@@ -214,24 +215,7 @@ public abstract class DatabaseConnection : IDisposable
     {
         var type = typeof(T);
 
-        if (type.IsCollection())
-        {
-            var behavior = (options?.MultipleResult ?? false) ? CommandBehavior.Default : CommandBehavior.SingleResult;
-            DbDataReader reader = null;
-
-            try
-            {
-                await Executor.BeginSessionAsync().ConfigureAwait(false);
-                reader = await Executor.RunReaderAsync(sql, Prepare(options), GetTimeout(timeout), token, behavior).ConfigureAwait(false);
-                return TableReader.Create<T>(this, reader, options);
-            }
-            finally
-            {
-                (reader as IDisposable)?.Dispose();
-                Executor.EndSession();
-            }
-        }
-        else if (type == typeof(DataSet))
+        if (type == typeof(DataSet))
         {
             var behavior = (options?.MultipleResult ?? false) ? CommandBehavior.Default : CommandBehavior.SingleResult;
             DbDataReader reader = null;
@@ -258,6 +242,23 @@ public abstract class DatabaseConnection : IDisposable
                 await Executor.BeginSessionAsync().ConfigureAwait(false);
                 reader = await Executor.RunReaderAsync(sql, Prepare(options), GetTimeout(timeout), token, behavior).ConfigureAwait(false);
                 return (T)(object)TableReader.CreateDataTable(this, reader, options);
+            }
+            finally
+            {
+                (reader as IDisposable)?.Dispose();
+                Executor.EndSession();
+            }
+        }
+        else if (type.IsCollection())
+        {
+            var behavior = (options?.MultipleResult ?? false) ? CommandBehavior.Default : CommandBehavior.SingleResult;
+            DbDataReader reader = null;
+
+            try
+            {
+                await Executor.BeginSessionAsync().ConfigureAwait(false);
+                reader = await Executor.RunReaderAsync(sql, Prepare(options), GetTimeout(timeout), token, behavior).ConfigureAwait(false);
+                return TableReader.Create<T>(this, reader, options);
             }
             finally
             {
