@@ -146,7 +146,7 @@ public static class MultiValueQueryFluent
     {
         ArgumentNullException.ThrowIfNull(dataTable);
 
-        if (excludedColumnNames?.Count == 0)
+        if (excludedColumnNames is null || excludedColumnNames.Count == 0)
             return query.AddColumns(dataTable);
 
         foreach (var pair in dataTable)

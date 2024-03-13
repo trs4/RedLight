@@ -17,7 +17,7 @@ internal static class ListReader
         else if (source is ICollection<T> collection)
             AppendCore(connection, collection, reader, options);
         else
-            throw new NotSupportedException();
+            throw new NotSupportedException(source.GetType().FullName);
     }
 
     private static void AppendCore<T>(DatabaseConnection connection, List<T> source, DbDataReader reader, QueryOptions options)
