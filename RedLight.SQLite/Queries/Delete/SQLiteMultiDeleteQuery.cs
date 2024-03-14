@@ -28,10 +28,4 @@ internal sealed class SQLiteMultiDeleteQuery : MultiDeleteQuery
         BuildWhereBlock(builder, options);
     }
 
-    protected override void BuildBlock(StringBuilder builder, QueryOptions options, int startIndex, int packetSize)
-        => QueryBuilder.BuildBlock(builder, options, Connection, _columns, DataAlias, startIndex, packetSize);
-
-    protected override void BuildPacketBlock(StringBuilder builder, QueryOptions options,
-        int packetSize, int packetCount, int rowCount)
-        => QueryBuilder.BuildPacketBlock(builder, options, Connection, _columns, DataAlias, packetSize, packetCount, rowCount);
 }

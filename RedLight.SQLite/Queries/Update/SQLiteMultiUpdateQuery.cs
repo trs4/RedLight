@@ -20,10 +20,14 @@ internal sealed class SQLiteMultiUpdateQuery : MultiUpdateQuery
         BuildWhereBlock(builder, options, onTerm);
     }
 
-    protected override void BuildBlock(StringBuilder builder, QueryOptions options, int startIndex, int packetSize)
-        => QueryBuilder.BuildLiteBlock(builder, options, Connection, _columns, DataAlias, startIndex, packetSize);
+    protected override void BuildBlock(StringBuilder builder, QueryOptions options, int startIndex, int packetSize, string tableName)
+    {
+        int number = 0;
+        builder.Append("SELECT ");
+        ColumnBuilder.Build(builder, _columns, f => builder.Append(tableName).Append(".[column").Append(++number).Append("] ").Append(f.Name));
+        builder.Append(" FROM (\r\n");
+        QueryBuilder.BuildValues(builder, Connection, _columns, startIndex, packetSize);
+        builder.Append("\r\n) AS ").Append(tableName);
+    }
 
-    protected override void BuildPacketBlock(StringBuilder builder, QueryOptions options,
-        int packetSize, int packetCount, int rowCount)
-        => QueryBuilder.BuildPacketLiteBlock(builder, options, Connection, _columns, DataAlias, packetSize, packetCount, rowCount);
 }

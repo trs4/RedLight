@@ -31,4 +31,5 @@ public abstract class DataMultiValueQuery : MultiValueQuery, ICheckExistenceQuer
         return _checkExistenceJoin;
     }
 
+    protected override string GetPacketTableName() => DataAlias;
 }

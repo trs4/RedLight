@@ -55,19 +55,44 @@ public abstract class MultiValueQuery : WhereQuery
             OnEmptyRows();
     }
 
+    protected virtual string GetPacketTableName() => TableName;
+
     protected virtual void BuildPackets(StringBuilder builder, QueryOptions options,
         int packetSize, int packetCount, int rowCount)
     {
+        string tableName = GetPacketTableName();
+
         if (packetCount == 1)
-            BuildBlock(builder, options, 0, rowCount);
+            BuildBlock(builder, options, 0, rowCount, tableName);
         else
-            BuildPacketBlock(builder, options, packetSize, packetCount - 1, rowCount);
+            BuildPacketBlock(builder, options, packetSize, packetCount - 1, rowCount, tableName);
     }
 
-    protected abstract void BuildBlock(StringBuilder builder, QueryOptions options, int startIndex, int packetSize);
+    protected virtual void BuildBlock(StringBuilder builder, QueryOptions options, int startIndex, int packetSize, string tableName)
+    {
+        builder.Append("SELECT * FROM (\r\n");
+        QueryBuilder.BuildValues(builder, Connection, _columns, startIndex, packetSize);
+        builder.Append("\r\n) AS ").Append(tableName).Append(" (");
+        ColumnBuilder.Build(builder, _columns, f => f.Name);
+        builder.Append(')');
+    }
 
-    protected abstract void BuildPacketBlock(StringBuilder builder, QueryOptions options,
-        int packetSize, int packetCount, int rowCount);
+    protected virtual void BuildPacketBlock(StringBuilder builder, QueryOptions options,
+        int packetSize, int packetCount, int rowCount, string tableName)
+    {
+        builder.Append("SELECT * FROM ( /* count: ").Append(rowCount).Append(" packet size: ").Append(packetSize).Append(" */\r\n");
+        int startIndex = 0;
+
+        for (int packetIndex = 0; packetIndex < packetCount; packetIndex++)
+        {
+            BuildBlock(builder, options, startIndex, packetSize, tableName);
+            builder.Append("\r\n  UNION ALL\r\n");
+            startIndex += packetCount;
+        }
+
+        BuildBlock(builder, options, startIndex, rowCount - startIndex, tableName);
+        builder.Append("\r\n) AS ").Append(tableName);
+    }
 
     protected virtual void OnEmptyRows() { }
 

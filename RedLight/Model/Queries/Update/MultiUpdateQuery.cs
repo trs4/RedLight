@@ -64,5 +64,7 @@ public abstract class MultiUpdateQuery : MultiValueQuery
         return (columns, onTerm);
     }
 
+    protected override string GetPacketTableName() => DataAlias;
+
     #endregion
 }

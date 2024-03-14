@@ -18,7 +18,7 @@ internal sealed class PostgreSqlMultiDeleteQuery : MultiDeleteQuery
         }
 
         builder.Append("DELETE FROM ").Append(TableName)
-            .Append("\r\nFROM ").Append(TableName).Append(" ").Append(Alias)
+            .Append("\r\nFROM ").Append(TableName).Append(' ').Append(Alias)
             .Append("\r\nINNER JOIN\r\n(\r\n");
 
         base.BuildPackets(builder, options, packetSize, packetCount, rowCount);
@@ -28,10 +28,4 @@ internal sealed class PostgreSqlMultiDeleteQuery : MultiDeleteQuery
         BuildWhereBlock(builder, options);
     }
 
-    protected override void BuildBlock(StringBuilder builder, QueryOptions options, int startIndex, int packetSize)
-        => QueryBuilder.BuildBlock(builder, options, Connection, _columns, DataAlias, startIndex, packetSize);
-
-    protected override void BuildPacketBlock(StringBuilder builder, QueryOptions options,
-        int packetSize, int packetCount, int rowCount)
-        => QueryBuilder.BuildPacketBlock(builder, options, Connection, _columns, DataAlias, packetSize, packetCount, rowCount);
 }
