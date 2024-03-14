@@ -149,6 +149,41 @@ public abstract class DatabaseSelectQueries
         where TEnum : Enum
         => CreateConst(Connection.Naming.GetName<TEnum>());
 
+    /// <summary>Создаёт запрос ввода данных</summary>
+    /// <param name="tableName">Имя таблицы</param>
+    /// <param name="dataTable">Таблица данных</param>
+    public ConstSelectQuery CreateConstQuery(string tableName, DataTable dataTable)
+    {
+        ArgumentNullException.ThrowIfNull(dataTable);
+        var query = CreateConst(Connection.Naming.GetName(tableName));
+        query.AddColumns(dataTable);
+        return query;
+    }
+
+    /// <summary>Создаёт запрос ввода данных</summary>
+    /// <param name="tableName">Имя таблицы</param>
+    /// <param name="dataTable">Таблица данных</param>
+    public ConstSelectQuery CreateConstQuery<TEnum>(TEnum tableName, DataTable dataTable)
+        where TEnum : Enum
+    {
+        ArgumentNullException.ThrowIfNull(dataTable);
+        var query = CreateConst(Connection.Naming.GetName(tableName));
+        query.AddColumns(dataTable);
+        return query;
+    }
+
+    /// <summary>Создаёт запрос ввода данных</summary>
+    /// <typeparam name="TEnum">Имя таблицы</typeparam>
+    /// <param name="dataTable">Таблица данных</param>
+    public ConstSelectQuery CreateConstQuery<TEnum>(DataTable dataTable)
+        where TEnum : Enum
+    {
+        ArgumentNullException.ThrowIfNull(dataTable);
+        var query = CreateConst(Connection.Naming.GetName<TEnum>());
+        query.AddColumns(dataTable);
+        return query;
+    }
+
     protected abstract SelectQuery<TResult> Create<TResult>(string tableName, string alias);
 
     protected abstract ConstSelectQuery CreateConst(string tableName);
