@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace RedLight;
 
@@ -127,6 +128,36 @@ public static class SelectQueryJoinFluent
             type);
 
         join?.Invoke(joinBlock);
+        return query;
+    }
+
+    /// <summary>Добавляет пересечение с другой таблицей</summary>
+    /// <param name="values">таблица данных</param>
+    /// <param name="join">Построитель условий пересечения</param>
+    public static TQuery Join<TQuery>(this TQuery query, ConstSelectQuery values, Action<JoinQuery> join = null)
+        where TQuery : SelectQuery
+    {
+        ArgumentNullException.ThrowIfNull(values);
+        var joinBlock = query.AddJoinCore(values.TableName, values);
+        join?.Invoke(joinBlock);
+        return query;
+    }
+
+    /// <summary>Добавляет пересечение с другой таблицей</summary>
+    /// <param name="values">Таблица данных</param>
+    /// <param name="onColumnNames">Поля объединения</param>
+    public static TQuery Join<TQuery>(this TQuery query, ConstSelectQuery values, IEnumerable<string> onColumnNames)
+        where TQuery : SelectQuery
+    {
+        ArgumentNullException.ThrowIfNull(values);
+        var joinBlock = query.AddJoinCore(values.TableName, values);
+
+        if (onColumnNames is not null)
+        {
+            foreach (string columnName in onColumnNames)
+                joinBlock.WithTerm(columnName, Op.Equal, columnName);
+        }
+
         return query;
     }
 

@@ -85,7 +85,15 @@ public abstract class SelectQuery : WhereQuery
     {
         var join = Connection.CreateJoin(this, tableName, alias);
         join.Type = type;
+        _joins.Add(join);
+        return join;
+    }
 
+    [MethodImpl(Flags.HotPath)]
+    internal JoinQuery AddJoinCore(string tableName, ConstSelectQuery values, string alias = null, JoinQueryMode type = JoinQueryMode.Inner)
+    {
+        var join = Connection.CreateJoin(this, tableName, alias, values);
+        join.Type = type;
         _joins.Add(join);
         return join;
     }

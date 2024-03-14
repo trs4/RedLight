@@ -14,6 +14,10 @@ public abstract class JoinQuery : Query
         On = new TermBlock(this);
     }
 
+    protected JoinQuery(Query owner, string tableName, string alias, ConstSelectQuery values)
+        : this(owner, tableName, alias)
+        => Values = values ?? throw new ArgumentNullException(nameof(values));
+
     /// <summary>Имя таблицы, с которой осуществляется объединение</summary>
     public string TableName { get; }
 
@@ -28,6 +32,9 @@ public abstract class JoinQuery : Query
 
     /// <summary>Список подсказок запроса</summary>
     public Hints Hints { get; set; } = Hints.NoLock;
+
+    /// <summary>Объединение с таблицей данных</summary>
+    public ConstSelectQuery Values { get; }
 
     #region Internal
 

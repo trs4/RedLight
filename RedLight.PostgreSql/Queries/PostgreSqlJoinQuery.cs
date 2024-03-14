@@ -7,6 +7,8 @@ internal sealed class PostgreSqlJoinQuery : JoinQuery
 {
     public PostgreSqlJoinQuery(Query owner, string tableName, string alias) : base(owner, tableName, alias) { }
 
+    public PostgreSqlJoinQuery(Query owner, string tableName, string alias, ConstSelectQuery values) : base(owner, tableName, alias, values) { }
+
     internal override void BuildJoinSql(StringBuilder builder, QueryOptions options, TermBlock additionalBlockTerm = null)
     {
         builder.AppendLine().Append(GetTypeString()).Append(TableName);

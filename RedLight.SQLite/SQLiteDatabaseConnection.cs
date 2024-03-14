@@ -18,6 +18,9 @@ internal sealed class SQLiteDatabaseConnection : DatabaseConnection
 
     internal override JoinQuery CreateJoin(Query owner, string tableName, string alias) => new SQLiteJoinQuery(owner, tableName, alias);
 
+    internal override JoinQuery CreateJoin(Query owner, string tableName, string alias, ConstSelectQuery values)
+        => new SQLiteJoinQuery(owner, tableName, alias, values);
+
     internal override Executor CreateExecutor(DatabaseConnectionParameters parameters) => new SQLiteExecutor(parameters);
 
     protected override DatabaseFunctions CreateFunctions() => new SQLiteDatabaseFunctions();

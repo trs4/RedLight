@@ -7,6 +7,8 @@ internal sealed class SqlServerJoinQuery : JoinQuery
 {
     public SqlServerJoinQuery(Query owner, string tableName, string alias) : base(owner, tableName, alias) { }
 
+    public SqlServerJoinQuery(Query owner, string tableName, string alias, ConstSelectQuery values) : base(owner, tableName, alias, values) { }
+
     internal override void BuildJoinSql(StringBuilder builder, QueryOptions options, TermBlock additionalBlockTerm = null)
     {
         builder.AppendLine().Append(GetTypeString()).Append(TableName);

@@ -18,6 +18,9 @@ internal sealed class PostgreSqlDatabaseConnection : DatabaseConnection
 
     internal override JoinQuery CreateJoin(Query owner, string tableName, string alias) => new PostgreSqlJoinQuery(owner, tableName, alias);
 
+    internal override JoinQuery CreateJoin(Query owner, string tableName, string alias, ConstSelectQuery values)
+        => new PostgreSqlJoinQuery(owner, tableName, alias, values);
+
     internal override Executor CreateExecutor(DatabaseConnectionParameters parameters) => new PostgreSqlExecutor(parameters);
 
     protected override DatabaseFunctions CreateFunctions() => new PostgreSqlDatabaseFunctions();

@@ -18,6 +18,9 @@ internal sealed class SqlServerDatabaseConnection : DatabaseConnection
 
     internal override JoinQuery CreateJoin(Query owner, string tableName, string alias) => new SqlServerJoinQuery(owner, tableName, alias);
 
+    internal override JoinQuery CreateJoin(Query owner, string tableName, string alias, ConstSelectQuery values)
+        => new SqlServerJoinQuery(owner, tableName, alias, values);
+
     internal override Executor CreateExecutor(DatabaseConnectionParameters parameters) => new SqlServerExecutor(parameters);
 
     protected override DatabaseFunctions CreateFunctions() => new SqlServerDatabaseFunctions();

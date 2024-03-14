@@ -86,6 +86,8 @@ public abstract class DatabaseConnection : IDisposable
 
     internal abstract JoinQuery CreateJoin(Query owner, string tableName, string alias);
 
+    internal abstract JoinQuery CreateJoin(Query owner, string tableName, string alias, ConstSelectQuery values);
+
     internal virtual DatabaseTransaction CreateTransaction(string transactionName)
         => new DatabaseTransaction(this, transactionName);
 

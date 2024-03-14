@@ -7,6 +7,8 @@ internal sealed class SQLiteJoinQuery : JoinQuery
 {
     public SQLiteJoinQuery(Query owner, string tableName, string alias) : base(owner, tableName, alias) { }
 
+    public SQLiteJoinQuery(Query owner, string tableName, string alias, ConstSelectQuery values) : base(owner, tableName, alias, values) { }
+
     internal override void BuildJoinSql(StringBuilder builder, QueryOptions options, TermBlock additionalBlockTerm = null)
     {
         builder.AppendLine().Append(GetTypeString()).Append(TableName);
