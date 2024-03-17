@@ -5,18 +5,23 @@
 <#@ import namespace="System.Collections.Generic" #>
 <#@ output extension=".cs" #>
 <# var types = new [] { 
-    ("Bool", "bool"),
-    ("Byte", "byte"),
-    ("Short", "short"),
-    ("Int", "int"), 
-    ("Long", "long"),
-    ("Float", "float"),
-    ("Double", "double"),
-    ("Decimal", "decimal"),
-    ("String", "string"),
-    ("DateTime", "DateTime"),
-    ("TimeSpan", "TimeSpan"),
-    ("Guid", "Guid"),
+    ("Bool", "bool", ""),
+    ("Char", "char", ""),
+    ("SByte", "sbyte", "(byte)"),
+    ("Byte", "byte", ""),
+    ("Short", "short", ""),
+    ("UShort", "ushort", "(short)"),
+    ("Int", "int", ""),
+    ("UInt", "uint", "(int)"),
+    ("Long", "long", ""),
+    ("ULong", "ulong", "(long)"),
+    ("Float", "float", ""),
+    ("Double", "double", ""),
+    ("Decimal", "decimal", ""),
+    ("String", "string", ""),
+    ("Guid", "Guid", ""),
+    ("DateTime", "DateTime", ""),
+    ("TimeSpan", "TimeSpan", ""),
 }; #>
 using System;
 using System.Collections.Generic;
@@ -29,7 +34,7 @@ internal sealed class InTerm<#= p.Item1 #> : InTerm<<#= p.Item2 #>>
 {
     public InTerm<#= p.Item1 #>(Query owner, string column, IReadOnlyList<<#= p.Item2 #>> values) : base(owner, column, values) { }
 
-    protected sealed override string EscapeValue(<#= p.Item2 #> value) => Connection.Escaping.Escape(value);
+    protected sealed override string EscapeValue(<#= p.Item2 #> value) => Connection.Escaping.Escape(<#= p.Item3 #>value);
 }
 
 <# } #>

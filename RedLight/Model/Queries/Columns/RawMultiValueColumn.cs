@@ -13,5 +13,5 @@ internal sealed class RawMultiValueColumn : MultiValueColumn
     /// <summary>Список значений поля</summary>
     public IReadOnlyList<string> EscapedValues { get; }
 
-    internal override string GetEscapedString(DatabaseConnection connection, int rowIndex) => EscapedValues[rowIndex];
+    internal override string GetEscapedString(DatabaseConnection connection, int row) => EscapedValues[row];
 }

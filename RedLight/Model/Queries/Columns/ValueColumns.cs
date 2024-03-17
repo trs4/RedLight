@@ -31,6 +31,62 @@ internal sealed class NullableBoolValueColumn : ValueColumn
 }
 
 /// <summary>Конструктор поля для изменения данных</summary>
+internal sealed class CharValueColumn : ValueColumn
+{
+    public CharValueColumn(string name, char value)
+        : base(name)
+        => Value = value;
+
+    /// <summary>Значение поля</summary>
+    public char Value { get; }
+
+    internal override string GetEscapedString(DatabaseConnection connection, QueryOptions options)
+        => ParameterProcessing.ConstructChar(connection, options, Value);
+}
+
+/// <summary>Конструктор поля для изменения данных</summary>
+internal sealed class NullableCharValueColumn : ValueColumn
+{
+    public NullableCharValueColumn(string name, char? value)
+        : base(name)
+        => Value = value;
+
+    /// <summary>Значение поля</summary>
+    public char? Value { get; }
+
+    internal override string GetEscapedString(DatabaseConnection connection, QueryOptions options)
+        => ParameterProcessing.ConstructNullableChar(connection, options, Value);
+}
+
+/// <summary>Конструктор поля для изменения данных</summary>
+internal sealed class SByteValueColumn : ValueColumn
+{
+    public SByteValueColumn(string name, sbyte value)
+        : base(name)
+        => Value = value;
+
+    /// <summary>Значение поля</summary>
+    public sbyte Value { get; }
+
+    internal override string GetEscapedString(DatabaseConnection connection, QueryOptions options)
+        => ParameterProcessing.ConstructSByte(connection, options, Value);
+}
+
+/// <summary>Конструктор поля для изменения данных</summary>
+internal sealed class NullableSByteValueColumn : ValueColumn
+{
+    public NullableSByteValueColumn(string name, sbyte? value)
+        : base(name)
+        => Value = value;
+
+    /// <summary>Значение поля</summary>
+    public sbyte? Value { get; }
+
+    internal override string GetEscapedString(DatabaseConnection connection, QueryOptions options)
+        => ParameterProcessing.ConstructNullableSByte(connection, options, Value);
+}
+
+/// <summary>Конструктор поля для изменения данных</summary>
 internal sealed class ByteValueColumn : ValueColumn
 {
     public ByteValueColumn(string name, byte value)
@@ -56,6 +112,20 @@ internal sealed class NullableByteValueColumn : ValueColumn
 
     internal override string GetEscapedString(DatabaseConnection connection, QueryOptions options)
         => ParameterProcessing.ConstructNullableByte(connection, options, Value);
+}
+
+/// <summary>Конструктор поля для изменения данных</summary>
+internal sealed class ByteArrayValueColumn : ValueColumn
+{
+    public ByteArrayValueColumn(string name, byte[] value)
+        : base(name)
+        => Value = value;
+
+    /// <summary>Значение поля</summary>
+    public byte[] Value { get; }
+
+    internal override string GetEscapedString(DatabaseConnection connection, QueryOptions options)
+        => ParameterProcessing.ConstructByteArray(connection, options, Value);
 }
 
 /// <summary>Конструктор поля для изменения данных</summary>
@@ -87,6 +157,34 @@ internal sealed class NullableShortValueColumn : ValueColumn
 }
 
 /// <summary>Конструктор поля для изменения данных</summary>
+internal sealed class UShortValueColumn : ValueColumn
+{
+    public UShortValueColumn(string name, ushort value)
+        : base(name)
+        => Value = value;
+
+    /// <summary>Значение поля</summary>
+    public ushort Value { get; }
+
+    internal override string GetEscapedString(DatabaseConnection connection, QueryOptions options)
+        => ParameterProcessing.ConstructUShort(connection, options, Value);
+}
+
+/// <summary>Конструктор поля для изменения данных</summary>
+internal sealed class NullableUShortValueColumn : ValueColumn
+{
+    public NullableUShortValueColumn(string name, ushort? value)
+        : base(name)
+        => Value = value;
+
+    /// <summary>Значение поля</summary>
+    public ushort? Value { get; }
+
+    internal override string GetEscapedString(DatabaseConnection connection, QueryOptions options)
+        => ParameterProcessing.ConstructNullableUShort(connection, options, Value);
+}
+
+/// <summary>Конструктор поля для изменения данных</summary>
 internal sealed class IntValueColumn : ValueColumn
 {
     public IntValueColumn(string name, int value)
@@ -115,6 +213,34 @@ internal sealed class NullableIntValueColumn : ValueColumn
 }
 
 /// <summary>Конструктор поля для изменения данных</summary>
+internal sealed class UIntValueColumn : ValueColumn
+{
+    public UIntValueColumn(string name, uint value)
+        : base(name)
+        => Value = value;
+
+    /// <summary>Значение поля</summary>
+    public uint Value { get; }
+
+    internal override string GetEscapedString(DatabaseConnection connection, QueryOptions options)
+        => ParameterProcessing.ConstructUInt(connection, options, Value);
+}
+
+/// <summary>Конструктор поля для изменения данных</summary>
+internal sealed class NullableUIntValueColumn : ValueColumn
+{
+    public NullableUIntValueColumn(string name, uint? value)
+        : base(name)
+        => Value = value;
+
+    /// <summary>Значение поля</summary>
+    public uint? Value { get; }
+
+    internal override string GetEscapedString(DatabaseConnection connection, QueryOptions options)
+        => ParameterProcessing.ConstructNullableUInt(connection, options, Value);
+}
+
+/// <summary>Конструктор поля для изменения данных</summary>
 internal sealed class LongValueColumn : ValueColumn
 {
     public LongValueColumn(string name, long value)
@@ -140,6 +266,34 @@ internal sealed class NullableLongValueColumn : ValueColumn
 
     internal override string GetEscapedString(DatabaseConnection connection, QueryOptions options)
         => ParameterProcessing.ConstructNullableLong(connection, options, Value);
+}
+
+/// <summary>Конструктор поля для изменения данных</summary>
+internal sealed class ULongValueColumn : ValueColumn
+{
+    public ULongValueColumn(string name, ulong value)
+        : base(name)
+        => Value = value;
+
+    /// <summary>Значение поля</summary>
+    public ulong Value { get; }
+
+    internal override string GetEscapedString(DatabaseConnection connection, QueryOptions options)
+        => ParameterProcessing.ConstructULong(connection, options, Value);
+}
+
+/// <summary>Конструктор поля для изменения данных</summary>
+internal sealed class NullableULongValueColumn : ValueColumn
+{
+    public NullableULongValueColumn(string name, ulong? value)
+        : base(name)
+        => Value = value;
+
+    /// <summary>Значение поля</summary>
+    public ulong? Value { get; }
+
+    internal override string GetEscapedString(DatabaseConnection connection, QueryOptions options)
+        => ParameterProcessing.ConstructNullableULong(connection, options, Value);
 }
 
 /// <summary>Конструктор поля для изменения данных</summary>
@@ -241,6 +395,34 @@ internal sealed class StringValueColumn : ValueColumn
 }
 
 /// <summary>Конструктор поля для изменения данных</summary>
+internal sealed class GuidValueColumn : ValueColumn
+{
+    public GuidValueColumn(string name, Guid value)
+        : base(name)
+        => Value = value;
+
+    /// <summary>Значение поля</summary>
+    public Guid Value { get; }
+
+    internal override string GetEscapedString(DatabaseConnection connection, QueryOptions options)
+        => ParameterProcessing.ConstructGuid(connection, options, Value);
+}
+
+/// <summary>Конструктор поля для изменения данных</summary>
+internal sealed class NullableGuidValueColumn : ValueColumn
+{
+    public NullableGuidValueColumn(string name, Guid? value)
+        : base(name)
+        => Value = value;
+
+    /// <summary>Значение поля</summary>
+    public Guid? Value { get; }
+
+    internal override string GetEscapedString(DatabaseConnection connection, QueryOptions options)
+        => ParameterProcessing.ConstructNullableGuid(connection, options, Value);
+}
+
+/// <summary>Конструктор поля для изменения данных</summary>
 internal sealed class DateTimeValueColumn : ValueColumn
 {
     public DateTimeValueColumn(string name, DateTime value)
@@ -294,47 +476,5 @@ internal sealed class NullableTimeSpanValueColumn : ValueColumn
 
     internal override string GetEscapedString(DatabaseConnection connection, QueryOptions options)
         => ParameterProcessing.ConstructNullableTimeSpan(connection, options, Value);
-}
-
-/// <summary>Конструктор поля для изменения данных</summary>
-internal sealed class GuidValueColumn : ValueColumn
-{
-    public GuidValueColumn(string name, Guid value)
-        : base(name)
-        => Value = value;
-
-    /// <summary>Значение поля</summary>
-    public Guid Value { get; }
-
-    internal override string GetEscapedString(DatabaseConnection connection, QueryOptions options)
-        => ParameterProcessing.ConstructGuid(connection, options, Value);
-}
-
-/// <summary>Конструктор поля для изменения данных</summary>
-internal sealed class NullableGuidValueColumn : ValueColumn
-{
-    public NullableGuidValueColumn(string name, Guid? value)
-        : base(name)
-        => Value = value;
-
-    /// <summary>Значение поля</summary>
-    public Guid? Value { get; }
-
-    internal override string GetEscapedString(DatabaseConnection connection, QueryOptions options)
-        => ParameterProcessing.ConstructNullableGuid(connection, options, Value);
-}
-
-/// <summary>Конструктор поля для изменения данных</summary>
-internal sealed class ByteArrayValueColumn : ValueColumn
-{
-    public ByteArrayValueColumn(string name, byte[] value)
-        : base(name)
-        => Value = value;
-
-    /// <summary>Значение поля</summary>
-    public byte[] Value { get; }
-
-    internal override string GetEscapedString(DatabaseConnection connection, QueryOptions options)
-        => ParameterProcessing.ConstructByteArray(connection, options, Value);
 }
 

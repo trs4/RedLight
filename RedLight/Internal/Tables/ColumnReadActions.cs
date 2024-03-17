@@ -16,6 +16,32 @@ internal sealed class ColumnReadActionBool : ColumnReadAction
     public override string ToString() => $"{_index} {_column.Type}";
 }
 
+internal sealed class ColumnReadActionChar : ColumnReadAction
+{
+    private readonly CharDataColumn _column;
+
+    public ColumnReadActionChar(DatabaseConnection connection, DataTable dataTable, int index, string name)
+        : base(connection, index)
+        => _column = dataTable.AddCharColumn(name);
+
+    public override void Read(DbDataReader reader, int row) => _column.Set(row, reader.GetChar(_index));
+
+    public override string ToString() => $"{_index} {_column.Type}";
+}
+
+internal sealed class ColumnReadActionSByte : ColumnReadAction
+{
+    private readonly SByteDataColumn _column;
+
+    public ColumnReadActionSByte(DatabaseConnection connection, DataTable dataTable, int index, string name)
+        : base(connection, index)
+        => _column = dataTable.AddSByteColumn(name);
+
+    public override void Read(DbDataReader reader, int row) => _column.Set(row, (sbyte)reader.GetByte(_index));
+
+    public override string ToString() => $"{_index} {_column.Type}";
+}
+
 internal sealed class ColumnReadActionByte : ColumnReadAction
 {
     private readonly ByteDataColumn _column;
@@ -25,6 +51,19 @@ internal sealed class ColumnReadActionByte : ColumnReadAction
         => _column = dataTable.AddByteColumn(name);
 
     public override void Read(DbDataReader reader, int row) => _column.Set(row, reader.GetByte(_index));
+
+    public override string ToString() => $"{_index} {_column.Type}";
+}
+
+internal sealed class ColumnReadActionByteArray : ColumnReadAction
+{
+    private readonly ByteArrayDataColumn _column;
+
+    public ColumnReadActionByteArray(DatabaseConnection connection, DataTable dataTable, int index, string name)
+        : base(connection, index)
+        => _column = dataTable.AddByteArrayColumn(name);
+
+    public override void Read(DbDataReader reader, int row) => _column.Set(row, reader.GetValue(_index) as byte[]);
 
     public override string ToString() => $"{_index} {_column.Type}";
 }
@@ -42,6 +81,19 @@ internal sealed class ColumnReadActionShort : ColumnReadAction
     public override string ToString() => $"{_index} {_column.Type}";
 }
 
+internal sealed class ColumnReadActionUShort : ColumnReadAction
+{
+    private readonly UInt16DataColumn _column;
+
+    public ColumnReadActionUShort(DatabaseConnection connection, DataTable dataTable, int index, string name)
+        : base(connection, index)
+        => _column = dataTable.AddUInt16Column(name);
+
+    public override void Read(DbDataReader reader, int row) => _column.Set(row, (ushort)reader.GetInt16(_index));
+
+    public override string ToString() => $"{_index} {_column.Type}";
+}
+
 internal sealed class ColumnReadActionInt : ColumnReadAction
 {
     private readonly Int32DataColumn _column;
@@ -55,6 +107,19 @@ internal sealed class ColumnReadActionInt : ColumnReadAction
     public override string ToString() => $"{_index} {_column.Type}";
 }
 
+internal sealed class ColumnReadActionUInt : ColumnReadAction
+{
+    private readonly UInt32DataColumn _column;
+
+    public ColumnReadActionUInt(DatabaseConnection connection, DataTable dataTable, int index, string name)
+        : base(connection, index)
+        => _column = dataTable.AddUInt32Column(name);
+
+    public override void Read(DbDataReader reader, int row) => _column.Set(row, (uint)reader.GetInt32(_index));
+
+    public override string ToString() => $"{_index} {_column.Type}";
+}
+
 internal sealed class ColumnReadActionLong : ColumnReadAction
 {
     private readonly Int64DataColumn _column;
@@ -64,6 +129,19 @@ internal sealed class ColumnReadActionLong : ColumnReadAction
         => _column = dataTable.AddInt64Column(name);
 
     public override void Read(DbDataReader reader, int row) => _column.Set(row, reader.GetInt64(_index));
+
+    public override string ToString() => $"{_index} {_column.Type}";
+}
+
+internal sealed class ColumnReadActionULong : ColumnReadAction
+{
+    private readonly UInt64DataColumn _column;
+
+    public ColumnReadActionULong(DatabaseConnection connection, DataTable dataTable, int index, string name)
+        : base(connection, index)
+        => _column = dataTable.AddUInt64Column(name);
+
+    public override void Read(DbDataReader reader, int row) => _column.Set(row, (ulong)reader.GetInt64(_index));
 
     public override string ToString() => $"{_index} {_column.Type}";
 }
@@ -120,19 +198,6 @@ internal sealed class ColumnReadActionString : ColumnReadAction
     public override string ToString() => $"{_index} {_column.Type}";
 }
 
-internal sealed class ColumnReadActionDateTime : ColumnReadAction
-{
-    private readonly DateTimeDataColumn _column;
-
-    public ColumnReadActionDateTime(DatabaseConnection connection, DataTable dataTable, int index, string name)
-        : base(connection, index)
-        => _column = dataTable.AddDateTimeColumn(name);
-
-    public override void Read(DbDataReader reader, int row) => _column.Set(row, _connection.ConvertToLocal(reader.GetDateTime(_index)));
-
-    public override string ToString() => $"{_index} {_column.Type}";
-}
-
 internal sealed class ColumnReadActionGuid : ColumnReadAction
 {
     private readonly GuidDataColumn _column;
@@ -146,15 +211,15 @@ internal sealed class ColumnReadActionGuid : ColumnReadAction
     public override string ToString() => $"{_index} {_column.Type}";
 }
 
-internal sealed class ColumnReadActionByteArray : ColumnReadAction
+internal sealed class ColumnReadActionDateTime : ColumnReadAction
 {
-    private readonly ByteArrayDataColumn _column;
+    private readonly DateTimeDataColumn _column;
 
-    public ColumnReadActionByteArray(DatabaseConnection connection, DataTable dataTable, int index, string name)
+    public ColumnReadActionDateTime(DatabaseConnection connection, DataTable dataTable, int index, string name)
         : base(connection, index)
-        => _column = dataTable.AddByteArrayColumn(name);
+        => _column = dataTable.AddDateTimeColumn(name);
 
-    public override void Read(DbDataReader reader, int row) => _column.Set(row, reader.GetValue(_index) as byte[]);
+    public override void Read(DbDataReader reader, int row) => _column.Set(row, _connection.ConvertToLocal(reader.GetDateTime(_index)));
 
     public override string ToString() => $"{_index} {_column.Type}";
 }
@@ -173,6 +238,44 @@ internal sealed class ColumnReadActionNullableBool : ColumnReadAction
             _column.Set(row, null);
         else
             _column.Set(row, reader.GetBoolean(_index));
+    }
+
+    public override string ToString() => $"{_index} {_column.Type}";
+}
+
+internal sealed class ColumnReadActionNullableChar : ColumnReadAction
+{
+    private readonly NullableCharDataColumn _column;
+
+    public ColumnReadActionNullableChar(DatabaseConnection connection, DataTable dataTable, int index, string name)
+        : base(connection, index)
+        => _column = dataTable.AddNullableCharColumn(name);
+
+    public override void Read(DbDataReader reader, int row)
+    {
+        if (reader.IsDBNull(_index))
+            _column.Set(row, null);
+        else
+            _column.Set(row, reader.GetChar(_index));
+    }
+
+    public override string ToString() => $"{_index} {_column.Type}";
+}
+
+internal sealed class ColumnReadActionNullableSByte : ColumnReadAction
+{
+    private readonly NullableSByteDataColumn _column;
+
+    public ColumnReadActionNullableSByte(DatabaseConnection connection, DataTable dataTable, int index, string name)
+        : base(connection, index)
+        => _column = dataTable.AddNullableSByteColumn(name);
+
+    public override void Read(DbDataReader reader, int row)
+    {
+        if (reader.IsDBNull(_index))
+            _column.Set(row, null);
+        else
+            _column.Set(row, (sbyte)reader.GetByte(_index));
     }
 
     public override string ToString() => $"{_index} {_column.Type}";
@@ -216,6 +319,25 @@ internal sealed class ColumnReadActionNullableShort : ColumnReadAction
     public override string ToString() => $"{_index} {_column.Type}";
 }
 
+internal sealed class ColumnReadActionNullableUShort : ColumnReadAction
+{
+    private readonly NullableUInt16DataColumn _column;
+
+    public ColumnReadActionNullableUShort(DatabaseConnection connection, DataTable dataTable, int index, string name)
+        : base(connection, index)
+        => _column = dataTable.AddNullableUInt16Column(name);
+
+    public override void Read(DbDataReader reader, int row)
+    {
+        if (reader.IsDBNull(_index))
+            _column.Set(row, null);
+        else
+            _column.Set(row, (ushort)reader.GetInt16(_index));
+    }
+
+    public override string ToString() => $"{_index} {_column.Type}";
+}
+
 internal sealed class ColumnReadActionNullableInt : ColumnReadAction
 {
     private readonly NullableInt32DataColumn _column;
@@ -235,6 +357,25 @@ internal sealed class ColumnReadActionNullableInt : ColumnReadAction
     public override string ToString() => $"{_index} {_column.Type}";
 }
 
+internal sealed class ColumnReadActionNullableUInt : ColumnReadAction
+{
+    private readonly NullableUInt32DataColumn _column;
+
+    public ColumnReadActionNullableUInt(DatabaseConnection connection, DataTable dataTable, int index, string name)
+        : base(connection, index)
+        => _column = dataTable.AddNullableUInt32Column(name);
+
+    public override void Read(DbDataReader reader, int row)
+    {
+        if (reader.IsDBNull(_index))
+            _column.Set(row, null);
+        else
+            _column.Set(row, (uint)reader.GetInt32(_index));
+    }
+
+    public override string ToString() => $"{_index} {_column.Type}";
+}
+
 internal sealed class ColumnReadActionNullableLong : ColumnReadAction
 {
     private readonly NullableInt64DataColumn _column;
@@ -249,6 +390,25 @@ internal sealed class ColumnReadActionNullableLong : ColumnReadAction
             _column.Set(row, null);
         else
             _column.Set(row, reader.GetInt64(_index));
+    }
+
+    public override string ToString() => $"{_index} {_column.Type}";
+}
+
+internal sealed class ColumnReadActionNullableULong : ColumnReadAction
+{
+    private readonly NullableUInt64DataColumn _column;
+
+    public ColumnReadActionNullableULong(DatabaseConnection connection, DataTable dataTable, int index, string name)
+        : base(connection, index)
+        => _column = dataTable.AddNullableUInt64Column(name);
+
+    public override void Read(DbDataReader reader, int row)
+    {
+        if (reader.IsDBNull(_index))
+            _column.Set(row, null);
+        else
+            _column.Set(row, (ulong)reader.GetInt64(_index));
     }
 
     public override string ToString() => $"{_index} {_column.Type}";
@@ -330,25 +490,6 @@ internal sealed class ColumnReadActionNullableString : ColumnReadAction
     public override string ToString() => $"{_index} {_column.Type}";
 }
 
-internal sealed class ColumnReadActionNullableDateTime : ColumnReadAction
-{
-    private readonly NullableDateTimeDataColumn _column;
-
-    public ColumnReadActionNullableDateTime(DatabaseConnection connection, DataTable dataTable, int index, string name)
-        : base(connection, index)
-        => _column = dataTable.AddNullableDateTimeColumn(name);
-
-    public override void Read(DbDataReader reader, int row)
-    {
-        if (reader.IsDBNull(_index))
-            _column.Set(row, null);
-        else
-            _column.Set(row, _connection.ConvertToLocal(reader.GetDateTime(_index)));
-    }
-
-    public override string ToString() => $"{_index} {_column.Type}";
-}
-
 internal sealed class ColumnReadActionNullableGuid : ColumnReadAction
 {
     private readonly NullableGuidDataColumn _column;
@@ -363,6 +504,25 @@ internal sealed class ColumnReadActionNullableGuid : ColumnReadAction
             _column.Set(row, null);
         else
             _column.Set(row, reader.GetGuid(_index));
+    }
+
+    public override string ToString() => $"{_index} {_column.Type}";
+}
+
+internal sealed class ColumnReadActionNullableDateTime : ColumnReadAction
+{
+    private readonly NullableDateTimeDataColumn _column;
+
+    public ColumnReadActionNullableDateTime(DatabaseConnection connection, DataTable dataTable, int index, string name)
+        : base(connection, index)
+        => _column = dataTable.AddNullableDateTimeColumn(name);
+
+    public override void Read(DbDataReader reader, int row)
+    {
+        if (reader.IsDBNull(_index))
+            _column.Set(row, null);
+        else
+            _column.Set(row, _connection.ConvertToLocal(reader.GetDateTime(_index)));
     }
 
     public override string ToString() => $"{_index} {_column.Type}";

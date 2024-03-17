@@ -14,5 +14,5 @@ public abstract class MultiValueColumn
     /// <summary>Количество строк</summary>
     public abstract int RowCount { get; }
 
-    internal abstract string GetEscapedString(DatabaseConnection connection, int rowIndex);
+    internal abstract string GetEscapedString(DatabaseConnection connection, int row);
 }

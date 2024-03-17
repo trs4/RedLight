@@ -30,6 +30,62 @@ internal sealed class OperatorTermNullableBool : OperatorTerm
         => ParameterProcessing.ConstructNullableBool(Connection, options, SecondOperand);
 }
 
+/// <summary>Условие с оператором char</summary>
+internal sealed class OperatorTermChar : OperatorTerm
+{
+    public OperatorTermChar(Query owner, string firstOperand, Op termOperator, char secondOperand)
+        : base(owner, firstOperand, termOperator)
+        => SecondOperand = secondOperand;
+
+    /// <summary>Второй операнд (имя колонки или значение)</summary>
+    public char SecondOperand { get; }
+
+    protected sealed override string GetSecondOperand(QueryOptions options)
+        => ParameterProcessing.ConstructChar(Connection, options, SecondOperand);
+}
+
+/// <summary>Условие с оператором char?</summary>
+internal sealed class OperatorTermNullableChar : OperatorTerm
+{
+    public OperatorTermNullableChar(Query owner, string firstOperand, Op termOperator, char? secondOperand)
+        : base(owner, firstOperand, termOperator)
+        => SecondOperand = secondOperand;
+
+    /// <summary>Второй операнд (имя колонки или значение)</summary>
+    public char? SecondOperand { get; }
+
+    protected sealed override string GetSecondOperand(QueryOptions options)
+        => ParameterProcessing.ConstructNullableChar(Connection, options, SecondOperand);
+}
+
+/// <summary>Условие с оператором sbyte</summary>
+internal sealed class OperatorTermSByte : OperatorTerm
+{
+    public OperatorTermSByte(Query owner, string firstOperand, Op termOperator, sbyte secondOperand)
+        : base(owner, firstOperand, termOperator)
+        => SecondOperand = secondOperand;
+
+    /// <summary>Второй операнд (имя колонки или значение)</summary>
+    public sbyte SecondOperand { get; }
+
+    protected sealed override string GetSecondOperand(QueryOptions options)
+        => ParameterProcessing.ConstructSByte(Connection, options, SecondOperand);
+}
+
+/// <summary>Условие с оператором sbyte?</summary>
+internal sealed class OperatorTermNullableSByte : OperatorTerm
+{
+    public OperatorTermNullableSByte(Query owner, string firstOperand, Op termOperator, sbyte? secondOperand)
+        : base(owner, firstOperand, termOperator)
+        => SecondOperand = secondOperand;
+
+    /// <summary>Второй операнд (имя колонки или значение)</summary>
+    public sbyte? SecondOperand { get; }
+
+    protected sealed override string GetSecondOperand(QueryOptions options)
+        => ParameterProcessing.ConstructNullableSByte(Connection, options, SecondOperand);
+}
+
 /// <summary>Условие с оператором byte</summary>
 internal sealed class OperatorTermByte : OperatorTerm
 {
@@ -56,6 +112,20 @@ internal sealed class OperatorTermNullableByte : OperatorTerm
 
     protected sealed override string GetSecondOperand(QueryOptions options)
         => ParameterProcessing.ConstructNullableByte(Connection, options, SecondOperand);
+}
+
+/// <summary>Условие с оператором byte[]</summary>
+internal sealed class OperatorTermByteArray : OperatorTerm
+{
+    public OperatorTermByteArray(Query owner, string firstOperand, Op termOperator, byte[] secondOperand)
+        : base(owner, firstOperand, termOperator)
+        => SecondOperand = secondOperand;
+
+    /// <summary>Второй операнд (имя колонки или значение)</summary>
+    public byte[] SecondOperand { get; }
+
+    protected sealed override string GetSecondOperand(QueryOptions options)
+        => ParameterProcessing.ConstructByteArray(Connection, options, SecondOperand);
 }
 
 /// <summary>Условие с оператором short</summary>
@@ -86,6 +156,34 @@ internal sealed class OperatorTermNullableShort : OperatorTerm
         => ParameterProcessing.ConstructNullableShort(Connection, options, SecondOperand);
 }
 
+/// <summary>Условие с оператором ushort</summary>
+internal sealed class OperatorTermUShort : OperatorTerm
+{
+    public OperatorTermUShort(Query owner, string firstOperand, Op termOperator, ushort secondOperand)
+        : base(owner, firstOperand, termOperator)
+        => SecondOperand = secondOperand;
+
+    /// <summary>Второй операнд (имя колонки или значение)</summary>
+    public ushort SecondOperand { get; }
+
+    protected sealed override string GetSecondOperand(QueryOptions options)
+        => ParameterProcessing.ConstructUShort(Connection, options, SecondOperand);
+}
+
+/// <summary>Условие с оператором ushort?</summary>
+internal sealed class OperatorTermNullableUShort : OperatorTerm
+{
+    public OperatorTermNullableUShort(Query owner, string firstOperand, Op termOperator, ushort? secondOperand)
+        : base(owner, firstOperand, termOperator)
+        => SecondOperand = secondOperand;
+
+    /// <summary>Второй операнд (имя колонки или значение)</summary>
+    public ushort? SecondOperand { get; }
+
+    protected sealed override string GetSecondOperand(QueryOptions options)
+        => ParameterProcessing.ConstructNullableUShort(Connection, options, SecondOperand);
+}
+
 /// <summary>Условие с оператором int</summary>
 internal sealed class OperatorTermInt : OperatorTerm
 {
@@ -114,6 +212,34 @@ internal sealed class OperatorTermNullableInt : OperatorTerm
         => ParameterProcessing.ConstructNullableInt(Connection, options, SecondOperand);
 }
 
+/// <summary>Условие с оператором uint</summary>
+internal sealed class OperatorTermUInt : OperatorTerm
+{
+    public OperatorTermUInt(Query owner, string firstOperand, Op termOperator, uint secondOperand)
+        : base(owner, firstOperand, termOperator)
+        => SecondOperand = secondOperand;
+
+    /// <summary>Второй операнд (имя колонки или значение)</summary>
+    public uint SecondOperand { get; }
+
+    protected sealed override string GetSecondOperand(QueryOptions options)
+        => ParameterProcessing.ConstructUInt(Connection, options, SecondOperand);
+}
+
+/// <summary>Условие с оператором uint?</summary>
+internal sealed class OperatorTermNullableUInt : OperatorTerm
+{
+    public OperatorTermNullableUInt(Query owner, string firstOperand, Op termOperator, uint? secondOperand)
+        : base(owner, firstOperand, termOperator)
+        => SecondOperand = secondOperand;
+
+    /// <summary>Второй операнд (имя колонки или значение)</summary>
+    public uint? SecondOperand { get; }
+
+    protected sealed override string GetSecondOperand(QueryOptions options)
+        => ParameterProcessing.ConstructNullableUInt(Connection, options, SecondOperand);
+}
+
 /// <summary>Условие с оператором long</summary>
 internal sealed class OperatorTermLong : OperatorTerm
 {
@@ -140,6 +266,34 @@ internal sealed class OperatorTermNullableLong : OperatorTerm
 
     protected sealed override string GetSecondOperand(QueryOptions options)
         => ParameterProcessing.ConstructNullableLong(Connection, options, SecondOperand);
+}
+
+/// <summary>Условие с оператором ulong</summary>
+internal sealed class OperatorTermULong : OperatorTerm
+{
+    public OperatorTermULong(Query owner, string firstOperand, Op termOperator, ulong secondOperand)
+        : base(owner, firstOperand, termOperator)
+        => SecondOperand = secondOperand;
+
+    /// <summary>Второй операнд (имя колонки или значение)</summary>
+    public ulong SecondOperand { get; }
+
+    protected sealed override string GetSecondOperand(QueryOptions options)
+        => ParameterProcessing.ConstructULong(Connection, options, SecondOperand);
+}
+
+/// <summary>Условие с оператором ulong?</summary>
+internal sealed class OperatorTermNullableULong : OperatorTerm
+{
+    public OperatorTermNullableULong(Query owner, string firstOperand, Op termOperator, ulong? secondOperand)
+        : base(owner, firstOperand, termOperator)
+        => SecondOperand = secondOperand;
+
+    /// <summary>Второй операнд (имя колонки или значение)</summary>
+    public ulong? SecondOperand { get; }
+
+    protected sealed override string GetSecondOperand(QueryOptions options)
+        => ParameterProcessing.ConstructNullableULong(Connection, options, SecondOperand);
 }
 
 /// <summary>Условие с оператором float</summary>
@@ -240,6 +394,34 @@ internal sealed class OperatorTermString : OperatorTerm
         => ParameterProcessing.ConstructString(Connection, options, SecondOperand);
 }
 
+/// <summary>Условие с оператором Guid</summary>
+internal sealed class OperatorTermGuid : OperatorTerm
+{
+    public OperatorTermGuid(Query owner, string firstOperand, Op termOperator, Guid secondOperand)
+        : base(owner, firstOperand, termOperator)
+        => SecondOperand = secondOperand;
+
+    /// <summary>Второй операнд (имя колонки или значение)</summary>
+    public Guid SecondOperand { get; }
+
+    protected sealed override string GetSecondOperand(QueryOptions options)
+        => ParameterProcessing.ConstructGuid(Connection, options, SecondOperand);
+}
+
+/// <summary>Условие с оператором Guid?</summary>
+internal sealed class OperatorTermNullableGuid : OperatorTerm
+{
+    public OperatorTermNullableGuid(Query owner, string firstOperand, Op termOperator, Guid? secondOperand)
+        : base(owner, firstOperand, termOperator)
+        => SecondOperand = secondOperand;
+
+    /// <summary>Второй операнд (имя колонки или значение)</summary>
+    public Guid? SecondOperand { get; }
+
+    protected sealed override string GetSecondOperand(QueryOptions options)
+        => ParameterProcessing.ConstructNullableGuid(Connection, options, SecondOperand);
+}
+
 /// <summary>Условие с оператором DateTime</summary>
 internal sealed class OperatorTermDateTime : OperatorTerm
 {
@@ -294,47 +476,5 @@ internal sealed class OperatorTermNullableTimeSpan : OperatorTerm
 
     protected sealed override string GetSecondOperand(QueryOptions options)
         => ParameterProcessing.ConstructNullableTimeSpan(Connection, options, SecondOperand);
-}
-
-/// <summary>Условие с оператором Guid</summary>
-internal sealed class OperatorTermGuid : OperatorTerm
-{
-    public OperatorTermGuid(Query owner, string firstOperand, Op termOperator, Guid secondOperand)
-        : base(owner, firstOperand, termOperator)
-        => SecondOperand = secondOperand;
-
-    /// <summary>Второй операнд (имя колонки или значение)</summary>
-    public Guid SecondOperand { get; }
-
-    protected sealed override string GetSecondOperand(QueryOptions options)
-        => ParameterProcessing.ConstructGuid(Connection, options, SecondOperand);
-}
-
-/// <summary>Условие с оператором Guid?</summary>
-internal sealed class OperatorTermNullableGuid : OperatorTerm
-{
-    public OperatorTermNullableGuid(Query owner, string firstOperand, Op termOperator, Guid? secondOperand)
-        : base(owner, firstOperand, termOperator)
-        => SecondOperand = secondOperand;
-
-    /// <summary>Второй операнд (имя колонки или значение)</summary>
-    public Guid? SecondOperand { get; }
-
-    protected sealed override string GetSecondOperand(QueryOptions options)
-        => ParameterProcessing.ConstructNullableGuid(Connection, options, SecondOperand);
-}
-
-/// <summary>Условие с оператором byte[]</summary>
-internal sealed class OperatorTermByteArray : OperatorTerm
-{
-    public OperatorTermByteArray(Query owner, string firstOperand, Op termOperator, byte[] secondOperand)
-        : base(owner, firstOperand, termOperator)
-        => SecondOperand = secondOperand;
-
-    /// <summary>Второй операнд (имя колонки или значение)</summary>
-    public byte[] SecondOperand { get; }
-
-    protected sealed override string GetSecondOperand(QueryOptions options)
-        => ParameterProcessing.ConstructByteArray(Connection, options, SecondOperand);
 }
 

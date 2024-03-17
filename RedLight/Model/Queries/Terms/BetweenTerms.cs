@@ -2,6 +2,29 @@
 
 namespace RedLight;
 
+/// <summary>Условие с диапазоном по sbyte</summary>
+internal sealed class BetweenTermSByte : BetweenTerm
+{
+    public BetweenTermSByte(Query owner, string column, sbyte beginValue, sbyte endValue)
+        : base(owner, column)
+    {
+        BeginValue = beginValue;
+        EndValue = endValue;
+    }
+
+    /// <summary>Значение начала диапазона</summary>
+    public sbyte BeginValue { get; }
+
+    /// <summary>Значение конца диапазона</summary>
+    public sbyte EndValue { get; }
+
+    protected override string GetBeginValue(QueryOptions options)
+        => ParameterProcessing.ConstructSByte(Connection, options, BeginValue);
+
+    protected override string GetEndValue(QueryOptions options)
+        => ParameterProcessing.ConstructSByte(Connection, options, EndValue);
+}
+
 /// <summary>Условие с диапазоном по byte</summary>
 internal sealed class BetweenTermByte : BetweenTerm
 {
@@ -48,6 +71,29 @@ internal sealed class BetweenTermShort : BetweenTerm
         => ParameterProcessing.ConstructShort(Connection, options, EndValue);
 }
 
+/// <summary>Условие с диапазоном по ushort</summary>
+internal sealed class BetweenTermUShort : BetweenTerm
+{
+    public BetweenTermUShort(Query owner, string column, ushort beginValue, ushort endValue)
+        : base(owner, column)
+    {
+        BeginValue = beginValue;
+        EndValue = endValue;
+    }
+
+    /// <summary>Значение начала диапазона</summary>
+    public ushort BeginValue { get; }
+
+    /// <summary>Значение конца диапазона</summary>
+    public ushort EndValue { get; }
+
+    protected override string GetBeginValue(QueryOptions options)
+        => ParameterProcessing.ConstructUShort(Connection, options, BeginValue);
+
+    protected override string GetEndValue(QueryOptions options)
+        => ParameterProcessing.ConstructUShort(Connection, options, EndValue);
+}
+
 /// <summary>Условие с диапазоном по int</summary>
 internal sealed class BetweenTermInt : BetweenTerm
 {
@@ -71,6 +117,29 @@ internal sealed class BetweenTermInt : BetweenTerm
         => ParameterProcessing.ConstructInt(Connection, options, EndValue);
 }
 
+/// <summary>Условие с диапазоном по uint</summary>
+internal sealed class BetweenTermUInt : BetweenTerm
+{
+    public BetweenTermUInt(Query owner, string column, uint beginValue, uint endValue)
+        : base(owner, column)
+    {
+        BeginValue = beginValue;
+        EndValue = endValue;
+    }
+
+    /// <summary>Значение начала диапазона</summary>
+    public uint BeginValue { get; }
+
+    /// <summary>Значение конца диапазона</summary>
+    public uint EndValue { get; }
+
+    protected override string GetBeginValue(QueryOptions options)
+        => ParameterProcessing.ConstructUInt(Connection, options, BeginValue);
+
+    protected override string GetEndValue(QueryOptions options)
+        => ParameterProcessing.ConstructUInt(Connection, options, EndValue);
+}
+
 /// <summary>Условие с диапазоном по long</summary>
 internal sealed class BetweenTermLong : BetweenTerm
 {
@@ -92,6 +161,29 @@ internal sealed class BetweenTermLong : BetweenTerm
 
     protected override string GetEndValue(QueryOptions options)
         => ParameterProcessing.ConstructLong(Connection, options, EndValue);
+}
+
+/// <summary>Условие с диапазоном по ulong</summary>
+internal sealed class BetweenTermULong : BetweenTerm
+{
+    public BetweenTermULong(Query owner, string column, ulong beginValue, ulong endValue)
+        : base(owner, column)
+    {
+        BeginValue = beginValue;
+        EndValue = endValue;
+    }
+
+    /// <summary>Значение начала диапазона</summary>
+    public ulong BeginValue { get; }
+
+    /// <summary>Значение конца диапазона</summary>
+    public ulong EndValue { get; }
+
+    protected override string GetBeginValue(QueryOptions options)
+        => ParameterProcessing.ConstructULong(Connection, options, BeginValue);
+
+    protected override string GetEndValue(QueryOptions options)
+        => ParameterProcessing.ConstructULong(Connection, options, EndValue);
 }
 
 /// <summary>Условие с диапазоном по float</summary>

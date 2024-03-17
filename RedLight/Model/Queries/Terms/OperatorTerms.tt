@@ -4,17 +4,28 @@
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ output extension=".cs" #>
-<# var types = new [] { 
+<# var types = new [] {
     ("Bool", "bool"),
     ("NullableBool", "bool?"),
+    ("Char", "char"),
+    ("NullableChar", "char?"),
+    ("SByte", "sbyte"),
+    ("NullableSByte", "sbyte?"),
     ("Byte", "byte"),
     ("NullableByte", "byte?"),
+    ("ByteArray", "byte[]"),
     ("Short", "short"),
     ("NullableShort", "short?"),
-    ("Int", "int"), 
-    ("NullableInt", "int?"), 
+    ("UShort", "ushort"),
+    ("NullableUShort", "ushort?"),
+    ("Int", "int"),
+    ("NullableInt", "int?"),
+    ("UInt", "uint"),
+    ("NullableUInt", "uint?"),
     ("Long", "long"),
     ("NullableLong", "long?"),
+    ("ULong", "ulong"),
+    ("NullableULong", "ulong?"),
     ("Float", "float"),
     ("NullableFloat", "float?"),
     ("Double", "double"),
@@ -22,13 +33,12 @@
     ("Decimal", "decimal"),
     ("NullableDecimal", "decimal?"),
     ("String", "string"),
+    ("Guid", "Guid"),
+    ("NullableGuid", "Guid?"),
     ("DateTime", "DateTime"),
     ("NullableDateTime", "DateTime?"),
     ("TimeSpan", "TimeSpan"),
     ("NullableTimeSpan", "TimeSpan?"),
-    ("Guid", "Guid"),
-    ("NullableGuid", "Guid?"),
-    ("ByteArray", "byte[]"),
 }; #>
 using System;
 

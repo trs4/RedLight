@@ -4,33 +4,43 @@
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ output extension=".cs" #>
-<# var types = new [] { 
-    ("Bool", "bool", "Boolean", ""),
-    ("Byte", "byte", "Byte", ""),
-    ("Short", "short", "Short", ""),
-    ("Int", "int", "Integer", ""), 
-    ("Long", "long", "Long", ""),
-    ("Float", "float", "Float", ""),
-    ("Double", "double", "Double", ""),
-    ("Decimal", "decimal", "Decimal", ""),
-    ("String", "string", "String", ""), 
-    ("DateTime", "DateTime", "DateTime", "connection, "),
-    ("TimeSpan", "TimeSpan", "TimeSpan", ""),
-    ("Guid", "Guid", "Guid", ""),
-    ("ByteArray", "byte[]", "ByteArray", ""),
+<# var types = new [] {
+    ("Bool", "Bool", "bool", "", ""),
+    ("Char", "Int", "char", "", ""),
+    ("SByte", "Byte", "sbyte", "(byte)", ""),
+    ("Byte", "Byte", "byte", "", ""),
+    ("ByteArray", "ByteArray", "byte[]", "", ""),
+    ("Short", "Short", "short", "", ""),
+    ("UShort", "Short", "ushort", "(short)", ""),
+    ("Int", "Int", "int", "", ""),
+    ("UInt", "Int", "uint", "(int)", ""),
+    ("Long", "Long", "long", "", ""),
+    ("ULong", "Long", "ulong", "(long)", ""),
+    ("Float", "Float", "float", "", ""),
+    ("Double", "Double", "double", "", ""),
+    ("Decimal", "Decimal", "decimal", "", ""),
+    ("String", "String", "string", "", ""),
+    ("Guid", "Guid", "Guid", "", ""),
+    ("DateTime", "DateTime", "DateTime", "", "connection, "),
+    ("TimeSpan", "TimeSpan", "TimeSpan", "", ""),
 };
-var nullableTypes = new [] { 
-    ("NullableBool", "bool?", "Boolean", ""),
-    ("NullableByte", "byte?", "Byte", ""),
-    ("NullableShort", "short?", "Short", ""),
-    ("NullableInt", "int?", "Integer", ""), 
-    ("NullableLong", "long?", "Long", ""),
-    ("NullableFloat", "float?", "Float", ""),
-    ("NullableDouble", "double?", "Double", ""),
-    ("NullableDecimal", "decimal?", "Decimal", ""),
-    ("NullableDateTime", "DateTime?", "DateTime", "connection, "),
-    ("NullableTimeSpan", "TimeSpan?", "TimeSpan", ""),
-    ("NullableGuid", "Guid?", "Guid", ""),
+var nullableTypes = new [] {
+    ("NullableBool", "NullableBool", "bool?", "", "", ""),
+    ("NullableChar", "NullableInt", "char?", "", "", ""),
+    ("NullableSByte", "NullableByte", "sbyte?", "(byte?)", "(byte)", ""),
+    ("NullableByte", "NullableByte", "byte?", "", "", ""),
+    ("NullableShort", "NullableShort", "short?", "", "", ""),
+    ("NullableUShort", "NullableShort", "ushort?", "(short?)", "(short)", ""),
+    ("NullableInt", "NullableInt", "int?", "", "", ""),
+    ("NullableUInt", "NullableInt", "uint?", "(int?)", "(int)", ""),
+    ("NullableLong", "NullableLong", "long?", "", "", ""),
+    ("NullableULong", "NullableLong", "ulong?", "(long?)", "(long)", ""),
+    ("NullableFloat", "NullableFloat", "float?", "", "", ""),
+    ("NullableDouble", "NullableDouble", "double?", "", "", ""),
+    ("NullableDecimal", "NullableDecimal", "decimal?", "", "", ""),
+    ("NullableGuid", "NullableGuid", "Guid?", "", "", ""),
+    ("NullableDateTime", "NullableDateTime", "DateTime?", "", "", "connection, "),
+    ("NullableTimeSpan", "NullableTimeSpan", "TimeSpan?", "", "", ""),
 }; #>
 using System;
 using RedLight.Internal;
@@ -41,26 +51,26 @@ namespace RedLight;
 internal static class ParameterProcessing
 {
 <# foreach (var p in types) { #>
-    public static string Construct<#= p.Item1 #>(DatabaseConnection connection, QueryOptions options, <#= p.Item2 #> value)
+    public static string Construct<#= p.Item1 #>(DatabaseConnection connection, QueryOptions options, <#= p.Item3 #> value)
     {
         if (!options.UseParameters || options.Parameters.Count == Consts.MaxQueryParameters)
-            return connection.Escaping.Escape(value);
+            return connection.Escaping.Escape(<#= p.Item4 #>value);
 
         string name = connection.ParameterNaming.GetName(options.Parameters.Count + 1);
-        var parameter = new <#= p.Item1 #>QueryParameter(<#= p.Item4 #>name, value);
+        var parameter = new <#= p.Item2 #>QueryParameter(<#= p.Item5 #>name, <#= p.Item4 #>value);
         options.Parameters.Add(parameter);
         return connection.ParameterNaming.GetNameForQuery(name);
     }
 
 <# } #>
 <# foreach (var p in nullableTypes) { #>
-    public static string Construct<#= p.Item1 #>(DatabaseConnection connection, QueryOptions options, <#= p.Item2 #> value)
+    public static string Construct<#= p.Item1 #>(DatabaseConnection connection, QueryOptions options, <#= p.Item3 #> value)
     {
         if (!options.UseParameters || options.Parameters.Count == Consts.MaxQueryParameters)
-            return value.HasValue ? connection.Escaping.Escape(value.Value) : Consts.Null;
+            return value.HasValue ? connection.Escaping.Escape(<#= p.Item5 #>value.Value) : Consts.Null;
 
         string name = connection.ParameterNaming.GetName(options.Parameters.Count + 1);
-        var parameter = new <#= p.Item1 #>QueryParameter(<#= p.Item4 #>name, value);
+        var parameter = new <#= p.Item2 #>QueryParameter(<#= p.Item6 #>name, <#= p.Item4 #>value);
         options.Parameters.Add(parameter);
         return connection.ParameterNaming.GetNameForQuery(name);
     }

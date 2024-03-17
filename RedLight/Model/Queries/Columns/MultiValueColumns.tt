@@ -5,32 +5,42 @@
 <#@ import namespace="System.Collections.Generic" #>
 <#@ output extension=".cs" #>
 <# var types = new [] { 
-    ("Bool", "bool"),
-    ("Byte", "byte"),
-    ("Short", "short"),
-    ("Int", "int"), 
-    ("Long", "long"),
-    ("Float", "float"),
-    ("Double", "double"),
-    ("Decimal", "decimal"),
-    ("String", "string"), 
-    ("DateTime", "DateTime"),
-    ("TimeSpan", "TimeSpan"),
-    ("Guid", "Guid"),
-    ("ByteArray", "byte[]"),
+    ("Bool", "bool", ""),
+    ("Char", "char", ""),
+    ("SByte", "sbyte", "(byte)"),
+    ("Byte", "byte", ""),
+    ("ByteArray", "byte[]", ""),
+    ("Short", "short", ""),
+    ("UShort", "ushort", "(short)"),
+    ("Int", "int", ""),
+    ("UInt", "uint", "(int)"),
+    ("Long", "long", ""),
+    ("ULong", "ulong", "(long)"),
+    ("Float", "float", ""),
+    ("Double", "double", ""),
+    ("Decimal", "decimal", ""),
+    ("String", "string", ""),
+    ("Guid", "Guid", ""),
+    ("DateTime", "DateTime", ""),
+    ("TimeSpan", "TimeSpan", ""),
 };
 var nullableTypes = new [] { 
-    ("NullableBool", "bool?"),
-    ("NullableByte", "byte?"),
-    ("NullableShort", "short?"),
-    ("NullableInt", "int?"), 
-    ("NullableLong", "long?"),
-    ("NullableFloat", "float?"),
-    ("NullableDouble", "double?"),
-    ("NullableDecimal", "decimal?"),
-    ("NullableDateTime", "DateTime?"),
-    ("NullableTimeSpan", "TimeSpan?"),
-    ("NullableGuid", "Guid?"),
+    ("NullableBool", "bool?", ""),
+    ("NullableChar", "char?", ""),
+    ("NullableSByte", "sbyte?", "(byte)"),
+    ("NullableByte", "byte?", ""),
+    ("NullableShort", "short?", ""),
+    ("NullableUShort", "ushort?", "(short)"),
+    ("NullableInt", "int?", ""),
+    ("NullableUInt", "uint?", "(int)"),
+    ("NullableLong", "long?", ""),
+    ("NullableULong", "ulong?", "(long)"),
+    ("NullableFloat", "float?", ""),
+    ("NullableDouble", "double?", ""),
+    ("NullableDecimal", "decimal?", ""),
+    ("NullableGuid", "Guid?", ""),
+    ("NullableDateTime", "DateTime?", ""),
+    ("NullableTimeSpan", "TimeSpan?", ""),
 }; #>
 using System;
 using System.Collections.Generic;
@@ -51,8 +61,8 @@ internal sealed class <#= p.Item1 #>MultiValueColumn : MultiValueColumn
     /// <summary>Список значений поля</summary>
     public IReadOnlyList<<#= p.Item2 #>> Values { get; }
 
-    internal override string GetEscapedString(DatabaseConnection connection, int rowIndex)
-        => connection.Escaping.Escape(Values[rowIndex]);
+    internal override string GetEscapedString(DatabaseConnection connection, int row)
+        => connection.Escaping.Escape(<#= p.Item3 #>Values[row]);
 }
 
 <# } #>
@@ -69,10 +79,10 @@ internal sealed class <#= p.Item1 #>MultiValueColumn : MultiValueColumn
     /// <summary>Список значений поля</summary>
     public IReadOnlyList<<#= p.Item2 #>> Values { get; }
 
-    internal override string GetEscapedString(DatabaseConnection connection, int rowIndex)
+    internal override string GetEscapedString(DatabaseConnection connection, int row)
     {
-        var value = Values[rowIndex];
-        return value.HasValue ? connection.Escaping.Escape(value.Value) : Consts.Null;
+        var value = Values[row];
+        return value.HasValue ? connection.Escaping.Escape(<#= p.Item3 #>value.Value) : Consts.Null;
     }
 
 }

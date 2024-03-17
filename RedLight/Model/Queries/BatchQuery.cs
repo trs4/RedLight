@@ -11,7 +11,7 @@ namespace RedLight;
 /// <summary>Группа запросов</summary>
 public class BatchQuery : Query, IRunQuery, IList<Query>
 {
-    private readonly List<Query> _queries = new();
+    private readonly List<Query> _queries = [];
 
     internal BatchQuery(DatabaseConnection connection) : base(connection) { }
 

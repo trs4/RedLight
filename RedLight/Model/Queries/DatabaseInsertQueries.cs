@@ -282,38 +282,38 @@ public abstract class DatabaseInsertQueries
     /// <summary>Создаёт запрос добавления данных</summary>
     /// <param name="tableName">Имя таблицы</param>
     /// <param name="dataTable">Таблица значений</param>
-    /// <param name="rowIndex">Индекс строки</param>
-    public InsertQuery CreateQuery(string tableName, DataTable dataTable, int rowIndex)
+    /// <param name="row">Индекс строки</param>
+    public InsertQuery CreateQuery(string tableName, DataTable dataTable, int row)
     {
         ArgumentNullException.ThrowIfNull(dataTable);
         var query = Create<DataResult>(Connection.Naming.GetNameWithSchema(tableName));
-        query.AddColumns(dataTable, rowIndex);
+        query.AddColumns(dataTable, row);
         return query;
     }
 
     /// <summary>Создаёт запрос добавления данных</summary>
     /// <param name="tableName">Имя таблицы</param>
     /// <param name="dataTable">Таблица значений</param>
-    /// <param name="rowIndex">Индекс строки</param>
-    public InsertQuery CreateQuery<TEnum>(TEnum tableName, DataTable dataTable, int rowIndex)
+    /// <param name="row">Индекс строки</param>
+    public InsertQuery CreateQuery<TEnum>(TEnum tableName, DataTable dataTable, int row)
         where TEnum : Enum
     {
         ArgumentNullException.ThrowIfNull(dataTable);
         var query = Create<DataResult>(Connection.Naming.GetNameWithSchema(tableName));
-        query.AddColumns(dataTable, rowIndex);
+        query.AddColumns(dataTable, row);
         return query;
     }
 
     /// <summary>Создаёт запрос добавления данных</summary>
     /// <typeparam name="TEnum">Имя таблицы</typeparam>
     /// <param name="dataTable">Таблица значений</param>
-    /// <param name="rowIndex">Индекс строки</param>
-    public InsertQuery CreateQuery<TEnum>(DataTable dataTable, int rowIndex)
+    /// <param name="row">Индекс строки</param>
+    public InsertQuery CreateQuery<TEnum>(DataTable dataTable, int row)
         where TEnum : Enum
     {
         ArgumentNullException.ThrowIfNull(dataTable);
         var query = Create<DataResult>(Connection.Naming.GetNameWithSchema<TEnum>());
-        query.AddColumns(dataTable, rowIndex);
+        query.AddColumns(dataTable, row);
         return query;
     }
 

@@ -8,6 +8,65 @@ public static class BetweenTermsFluent
     /// <param name="column">Имя поля</param>
     /// <param name="beginValue">Значение начала диапазона</param>
     /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithBetween(this TermBlock termBlock, string column, sbyte beginValue, sbyte endValue)
+    {
+        var term = new BetweenTermSByte(termBlock, termBlock.Connection.Naming.GetName(column), beginValue, endValue);
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="column">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithBetween<TEnum>(this TermBlock termBlock, TEnum column, sbyte beginValue, sbyte endValue)
+        where TEnum : Enum
+    {
+        var term = new BetweenTermSByte(termBlock, termBlock.Connection.Naming.GetName(column), beginValue, endValue);
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="alias">Псевдоним таблицы</param>
+    /// <param name="column">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithBetween(this TermBlock termBlock, string alias, string column, sbyte beginValue, sbyte endValue)
+    {
+        var term = new BetweenTermSByte(termBlock, termBlock.Connection.Naming.GetNameWithAlias(alias, column), beginValue, endValue);
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="alias">Псевдоним таблицы</param>
+    /// <param name="column">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithBetween<TEnum>(this TermBlock termBlock, string alias, TEnum column, sbyte beginValue, sbyte endValue)
+        where TEnum : Enum
+    {
+        var term = new BetweenTermSByte(termBlock, termBlock.Connection.Naming.GetNameWithAlias(alias, column), beginValue, endValue);
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="rawColumn">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithRawBetween(this TermBlock termBlock, string rawColumn, sbyte beginValue, sbyte endValue)
+    {
+        var term = new BetweenTermSByte(termBlock, rawColumn, beginValue, endValue);
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="column">Имя поля</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
     public static TermBlock WithBetween(this TermBlock termBlock, string column, byte beginValue, byte endValue)
     {
         var term = new BetweenTermByte(termBlock, termBlock.Connection.Naming.GetName(column), beginValue, endValue);
@@ -126,6 +185,65 @@ public static class BetweenTermsFluent
     /// <param name="column">Имя поля</param>
     /// <param name="beginValue">Значение начала диапазона</param>
     /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithBetween(this TermBlock termBlock, string column, ushort beginValue, ushort endValue)
+    {
+        var term = new BetweenTermUShort(termBlock, termBlock.Connection.Naming.GetName(column), beginValue, endValue);
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="column">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithBetween<TEnum>(this TermBlock termBlock, TEnum column, ushort beginValue, ushort endValue)
+        where TEnum : Enum
+    {
+        var term = new BetweenTermUShort(termBlock, termBlock.Connection.Naming.GetName(column), beginValue, endValue);
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="alias">Псевдоним таблицы</param>
+    /// <param name="column">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithBetween(this TermBlock termBlock, string alias, string column, ushort beginValue, ushort endValue)
+    {
+        var term = new BetweenTermUShort(termBlock, termBlock.Connection.Naming.GetNameWithAlias(alias, column), beginValue, endValue);
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="alias">Псевдоним таблицы</param>
+    /// <param name="column">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithBetween<TEnum>(this TermBlock termBlock, string alias, TEnum column, ushort beginValue, ushort endValue)
+        where TEnum : Enum
+    {
+        var term = new BetweenTermUShort(termBlock, termBlock.Connection.Naming.GetNameWithAlias(alias, column), beginValue, endValue);
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="rawColumn">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithRawBetween(this TermBlock termBlock, string rawColumn, ushort beginValue, ushort endValue)
+    {
+        var term = new BetweenTermUShort(termBlock, rawColumn, beginValue, endValue);
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="column">Имя поля</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
     public static TermBlock WithBetween(this TermBlock termBlock, string column, int beginValue, int endValue)
     {
         var term = new BetweenTermInt(termBlock, termBlock.Connection.Naming.GetName(column), beginValue, endValue);
@@ -185,6 +303,65 @@ public static class BetweenTermsFluent
     /// <param name="column">Имя поля</param>
     /// <param name="beginValue">Значение начала диапазона</param>
     /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithBetween(this TermBlock termBlock, string column, uint beginValue, uint endValue)
+    {
+        var term = new BetweenTermUInt(termBlock, termBlock.Connection.Naming.GetName(column), beginValue, endValue);
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="column">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithBetween<TEnum>(this TermBlock termBlock, TEnum column, uint beginValue, uint endValue)
+        where TEnum : Enum
+    {
+        var term = new BetweenTermUInt(termBlock, termBlock.Connection.Naming.GetName(column), beginValue, endValue);
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="alias">Псевдоним таблицы</param>
+    /// <param name="column">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithBetween(this TermBlock termBlock, string alias, string column, uint beginValue, uint endValue)
+    {
+        var term = new BetweenTermUInt(termBlock, termBlock.Connection.Naming.GetNameWithAlias(alias, column), beginValue, endValue);
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="alias">Псевдоним таблицы</param>
+    /// <param name="column">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithBetween<TEnum>(this TermBlock termBlock, string alias, TEnum column, uint beginValue, uint endValue)
+        where TEnum : Enum
+    {
+        var term = new BetweenTermUInt(termBlock, termBlock.Connection.Naming.GetNameWithAlias(alias, column), beginValue, endValue);
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="rawColumn">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithRawBetween(this TermBlock termBlock, string rawColumn, uint beginValue, uint endValue)
+    {
+        var term = new BetweenTermUInt(termBlock, rawColumn, beginValue, endValue);
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="column">Имя поля</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
     public static TermBlock WithBetween(this TermBlock termBlock, string column, long beginValue, long endValue)
     {
         var term = new BetweenTermLong(termBlock, termBlock.Connection.Naming.GetName(column), beginValue, endValue);
@@ -236,6 +413,65 @@ public static class BetweenTermsFluent
     public static TermBlock WithRawBetween(this TermBlock termBlock, string rawColumn, long beginValue, long endValue)
     {
         var term = new BetweenTermLong(termBlock, rawColumn, beginValue, endValue);
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="column">Имя поля</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithBetween(this TermBlock termBlock, string column, ulong beginValue, ulong endValue)
+    {
+        var term = new BetweenTermULong(termBlock, termBlock.Connection.Naming.GetName(column), beginValue, endValue);
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="column">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithBetween<TEnum>(this TermBlock termBlock, TEnum column, ulong beginValue, ulong endValue)
+        where TEnum : Enum
+    {
+        var term = new BetweenTermULong(termBlock, termBlock.Connection.Naming.GetName(column), beginValue, endValue);
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="alias">Псевдоним таблицы</param>
+    /// <param name="column">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithBetween(this TermBlock termBlock, string alias, string column, ulong beginValue, ulong endValue)
+    {
+        var term = new BetweenTermULong(termBlock, termBlock.Connection.Naming.GetNameWithAlias(alias, column), beginValue, endValue);
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="alias">Псевдоним таблицы</param>
+    /// <param name="column">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithBetween<TEnum>(this TermBlock termBlock, string alias, TEnum column, ulong beginValue, ulong endValue)
+        where TEnum : Enum
+    {
+        var term = new BetweenTermULong(termBlock, termBlock.Connection.Naming.GetNameWithAlias(alias, column), beginValue, endValue);
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="rawColumn">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithRawBetween(this TermBlock termBlock, string rawColumn, ulong beginValue, ulong endValue)
+    {
+        var term = new BetweenTermULong(termBlock, rawColumn, beginValue, endValue);
         termBlock.AddTerm(term);
         return termBlock;
     }
@@ -480,6 +716,80 @@ public static class BetweenTermsFluent
     /// <param name="column">Имя поля</param>
     /// <param name="beginValue">Значение начала диапазона</param>
     /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithNotBetween(this TermBlock termBlock, string column, sbyte beginValue, sbyte endValue)
+    {
+        var term = new BetweenTermSByte(termBlock, termBlock.Connection.Naming.GetName(column), beginValue, endValue)
+        {
+            Not = true,
+        };
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="column">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithNotBetween<TEnum>(this TermBlock termBlock, TEnum column, sbyte beginValue, sbyte endValue)
+        where TEnum : Enum
+    {
+        var term = new BetweenTermSByte(termBlock, termBlock.Connection.Naming.GetName(column), beginValue, endValue)
+        {
+            Not = true,
+        };
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="alias">Псевдоним таблицы</param>
+    /// <param name="column">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithNotBetween(this TermBlock termBlock, string alias, string column, sbyte beginValue, sbyte endValue)
+    {
+        var term = new BetweenTermSByte(termBlock, termBlock.Connection.Naming.GetNameWithAlias(alias, column), beginValue, endValue)
+        {
+            Not = true,
+        };
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="alias">Псевдоним таблицы</param>
+    /// <param name="column">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithNotBetween<TEnum>(this TermBlock termBlock, string alias, TEnum column, sbyte beginValue, sbyte endValue)
+        where TEnum : Enum
+    {
+        var term = new BetweenTermSByte(termBlock, termBlock.Connection.Naming.GetNameWithAlias(alias, column), beginValue, endValue)
+        {
+            Not = true,
+        };
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="rawColumn">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithRawNotBetween(this TermBlock termBlock, string rawColumn, sbyte beginValue, sbyte endValue)
+    {
+        var term = new BetweenTermSByte(termBlock, rawColumn, beginValue, endValue)
+        {
+            Not = true,
+        };
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="column">Имя поля</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
     public static TermBlock WithNotBetween(this TermBlock termBlock, string column, byte beginValue, byte endValue)
     {
         var term = new BetweenTermByte(termBlock, termBlock.Connection.Naming.GetName(column), beginValue, endValue)
@@ -628,6 +938,80 @@ public static class BetweenTermsFluent
     /// <param name="column">Имя поля</param>
     /// <param name="beginValue">Значение начала диапазона</param>
     /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithNotBetween(this TermBlock termBlock, string column, ushort beginValue, ushort endValue)
+    {
+        var term = new BetweenTermUShort(termBlock, termBlock.Connection.Naming.GetName(column), beginValue, endValue)
+        {
+            Not = true,
+        };
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="column">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithNotBetween<TEnum>(this TermBlock termBlock, TEnum column, ushort beginValue, ushort endValue)
+        where TEnum : Enum
+    {
+        var term = new BetweenTermUShort(termBlock, termBlock.Connection.Naming.GetName(column), beginValue, endValue)
+        {
+            Not = true,
+        };
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="alias">Псевдоним таблицы</param>
+    /// <param name="column">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithNotBetween(this TermBlock termBlock, string alias, string column, ushort beginValue, ushort endValue)
+    {
+        var term = new BetweenTermUShort(termBlock, termBlock.Connection.Naming.GetNameWithAlias(alias, column), beginValue, endValue)
+        {
+            Not = true,
+        };
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="alias">Псевдоним таблицы</param>
+    /// <param name="column">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithNotBetween<TEnum>(this TermBlock termBlock, string alias, TEnum column, ushort beginValue, ushort endValue)
+        where TEnum : Enum
+    {
+        var term = new BetweenTermUShort(termBlock, termBlock.Connection.Naming.GetNameWithAlias(alias, column), beginValue, endValue)
+        {
+            Not = true,
+        };
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="rawColumn">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithRawNotBetween(this TermBlock termBlock, string rawColumn, ushort beginValue, ushort endValue)
+    {
+        var term = new BetweenTermUShort(termBlock, rawColumn, beginValue, endValue)
+        {
+            Not = true,
+        };
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="column">Имя поля</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
     public static TermBlock WithNotBetween(this TermBlock termBlock, string column, int beginValue, int endValue)
     {
         var term = new BetweenTermInt(termBlock, termBlock.Connection.Naming.GetName(column), beginValue, endValue)
@@ -702,6 +1086,80 @@ public static class BetweenTermsFluent
     /// <param name="column">Имя поля</param>
     /// <param name="beginValue">Значение начала диапазона</param>
     /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithNotBetween(this TermBlock termBlock, string column, uint beginValue, uint endValue)
+    {
+        var term = new BetweenTermUInt(termBlock, termBlock.Connection.Naming.GetName(column), beginValue, endValue)
+        {
+            Not = true,
+        };
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="column">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithNotBetween<TEnum>(this TermBlock termBlock, TEnum column, uint beginValue, uint endValue)
+        where TEnum : Enum
+    {
+        var term = new BetweenTermUInt(termBlock, termBlock.Connection.Naming.GetName(column), beginValue, endValue)
+        {
+            Not = true,
+        };
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="alias">Псевдоним таблицы</param>
+    /// <param name="column">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithNotBetween(this TermBlock termBlock, string alias, string column, uint beginValue, uint endValue)
+    {
+        var term = new BetweenTermUInt(termBlock, termBlock.Connection.Naming.GetNameWithAlias(alias, column), beginValue, endValue)
+        {
+            Not = true,
+        };
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="alias">Псевдоним таблицы</param>
+    /// <param name="column">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithNotBetween<TEnum>(this TermBlock termBlock, string alias, TEnum column, uint beginValue, uint endValue)
+        where TEnum : Enum
+    {
+        var term = new BetweenTermUInt(termBlock, termBlock.Connection.Naming.GetNameWithAlias(alias, column), beginValue, endValue)
+        {
+            Not = true,
+        };
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="rawColumn">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithRawNotBetween(this TermBlock termBlock, string rawColumn, uint beginValue, uint endValue)
+    {
+        var term = new BetweenTermUInt(termBlock, rawColumn, beginValue, endValue)
+        {
+            Not = true,
+        };
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="column">Имя поля</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
     public static TermBlock WithNotBetween(this TermBlock termBlock, string column, long beginValue, long endValue)
     {
         var term = new BetweenTermLong(termBlock, termBlock.Connection.Naming.GetName(column), beginValue, endValue)
@@ -765,6 +1223,80 @@ public static class BetweenTermsFluent
     public static TermBlock WithRawNotBetween(this TermBlock termBlock, string rawColumn, long beginValue, long endValue)
     {
         var term = new BetweenTermLong(termBlock, rawColumn, beginValue, endValue)
+        {
+            Not = true,
+        };
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="column">Имя поля</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithNotBetween(this TermBlock termBlock, string column, ulong beginValue, ulong endValue)
+    {
+        var term = new BetweenTermULong(termBlock, termBlock.Connection.Naming.GetName(column), beginValue, endValue)
+        {
+            Not = true,
+        };
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="column">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithNotBetween<TEnum>(this TermBlock termBlock, TEnum column, ulong beginValue, ulong endValue)
+        where TEnum : Enum
+    {
+        var term = new BetweenTermULong(termBlock, termBlock.Connection.Naming.GetName(column), beginValue, endValue)
+        {
+            Not = true,
+        };
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="alias">Псевдоним таблицы</param>
+    /// <param name="column">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithNotBetween(this TermBlock termBlock, string alias, string column, ulong beginValue, ulong endValue)
+    {
+        var term = new BetweenTermULong(termBlock, termBlock.Connection.Naming.GetNameWithAlias(alias, column), beginValue, endValue)
+        {
+            Not = true,
+        };
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="alias">Псевдоним таблицы</param>
+    /// <param name="column">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithNotBetween<TEnum>(this TermBlock termBlock, string alias, TEnum column, ulong beginValue, ulong endValue)
+        where TEnum : Enum
+    {
+        var term = new BetweenTermULong(termBlock, termBlock.Connection.Naming.GetNameWithAlias(alias, column), beginValue, endValue)
+        {
+            Not = true,
+        };
+        termBlock.AddTerm(term);
+        return termBlock;
+    }
+
+    /// <summary>Добавляет условие по полю с диапазоном</summary>
+    /// <param name="rawColumn">Имя колонки</param>
+    /// <param name="beginValue">Значение начала диапазона</param>
+    /// <param name="endValue">Значение конца диапазона</param>
+    public static TermBlock WithRawNotBetween(this TermBlock termBlock, string rawColumn, ulong beginValue, ulong endValue)
+    {
+        var term = new BetweenTermULong(termBlock, rawColumn, beginValue, endValue)
         {
             Not = true,
         };

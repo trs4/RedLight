@@ -215,15 +215,25 @@ public static class MultiValueQueryFluent
         {
             { Extensions.GetHash(DataType.Boolean), (name, value) => new BoolMultiValueColumn(name, (IReadOnlyList<bool>)value) },
             { Extensions.GetHash(DataType.Boolean, isNullable: true), (name, value) => new NullableBoolMultiValueColumn(name, (IReadOnlyList<bool?>)value) },
+            { Extensions.GetHash(DataType.Char), (name, value) => new CharMultiValueColumn(name, (IReadOnlyList<char>)value) },
+            { Extensions.GetHash(DataType.Char, isNullable: true), (name, value) => new NullableCharMultiValueColumn(name, (IReadOnlyList<char?>)value) },
+            { Extensions.GetHash(DataType.SByte), (name, value) => new SByteMultiValueColumn(name, (IReadOnlyList<sbyte>)value) },
+            { Extensions.GetHash(DataType.SByte, isNullable: true), (name, value) => new NullableSByteMultiValueColumn(name, (IReadOnlyList<sbyte?>)value) },
             { Extensions.GetHash(DataType.Byte), (name, value) => new ByteMultiValueColumn(name, (IReadOnlyList<byte>)value) },
             { Extensions.GetHash(DataType.Byte, isNullable: true), (name, value) => new NullableByteMultiValueColumn(name, (IReadOnlyList<byte?>)value) },
             { Extensions.GetHash(DataType.Byte, isArray: true), (name, value) => new ByteArrayMultiValueColumn(name, (IReadOnlyList<byte[]>)value) },
             { Extensions.GetHash(DataType.Int16), (name, value) => new ShortMultiValueColumn(name, (IReadOnlyList<short>)value) },
             { Extensions.GetHash(DataType.Int16, isNullable: true), (name, value) => new NullableShortMultiValueColumn(name, (IReadOnlyList<short?>)value) },
+            { Extensions.GetHash(DataType.UInt16), (name, value) => new UShortMultiValueColumn(name, (IReadOnlyList<ushort>)value) },
+            { Extensions.GetHash(DataType.UInt16, isNullable: true), (name, value) => new NullableUShortMultiValueColumn(name, (IReadOnlyList<ushort?>)value) },
             { Extensions.GetHash(DataType.Int32), (name, value) => new IntMultiValueColumn(name, (IReadOnlyList<int>)value) },
             { Extensions.GetHash(DataType.Int32, isNullable: true), (name, value) => new NullableIntMultiValueColumn(name, (IReadOnlyList<int?>)value) },
+            { Extensions.GetHash(DataType.UInt32), (name, value) => new UIntMultiValueColumn(name, (IReadOnlyList<uint>)value) },
+            { Extensions.GetHash(DataType.UInt32, isNullable: true), (name, value) => new NullableUIntMultiValueColumn(name, (IReadOnlyList<uint?>)value) },
             { Extensions.GetHash(DataType.Int64), (name, value) => new LongMultiValueColumn(name, (IReadOnlyList<long>)value) },
             { Extensions.GetHash(DataType.Int64, isNullable: true), (name, value) => new NullableLongMultiValueColumn(name, (IReadOnlyList<long?>)value) },
+            { Extensions.GetHash(DataType.UInt64), (name, value) => new ULongMultiValueColumn(name, (IReadOnlyList<ulong>)value) },
+            { Extensions.GetHash(DataType.UInt64, isNullable: true), (name, value) => new NullableULongMultiValueColumn(name, (IReadOnlyList<ulong?>)value) },
             { Extensions.GetHash(DataType.Single), (name, value) => new FloatMultiValueColumn(name, (IReadOnlyList<float>)value) },
             { Extensions.GetHash(DataType.Single, isNullable: true), (name, value) => new NullableFloatMultiValueColumn(name, (IReadOnlyList<float?>)value) },
             { Extensions.GetHash(DataType.Double), (name, value) => new DoubleMultiValueColumn(name, (IReadOnlyList<double>)value) },
@@ -232,12 +242,12 @@ public static class MultiValueQueryFluent
             { Extensions.GetHash(DataType.Decimal, isNullable: true), (name, value) => new NullableDecimalMultiValueColumn(name, (IReadOnlyList<decimal?>)value) },
             { Extensions.GetHash(DataType.String), (name, value) => new StringMultiValueColumn(name, Extensions.NotNull((IReadOnlyList<string>)value)) },
             { Extensions.GetHash(DataType.String, isNullable: true), (name, value) => new StringMultiValueColumn(name, (IReadOnlyList<string>)value) },
+            { Extensions.GetHash(DataType.Guid), (name, value) => new GuidMultiValueColumn(name, (IReadOnlyList<Guid>)value) },
+            { Extensions.GetHash(DataType.Guid, isNullable: true), (name, value) => new NullableGuidMultiValueColumn(name, (IReadOnlyList<Guid?>)value) },
             { Extensions.GetHash(DataType.DateTime), (name, value) => new DateTimeMultiValueColumn(name, (IReadOnlyList<DateTime>)value) },
             { Extensions.GetHash(DataType.DateTime, isNullable: true), (name, value) => new NullableDateTimeMultiValueColumn(name, (IReadOnlyList<DateTime?>)value) },
             { Extensions.GetHash(DataType.TimeSpan), (name, value) => new TimeSpanMultiValueColumn(name, (IReadOnlyList<TimeSpan>)value) },
             { Extensions.GetHash(DataType.TimeSpan, isNullable: true), (name, value) => new NullableTimeSpanMultiValueColumn(name, (IReadOnlyList<TimeSpan?>)value) },
-            { Extensions.GetHash(DataType.Guid), (name, value) => new GuidMultiValueColumn(name, (IReadOnlyList<Guid>)value) },
-            { Extensions.GetHash(DataType.Guid, isNullable: true), (name, value) => new NullableGuidMultiValueColumn(name, (IReadOnlyList<Guid?>)value) },
         }.ToFrozenDictionary();
 
     private static readonly FrozenDictionary<Type, Func<string, ICollection, MultiValueColumn>> _columnByType
@@ -245,15 +255,25 @@ public static class MultiValueQueryFluent
         {
             { typeof(bool), (name, value) => new BoolMultiValueColumn(name, (IReadOnlyList<bool>)value) },
             { typeof(bool?), (name, value) => new NullableBoolMultiValueColumn(name, (IReadOnlyList<bool?>)value) },
+            { typeof(char), (name, value) => new CharMultiValueColumn(name, (IReadOnlyList<char>)value) },
+            { typeof(char?), (name, value) => new NullableCharMultiValueColumn(name, (IReadOnlyList<char?>)value) },
+            { typeof(sbyte), (name, value) => new SByteMultiValueColumn(name, (IReadOnlyList<sbyte>)value) },
+            { typeof(sbyte?), (name, value) => new NullableSByteMultiValueColumn(name, (IReadOnlyList<sbyte?>)value) },
             { typeof(byte), (name, value) => new ByteMultiValueColumn(name, (IReadOnlyList<byte>)value) },
             { typeof(byte?), (name, value) => new NullableByteMultiValueColumn(name, (IReadOnlyList<byte?>)value) },
             { typeof(byte[]), (name, value) => new ByteArrayMultiValueColumn(name, (IReadOnlyList<byte[]>)value) },
             { typeof(short), (name, value) => new ShortMultiValueColumn(name, (IReadOnlyList<short>)value) },
             { typeof(short?), (name, value) => new NullableShortMultiValueColumn(name, (IReadOnlyList<short?>)value) },
+            { typeof(ushort), (name, value) => new UShortMultiValueColumn(name, (IReadOnlyList<ushort>)value) },
+            { typeof(ushort?), (name, value) => new NullableUShortMultiValueColumn(name, (IReadOnlyList<ushort?>)value) },
             { typeof(int), (name, value) => new IntMultiValueColumn(name, (IReadOnlyList<int>)value) },
             { typeof(int?), (name, value) => new NullableIntMultiValueColumn(name, (IReadOnlyList<int?>)value) },
+            { typeof(uint), (name, value) => new UIntMultiValueColumn(name, (IReadOnlyList<uint>)value) },
+            { typeof(uint?), (name, value) => new NullableUIntMultiValueColumn(name, (IReadOnlyList<uint?>)value) },
             { typeof(long), (name, value) => new LongMultiValueColumn(name, (IReadOnlyList<long>)value) },
             { typeof(long?), (name, value) => new NullableLongMultiValueColumn(name, (IReadOnlyList<long?>)value) },
+            { typeof(ulong), (name, value) => new ULongMultiValueColumn(name, (IReadOnlyList<ulong>)value) },
+            { typeof(ulong?), (name, value) => new NullableULongMultiValueColumn(name, (IReadOnlyList<ulong?>)value) },
             { typeof(float), (name, value) => new FloatMultiValueColumn(name, (IReadOnlyList<float>)value) },
             { typeof(float?), (name, value) => new NullableFloatMultiValueColumn(name, (IReadOnlyList<float?>)value) },
             { typeof(double), (name, value) => new DoubleMultiValueColumn(name, (IReadOnlyList<double>)value) },
@@ -261,12 +281,12 @@ public static class MultiValueQueryFluent
             { typeof(decimal), (name, value) => new DecimalMultiValueColumn(name, (IReadOnlyList<decimal>)value) },
             { typeof(decimal?), (name, value) => new NullableDecimalMultiValueColumn(name, (IReadOnlyList<decimal?>)value) },
             { typeof(string), (name, value) => new StringMultiValueColumn(name, (IReadOnlyList<string>)value) },
+            { typeof(Guid), (name, value) => new GuidMultiValueColumn(name, (IReadOnlyList<Guid>)value) },
+            { typeof(Guid?), (name, value) => new NullableGuidMultiValueColumn(name, (IReadOnlyList<Guid?>)value) },
             { typeof(DateTime), (name, value) => new DateTimeMultiValueColumn(name, (IReadOnlyList<DateTime>)value) },
             { typeof(DateTime?), (name, value) => new NullableDateTimeMultiValueColumn(name, (IReadOnlyList<DateTime?>)value) },
             { typeof(TimeSpan), (name, value) => new TimeSpanMultiValueColumn(name, (IReadOnlyList<TimeSpan>)value) },
             { typeof(TimeSpan?), (name, value) => new NullableTimeSpanMultiValueColumn(name, (IReadOnlyList<TimeSpan?>)value) },
-            { typeof(Guid), (name, value) => new GuidMultiValueColumn(name, (IReadOnlyList<Guid>)value) },
-            { typeof(Guid?), (name, value) => new NullableGuidMultiValueColumn(name, (IReadOnlyList<Guid?>)value) },
         }.ToFrozenDictionary();
 
     private static readonly FrozenDictionary<int, Func<string, DataColumn, int, MultiValueColumn>> _readFromColumns
@@ -279,6 +299,22 @@ public static class MultiValueQueryFluent
             {
                 Extensions.GetHash(DataType.Boolean, isNullable: true),
                 (name, dataColumn, rowCount) => new NullableBoolMultiValueColumn(name, ((NullableBooleanDataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
+                Extensions.GetHash(DataType.Char),
+                (name, dataColumn, rowCount) => new CharMultiValueColumn(name, ((CharDataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
+                Extensions.GetHash(DataType.Char, isNullable: true),
+                (name, dataColumn, rowCount) => new NullableCharMultiValueColumn(name, ((NullableCharDataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
+                Extensions.GetHash(DataType.SByte),
+                (name, dataColumn, rowCount) => new SByteMultiValueColumn(name, ((SByteDataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
+                Extensions.GetHash(DataType.SByte, isNullable: true),
+                (name, dataColumn, rowCount) => new NullableSByteMultiValueColumn(name, ((NullableSByteDataColumn)dataColumn).GetValues(rowCount))
             },
             {
                 Extensions.GetHash(DataType.Byte),
@@ -301,6 +337,14 @@ public static class MultiValueQueryFluent
                 (name, dataColumn, rowCount) => new NullableShortMultiValueColumn(name, ((NullableInt16DataColumn)dataColumn).GetValues(rowCount))
             },
             {
+                Extensions.GetHash(DataType.UInt16),
+                (name, dataColumn, rowCount) => new UShortMultiValueColumn(name, ((UInt16DataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
+                Extensions.GetHash(DataType.UInt16, isNullable: true),
+                (name, dataColumn, rowCount) => new NullableUShortMultiValueColumn(name, ((NullableUInt16DataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
                 Extensions.GetHash(DataType.Int32),
                 (name, dataColumn, rowCount) => new IntMultiValueColumn(name, ((Int32DataColumn)dataColumn).GetValues(rowCount))
             },
@@ -309,12 +353,28 @@ public static class MultiValueQueryFluent
                 (name, dataColumn, rowCount) => new NullableIntMultiValueColumn(name, ((NullableInt32DataColumn)dataColumn).GetValues(rowCount))
             },
             {
+                Extensions.GetHash(DataType.UInt32),
+                (name, dataColumn, rowCount) => new UIntMultiValueColumn(name, ((UInt32DataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
+                Extensions.GetHash(DataType.UInt32, isNullable: true),
+                (name, dataColumn, rowCount) => new NullableUIntMultiValueColumn(name, ((NullableUInt32DataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
                 Extensions.GetHash(DataType.Int64),
                 (name, dataColumn, rowCount) => new LongMultiValueColumn(name, ((Int64DataColumn)dataColumn).GetValues(rowCount))
             },
             {
                 Extensions.GetHash(DataType.Int64, isNullable: true),
                 (name, dataColumn, rowCount) => new NullableLongMultiValueColumn(name, ((NullableInt64DataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
+                Extensions.GetHash(DataType.UInt64),
+                (name, dataColumn, rowCount) => new ULongMultiValueColumn(name, ((UInt64DataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
+                Extensions.GetHash(DataType.UInt64, isNullable: true),
+                (name, dataColumn, rowCount) => new NullableULongMultiValueColumn(name, ((NullableUInt64DataColumn)dataColumn).GetValues(rowCount))
             },
             {
                 Extensions.GetHash(DataType.Single),
@@ -349,6 +409,14 @@ public static class MultiValueQueryFluent
                 (name, dataColumn, rowCount) => new StringMultiValueColumn(name, ((NullableStringDataColumn)dataColumn).GetValues(rowCount))
             },
             {
+                Extensions.GetHash(DataType.Guid),
+                (name, dataColumn, rowCount) => new GuidMultiValueColumn(name, ((GuidDataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
+                Extensions.GetHash(DataType.Guid, isNullable: true),
+                (name, dataColumn, rowCount) => new NullableGuidMultiValueColumn(name, ((NullableGuidDataColumn)dataColumn).GetValues(rowCount))
+            },
+            {
                 Extensions.GetHash(DataType.DateTime),
                 (name, dataColumn, rowCount) => new DateTimeMultiValueColumn(name, ((DateTimeDataColumn)dataColumn).GetValues(rowCount))
             },
@@ -364,14 +432,6 @@ public static class MultiValueQueryFluent
                 Extensions.GetHash(DataType.TimeSpan, isNullable: true),
                 (name, dataColumn, rowCount) => new NullableTimeSpanMultiValueColumn(name, ((NullableTimeSpanDataColumn)dataColumn).GetValues(rowCount))
             },
-            {
-                Extensions.GetHash(DataType.Guid),
-                (name, dataColumn, rowCount) => new GuidMultiValueColumn(name, ((GuidDataColumn)dataColumn).GetValues(rowCount))
-            },
-            {
-                Extensions.GetHash(DataType.Guid, isNullable: true),
-                (name, dataColumn, rowCount) => new NullableGuidMultiValueColumn(name, ((NullableGuidDataColumn)dataColumn).GetValues(rowCount))
-            },
         }.ToFrozenDictionary();
 
 #pragma warning disable IDE0038 // Use pattern matching
@@ -381,14 +441,26 @@ public static class MultiValueQueryFluent
 
         if (values is IReadOnlyList<bool>)
             return new BoolMultiValueColumn(name, (IReadOnlyList<bool>)values);
+        else if (values is IReadOnlyList<char>)
+            return new CharMultiValueColumn(name, (IReadOnlyList<char>)values);
+        else if (values is IReadOnlyList<sbyte>)
+            return new SByteMultiValueColumn(name, (IReadOnlyList<sbyte>)values);
         else if (values is IReadOnlyList<byte>)
             return new ByteMultiValueColumn(name, (IReadOnlyList<byte>)values);
+        else if (values is IReadOnlyList<byte[]>)
+            return new ByteArrayMultiValueColumn(name, (IReadOnlyList<byte[]>)values);
         else if (values is IReadOnlyList<short>)
             return new ShortMultiValueColumn(name, (IReadOnlyList<short>)values);
+        else if (values is IReadOnlyList<ushort>)
+            return new UShortMultiValueColumn(name, (IReadOnlyList<ushort>)values);
         else if (values is IReadOnlyList<int>)
             return new IntMultiValueColumn(name, (IReadOnlyList<int>)values);
+        else if (values is IReadOnlyList<uint>)
+            return new UIntMultiValueColumn(name, (IReadOnlyList<uint>)values);
         else if (values is IReadOnlyList<long>)
             return new LongMultiValueColumn(name, (IReadOnlyList<long>)values);
+        else if (values is IReadOnlyList<ulong>)
+            return new ULongMultiValueColumn(name, (IReadOnlyList<ulong>)values);
         else if (values is IReadOnlyList<float>)
             return new FloatMultiValueColumn(name, (IReadOnlyList<float>)values);
         else if (values is IReadOnlyList<double>)
@@ -397,34 +469,46 @@ public static class MultiValueQueryFluent
             return new DecimalMultiValueColumn(name, (IReadOnlyList<decimal>)values);
         else if (values is IReadOnlyList<string>)
             return new StringMultiValueColumn(name, (IReadOnlyList<string>)values);
-        else if (values is IReadOnlyList<DateTime>)
-            return new DateTimeMultiValueColumn(name, (IReadOnlyList<DateTime>)values);
         else if (values is IReadOnlyList<Guid>)
             return new GuidMultiValueColumn(name, (IReadOnlyList<Guid>)values);
-        else if (values is IReadOnlyList<byte[]>)
-            return new ByteArrayMultiValueColumn(name, (IReadOnlyList<byte[]>)values);
+        else if (values is IReadOnlyList<DateTime>)
+            return new DateTimeMultiValueColumn(name, (IReadOnlyList<DateTime>)values);
+        else if (values is IReadOnlyList<TimeSpan>)
+            return new TimeSpanMultiValueColumn(name, (IReadOnlyList<TimeSpan>)values);
 
         // Nullable types
         if (values is IReadOnlyList<bool?>)
             return new NullableBoolMultiValueColumn(name, (IReadOnlyList<bool?>)values);
+        else if (values is IReadOnlyList<char?>)
+            return new NullableCharMultiValueColumn(name, (IReadOnlyList<char?>)values);
+        else if (values is IReadOnlyList<sbyte?>)
+            return new NullableSByteMultiValueColumn(name, (IReadOnlyList<sbyte?>)values);
         else if (values is IReadOnlyList<byte?>)
             return new NullableByteMultiValueColumn(name, (IReadOnlyList<byte?>)values);
         else if (values is IReadOnlyList<short?>)
             return new NullableShortMultiValueColumn(name, (IReadOnlyList<short?>)values);
+        else if (values is IReadOnlyList<ushort?>)
+            return new NullableUShortMultiValueColumn(name, (IReadOnlyList<ushort?>)values);
         else if (values is IReadOnlyList<int?>)
             return new NullableIntMultiValueColumn(name, (IReadOnlyList<int?>)values);
+        else if (values is IReadOnlyList<uint?>)
+            return new NullableUIntMultiValueColumn(name, (IReadOnlyList<uint?>)values);
         else if (values is IReadOnlyList<long?>)
             return new NullableLongMultiValueColumn(name, (IReadOnlyList<long?>)values);
+        else if (values is IReadOnlyList<ulong?>)
+            return new NullableULongMultiValueColumn(name, (IReadOnlyList<ulong?>)values);
         else if (values is IReadOnlyList<float?>)
             return new NullableFloatMultiValueColumn(name, (IReadOnlyList<float?>)values);
         else if (values is IReadOnlyList<double?>)
             return new NullableDoubleMultiValueColumn(name, (IReadOnlyList<double?>)values);
         else if (values is IReadOnlyList<decimal?>)
             return new NullableDecimalMultiValueColumn(name, (IReadOnlyList<decimal?>)values);
-        else if (values is IReadOnlyList<DateTime?>)
-            return new NullableDateTimeMultiValueColumn(name, (IReadOnlyList<DateTime?>)values);
         else if (values is IReadOnlyList<Guid?>)
             return new NullableGuidMultiValueColumn(name, (IReadOnlyList<Guid?>)values);
+        else if (values is IReadOnlyList<DateTime?>)
+            return new NullableDateTimeMultiValueColumn(name, (IReadOnlyList<DateTime?>)values);
+        else if (values is IReadOnlyList<TimeSpan?>)
+            return new NullableTimeSpanMultiValueColumn(name, (IReadOnlyList<TimeSpan?>)values);
 
         throw new NotSupportedException(values.GetType().FullName);
     }

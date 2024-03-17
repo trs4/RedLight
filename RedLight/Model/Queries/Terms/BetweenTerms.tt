@@ -4,15 +4,19 @@
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ output extension=".cs" #>
-<# var types = new [] { 
-    ("Byte", "byte", "Byte"),
-    ("Short", "short", "Short"),
-    ("Int", "int", "Int"), 
-    ("Long", "long", "Long"),
-    ("Float", "float", "Float"),
-    ("Double", "double", "Double"),
-    ("Decimal", "decimal", "Decimal"),
-    ("DateTime", "DateTime", "DateTime"),
+<# var types = new [] {
+    ("SByte", "sbyte"),
+    ("Byte", "byte"),
+    ("Short", "short"),
+    ("UShort", "ushort"),
+    ("Int", "int"),
+    ("UInt", "uint"),
+    ("Long", "long"),
+    ("ULong", "ulong"),
+    ("Float", "float"),
+    ("Double", "double"),
+    ("Decimal", "decimal"),
+    ("DateTime", "DateTime"),
 }; #>
 using System;
 

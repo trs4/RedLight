@@ -49,24 +49,24 @@ public sealed class RowReadAction
         _readActions = new ColumnReadAction[reader.FieldCount];
         var schema = reader.GetSchemaTable();
 
-        for (int rowIndex = 0; rowIndex < schema.Rows.Count; rowIndex++)
+        for (int row = 0; row < schema.Rows.Count; row++)
         {
-            var row = schema.Rows[rowIndex];
-            string columnName = row["ColumnName"] as string;
-            var columnType = row["DataType"] as Type;
-            bool nullable = row["AllowDBNull"] is bool boolValue && boolValue;
+            var dataRow = schema.Rows[row];
+            string columnName = dataRow["ColumnName"] as string;
+            var columnType = dataRow["DataType"] as Type;
+            bool nullable = dataRow["AllowDBNull"] is bool boolValue && boolValue;
 
             if (nullable)
             {
                 if (_nullableColumns.TryGetValue(columnType, out var columnFunc))
-                    _readActions[rowIndex] = columnFunc(connection, dataTable, rowIndex, columnName);
+                    _readActions[row] = columnFunc(connection, dataTable, row, columnName);
                 else
                     throw new InvalidOperationException($"{columnName}: {columnType.FullName}");
             }
             else
             {
                 if (_columns.TryGetValue(columnType, out var columnFunc))
-                    _readActions[rowIndex] = columnFunc(connection, dataTable, rowIndex, columnName);
+                    _readActions[row] = columnFunc(connection, dataTable, row, columnName);
                 else
                     throw new InvalidOperationException($"{columnName}: {columnType.FullName}");
             }
@@ -77,8 +77,8 @@ public sealed class RowReadAction
     {
         int row = _dataTable.RowCount++;
 
-        for (int columnIndex = 0; columnIndex < _readActions.Length; columnIndex++)
-            _readActions[columnIndex].Read(_reader, row);
+        for (int i = 0; i < _readActions.Length; i++)
+            _readActions[i].Read(_reader, row);
     }
 
 }
