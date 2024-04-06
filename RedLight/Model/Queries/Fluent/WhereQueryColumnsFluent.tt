@@ -39,6 +39,35 @@ public static class WhereQueryColumnsFluent
 <# foreach (var p in types) { #>
     /// <summary>Добавляет условие по полю с значением</summary>
     /// <param name="column">Имя поля</param>
+    /// <param name="value">Значение</param>
+    public static TQuery WithTerm<TQuery>(this TQuery query, string column, <#= p.Item2 #> value)
+        where TQuery : WhereQuery
+    {
+        string escapedColumnName = query.Connection.Naming.GetName(column);
+
+        query.Where.AddTerm(new OperatorTerm<#= p.Item1 #>(
+            query, escapedColumnName, Op.Equal, value));
+
+        return query;
+    }
+    
+    /// <summary>Добавляет условие по полю с значением</summary>
+    /// <param name="alias">Псевдоним таблицы</param>
+    /// <param name="column">Имя поля</param>
+    /// <param name="value">Значение</param>
+    public static TQuery WithTerm<TQuery>(this TQuery query, string alias, string column, <#= p.Item2 #> value)
+        where TQuery : WhereQuery
+    {
+        string escapedColumnName = query.Connection.Naming.GetNameWithAlias(alias, column);
+
+        query.Where.AddTerm(new OperatorTerm<#= p.Item1 #>(
+            query, escapedColumnName, Op.Equal, value));
+
+        return query;
+    }
+    
+    /// <summary>Добавляет условие по полю с значением</summary>
+    /// <param name="column">Имя поля</param>
     /// <param name="termOperator">Оператор</param>
     /// <param name="value">Значение</param>
     public static TQuery WithTerm<TQuery>(this TQuery query, string column, Op termOperator, <#= p.Item2 #> value)
@@ -53,6 +82,53 @@ public static class WhereQueryColumnsFluent
     }
 
     /// <summary>Добавляет условие по полю с значением</summary>
+    /// <param name="alias">Псевдоним таблицы</param>
+    /// <param name="column">Имя поля</param>
+    /// <param name="termOperator">Оператор</param>
+    /// <param name="value">Значение</param>
+    public static TQuery WithTerm<TQuery>(this TQuery query, string alias, string column, Op termOperator, <#= p.Item2 #> value)
+        where TQuery : WhereQuery
+    {
+        string escapedColumnName = query.Connection.Naming.GetNameWithAlias(alias, column);
+
+        query.Where.AddTerm(new OperatorTerm<#= p.Item1 #>(
+            query, escapedColumnName, termOperator, value));
+
+        return query;
+    }
+
+    /// <summary>Добавляет условие по полю с значением</summary>
+    /// <param name="column">Имя поля</param>
+    /// <param name="value">Значение</param>
+    public static TQuery WithTerm<TQuery, TEnum>(this TQuery query, TEnum column, <#= p.Item2 #> value)
+        where TQuery : WhereQuery
+        where TEnum : Enum
+    {
+        string escapedColumnName = query.Connection.Naming.GetName(column);
+
+        query.Where.AddTerm(new OperatorTerm<#= p.Item1 #>(
+            query, escapedColumnName, Op.Equal, value));
+
+        return query;
+    }
+    
+    /// <summary>Добавляет условие по полю с значением</summary>
+    /// <param name="alias">Псевдоним таблицы</param>
+    /// <param name="column">Имя поля</param>
+    /// <param name="value">Значение</param>
+    public static TQuery WithTerm<TQuery, TEnum>(this TQuery query, string alias, TEnum column, <#= p.Item2 #> value)
+        where TQuery : WhereQuery
+        where TEnum : Enum
+    {
+        string escapedColumnName = query.Connection.Naming.GetNameWithAlias(alias, column);
+
+        query.Where.AddTerm(new OperatorTerm<#= p.Item1 #>(
+            query, escapedColumnName, Op.Equal, value));
+
+        return query;
+    }
+
+    /// <summary>Добавляет условие по полю с значением</summary>
     /// <param name="column">Имя поля</param>
     /// <param name="termOperator">Оператор</param>
     /// <param name="value">Значение</param>
@@ -61,6 +137,23 @@ public static class WhereQueryColumnsFluent
         where TEnum : Enum
     {
         string escapedColumnName = query.Connection.Naming.GetName(column);
+
+        query.Where.AddTerm(new OperatorTerm<#= p.Item1 #>(
+            query, escapedColumnName, termOperator, value));
+
+        return query;
+    }
+
+    /// <summary>Добавляет условие по полю с значением</summary>
+    /// <param name="alias">Псевдоним таблицы</param>
+    /// <param name="column">Имя поля</param>
+    /// <param name="termOperator">Оператор</param>
+    /// <param name="value">Значение</param>
+    public static TQuery WithTerm<TQuery, TEnum>(this TQuery query, string alias, TEnum column, Op termOperator, <#= p.Item2 #> value)
+        where TQuery : WhereQuery
+        where TEnum : Enum
+    {
+        string escapedColumnName = query.Connection.Naming.GetNameWithAlias(alias, column);
 
         query.Where.AddTerm(new OperatorTerm<#= p.Item1 #>(
             query, escapedColumnName, termOperator, value));
