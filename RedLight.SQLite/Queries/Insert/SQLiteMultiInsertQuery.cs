@@ -22,7 +22,7 @@ internal sealed class SQLiteMultiInsertQuery<TResult> : MultiInsertQuery<TResult
         {
             BuildBlock(builder, options, startIndex, packetSize, tableName);
             builder.Append(";\r\n\r\n");
-            startIndex += packetCount;
+            startIndex += packetSize;
         }
 
         BuildBlock(builder, options, startIndex, rowCount - startIndex, tableName);

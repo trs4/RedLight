@@ -252,6 +252,71 @@ public abstract class DatabaseInsertQueries
         return query;
     }
 
+    /// <summary>Создаёт запрос добавления множественных данных</summary>
+    /// <typeparam name="TResult">Тип результата</typeparam>
+    /// <typeparam name="TEnum">Имя таблицы</typeparam>
+    /// <param name="row">Вставляемый объект</param>
+    /// <param name="returningIdentity">Возвращать и проставлять колонку идентификатора</param>
+    /// <param name="excludedColumns">Исключить колонки</param>
+    public MultiInsertQuery<TResult> CreateWithParseMultiQuery<TResult, TEnum>(TResult row,
+        bool returningIdentity = true, IReadOnlyCollection<string> excludedColumns = null)
+        where TEnum : Enum
+    {
+        ArgumentNullException.ThrowIfNull(row);
+        var table = TableGenerator.From<TEnum>();
+        var query = CreateMultiQuery<TResult, TEnum>();
+        var excludedColumnNames = Extensions.GetExcludedColumnNames(excludedColumns);
+        var type = typeof(TResult);
+
+        if (type == typeof(DataSet))
+            Append(query, table, ((DataSet)(object)row).Values.First(), returningIdentity, excludedColumnNames); // %%TODO
+        else if (type == typeof(DataTable))
+            Append(query, table, (DataTable)(object)row, returningIdentity, excludedColumnNames); // %%TODO
+        else if (type.IsClass && !type.IsSystem())
+        {
+            string identityColumnName = table.Identity?.Name;
+
+            if (identityColumnName is not null)
+            {
+                foreach (var column in table.Columns)
+                {
+                    var propertyInfo = type.GetProperty(column.Name);
+
+                    if (propertyInfo is null)
+                        continue;
+
+                    if (returningIdentity && column.Name.Equals(identityColumnName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        query.AddReturningColumnCore(query.Connection.Naming.GetName(column.Name));
+                        query.AddReadAction(column, (obj, value) => propertyInfo.SetValue(obj, value));
+                        continue;
+                    }
+
+                    if (excludedColumnNames?.Contains(column.Name) ?? false)
+                        continue;
+
+                    query.AddColumn(column, new object[] { propertyInfo.GetValue(row) });
+                }
+            }
+            else
+            {
+                foreach (var column in table.Columns)
+                {
+                    var propertyInfo = type.GetProperty(column.Name);
+
+                    if (propertyInfo is null || (excludedColumnNames?.Contains(column.Name) ?? false))
+                        continue;
+
+                    query.AddColumn(column, new object[] { propertyInfo.GetValue(row) });
+                }
+            }
+        }
+        else
+            throw new NotImplementedException();
+
+        return query;
+    }
+
     private static void Append<TResult>(MultiInsertQuery<TResult> query, Table table, DataTable dataTable,
         bool returningIdentity, HashSet<string> excludedColumnNames)
     {
