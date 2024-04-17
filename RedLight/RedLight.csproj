@@ -14,14 +14,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+	<PackageReference Include="IcyRain.Tables" Version="2.0.1" />
 	<PackageReference Include="System.Memory" Version="4.5.5" />
 	<PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
-  </ItemGroup>
-
-  <ItemGroup>
-	<Reference Include="IcyRain.Tables">
-	  <HintPath>..\IcyRain.Tables.dll</HintPath>
-	</Reference>
   </ItemGroup>
 
   <ItemGroup>

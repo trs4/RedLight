@@ -7,12 +7,11 @@
 	<IsPackable>false</IsPackable>
 	<NoWarn>CA1062</NoWarn>
   </PropertyGroup>
+  
   <ItemGroup>
-	<ProjectReference Include="..\RedLight.All\RedLight.All.csproj" />
+	<PackageReference Include="IcyRain.Tables" Version="2.0.1" />
   </ItemGroup>
   <ItemGroup>
-	<Reference Include="IcyRain.Tables">
-	  <HintPath>..\IcyRain.Tables.dll</HintPath>
-	</Reference>
+	<ProjectReference Include="..\RedLight.All\RedLight.All.csproj" />
   </ItemGroup>
 </Project>

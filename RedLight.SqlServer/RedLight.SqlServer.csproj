@@ -19,12 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
-	<ProjectReference Include="..\RedLight\RedLight.csproj" />
+	<PackageReference Include="IcyRain.Tables" Version="2.0.1" />
   </ItemGroup>
-
   <ItemGroup>
-	<Reference Include="IcyRain.Tables">
-	  <HintPath>..\IcyRain.Tables.dll</HintPath>
-	</Reference>
+	<ProjectReference Include="..\RedLight\RedLight.csproj" />
   </ItemGroup>
 </Project>
