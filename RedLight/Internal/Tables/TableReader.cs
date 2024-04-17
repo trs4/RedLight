@@ -1,28 +1,10 @@
-﻿using System;
-using System.Data.Common;
-using System.Runtime.CompilerServices;
+﻿using System.Data.Common;
 using IcyRain.Tables;
 
 namespace RedLight.Internal;
 
 internal static class TableReader
 {
-    [MethodImpl(Flags.HotPath)]
-    public static T Create<T>(DatabaseConnection connection, DbDataReader reader, QueryOptions options)
-    {
-        var type = typeof(T);
-
-        if (Types.TryGetICollectionArgumentType(type, out var elementType))
-        {
-            var source = Activator.CreateInstance<T>();
-            typeof(ListReader).GetMethod(nameof(ListReader.Append)).MakeGenericMethod(elementType).Invoke(null, [connection, source, reader, options]);
-            return source;
-        }
-        else
-            throw new NotSupportedException();
-    }
-
-    [MethodImpl(Flags.HotPath)]
     public static DataSet CreateDataSet(DatabaseConnection connection, DbDataReader reader, QueryOptions options)
     {
         bool multipleResult = options?.MultipleResult ?? false;
@@ -41,7 +23,6 @@ internal static class TableReader
         return dataSet;
     }
 
-    [MethodImpl(Flags.HotPath)]
     public static DataTable CreateDataTable(DatabaseConnection connection, DbDataReader reader, QueryOptions options)
     {
         bool multipleResult = options?.MultipleResult ?? false;

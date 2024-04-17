@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using IcyRain.Tables;
 using RedLight.Internal;
 
 namespace RedLight;
@@ -45,70 +43,8 @@ public abstract class DatabaseUpdateQueries
         string[] primaryKeyNames = table.GetPrimaryKeyNames();
         var excludedColumnNames = Extensions.GetExcludedColumnNames(excludedColumns);
         var query = CreateQuery<TEnum>();
-        var type = typeof(TResult);
-
-        if (type == typeof(DataSet))
-            Append(query, table, primaryKeyNames, ((DataSet)(object)row).Values.First(), excludedColumnNames);
-        else if (type == typeof(DataTable))
-            Append(query, table, primaryKeyNames, (DataTable)(object)row, excludedColumnNames);
-        else if (type.IsClass && !type.IsSystem())
-        {
-            var columns = new Column[primaryKeyNames.Length];
-
-            for (int i = 0; i < primaryKeyNames.Length; i++)
-            {
-                string primaryKeyName = primaryKeyNames[i];
-                var column = table.FindColumn(primaryKeyName);
-                var primaryKeyPropertyInfo = type.GetProperty(primaryKeyName) ?? throw new InvalidOperationException(primaryKeyName);
-                query.WithTerm(primaryKeyName, Op.Equal, column, primaryKeyPropertyInfo.GetValue(row));
-                columns[i] = column;
-            }
-
-            foreach (var column in table.Columns)
-            {
-                var propertyInfo = type.GetProperty(column.Name);
-
-                if (propertyInfo is null || columns.Any(c => ReferenceEquals(column, c)))
-                    continue;
-
-                if (excludedColumnNames?.Contains(column.Name) ?? false)
-                    continue;
-
-                query.AddColumn(column, propertyInfo.GetValue(row));
-            }
-        }
-        else
-            throw new NotImplementedException();
-
+        TypeAction<TResult>.Instance.BuildWithParseQuery(query, table, row, excludedColumnNames, primaryKeyNames);
         return query;
-    }
-
-    private static void Append(UpdateQuery query, Table table, string[] primaryKeyNames, DataTable dataTable, HashSet<string> excludedColumnNames)
-    {
-        var columns = new Column[primaryKeyNames.Length];
-
-        for (int i = 0; i < primaryKeyNames.Length; i++)
-        {
-            string primaryKeyName = primaryKeyNames[i];
-            var column = table.FindColumn(primaryKeyName);
-
-            if (!dataTable.TryGetValue(primaryKeyName, out var dataColumn))
-                throw new InvalidOperationException(primaryKeyName);
-
-            query.WithTerm(primaryKeyName, Op.Equal, column, dataColumn.GetObject(0)); // %%TODO
-            columns[i] = column;
-        }
-
-        foreach (var column in table.Columns)
-        {
-            if (!dataTable.TryGetValue(column.Name, out var dataColumn) || columns.Any(c => ReferenceEquals(column, c)))
-                continue;
-
-            if (excludedColumnNames?.Contains(column.Name) ?? false)
-                continue;
-
-            query.AddColumn(column.Name, dataColumn.GetObject(0));
-        }
     }
 
 
@@ -142,64 +78,8 @@ public abstract class DatabaseUpdateQueries
         var query = CreateMultiQuery<TEnum>();
         string[] primaryKeyNames = table.GetPrimaryKeyNames();
         var excludedColumnNames = Extensions.GetExcludedColumnNames(excludedColumns);
-        var type = typeof(TResult);
-
-        if (type == typeof(DataSet))
-            Append(query, table, primaryKeyNames, ((DataSet)(object)rows.First()).Values.First(), excludedColumnNames); // %%TODO
-        else if (type == typeof(DataTable))
-            Append(query, table, primaryKeyNames, (DataTable)(object)rows.First(), excludedColumnNames); // %%TODO
-        else if (type.IsClass && !type.IsSystem())
-        {
-            foreach (string primaryKeyName in primaryKeyNames)
-                query.OnColumn(primaryKeyName);
-
-            foreach (var column in table.Columns)
-            {
-                var propertyInfo = type.GetProperty(column.Name);
-
-                if (propertyInfo is null)
-                    continue;
-
-                if (!primaryKeyNames.Any(primaryKeyName => column.Name.Equals(primaryKeyName, StringComparison.OrdinalIgnoreCase)))
-                    query.ReplaceDataColumn(column.Name, column.Name);
-
-                if (excludedColumnNames?.Contains(column.Name) ?? false)
-                    continue;
-
-                var (dataType, nullable, isArray) = column.GetDataType();
-                var dataColumn = DataColumn.Create(dataType, rows.Count, nullable, isArray); // %%TODO
-                int index = 0;
-
-                foreach (var row in rows)
-                    dataColumn.SetObject(index++, propertyInfo.GetValue(row));
-
-                query.AddColumn(column.Name, dataColumn, rows.Count);
-            }
-        }
-        else
-            throw new NotImplementedException();
-
+        TypeAction<TResult>.Instance.BuildWithParseMultiQuery(query, table, rows, excludedColumnNames, primaryKeyNames);
         return query;
-    }
-
-    private static void Append(MultiUpdateQuery query, Table table, string[] primaryKeyNames, DataTable dataTable, HashSet<string> excludedColumnNames)
-    {
-        foreach (string primaryKeyName in primaryKeyNames)
-            query.OnColumn(primaryKeyName);
-
-        foreach (var column in table.Columns)
-        {
-            if (!dataTable.TryGetValue(column.Name, out var dataColumn))
-                continue;
-
-            if (!primaryKeyNames.Any(primaryKeyName => column.Name.Equals(primaryKeyName, StringComparison.OrdinalIgnoreCase)))
-                query.ReplaceDataColumn(column.Name, column.Name);
-
-            if (excludedColumnNames?.Contains(column.Name) ?? false)
-                continue;
-
-            query.AddColumn(column.Name, dataColumn, dataTable.RowCount);
-        }
     }
 
     protected abstract UpdateQuery Create(string tableName);

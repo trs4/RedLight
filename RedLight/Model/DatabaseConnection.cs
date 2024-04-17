@@ -5,8 +5,6 @@ using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
 using RedLight.Internal;
-using DataSet = IcyRain.Tables.DataSet;
-using DataTable = IcyRain.Tables.DataTable;
 
 namespace RedLight;
 
@@ -142,70 +140,7 @@ public abstract class DatabaseConnection : IDisposable
     /// <param name="timeout">Максимальное время ожидания выполнения команды</param>
     /// <returns>Результат заданного типа</returns>
     public T Get<T>(string sql, QueryOptions options = null, int timeout = 0)
-    {
-        var type = typeof(T);
-
-        if (type == typeof(DataSet))
-        {
-            var behavior = (options?.MultipleResult ?? false) ? CommandBehavior.Default : CommandBehavior.SingleResult;
-            DbDataReader reader = null;
-
-            try
-            {
-                Executor.BeginSession();
-                reader = Executor.RunReader(sql, Prepare(options), GetTimeout(timeout), behavior);
-                return (T)(object)TableReader.CreateDataSet(this, reader, options);
-            }
-            finally
-            {
-                (reader as IDisposable)?.Dispose();
-                Executor.EndSession();
-            }
-        }
-        else if (type == typeof(DataTable))
-        {
-            var behavior = (options?.MultipleResult ?? false) ? CommandBehavior.Default : CommandBehavior.SingleResult;
-            DbDataReader reader = null;
-
-            try
-            {
-                Executor.BeginSession();
-                reader = Executor.RunReader(sql, Prepare(options), GetTimeout(timeout), behavior);
-                return (T)(object)TableReader.CreateDataTable(this, reader, options);
-            }
-            finally
-            {
-                (reader as IDisposable)?.Dispose();
-                Executor.EndSession();
-            }
-        }
-        else if (type.IsCollection())
-        {
-            var behavior = (options?.MultipleResult ?? false) ? CommandBehavior.Default : CommandBehavior.SingleResult;
-            DbDataReader reader = null;
-
-            try
-            {
-                Executor.BeginSession();
-                reader = Executor.RunReader(sql, Prepare(options), GetTimeout(timeout), behavior);
-                return TableReader.Create<T>(this, reader, options);
-            }
-            finally
-            {
-                (reader as IDisposable)?.Dispose();
-                Executor.EndSession();
-            }
-        }
-
-
-        if (!type.IsSystem())
-            throw new NotImplementedException();
-
-        {
-            object result = Executor.RunScalar(sql, Prepare(options), GetTimeout(timeout));
-            return Extensions.Convert<T>(result);
-        }
-    }
+        => TypeAction<T>.Instance.Get(this, sql, options, timeout);
 
     /// <summary>Выполняет запрос с получением результата в данном формате</summary>
     /// <param name="sql">Текст запроса</param>
@@ -213,70 +148,8 @@ public abstract class DatabaseConnection : IDisposable
     /// <param name="timeout">Максимальное время ожидания выполнения команды</param>
     /// <param name="token">Оповещение отмены задачи</param>
     /// <returns>Результат заданного типа</returns>
-    public async Task<T> GetAsync<T>(string sql, QueryOptions options = null, int timeout = 0, CancellationToken token = default)
-    {
-        var type = typeof(T);
-
-        if (type == typeof(DataSet))
-        {
-            var behavior = (options?.MultipleResult ?? false) ? CommandBehavior.Default : CommandBehavior.SingleResult;
-            DbDataReader reader = null;
-
-            try
-            {
-                await Executor.BeginSessionAsync().ConfigureAwait(false);
-                reader = await Executor.RunReaderAsync(sql, Prepare(options), GetTimeout(timeout), token, behavior).ConfigureAwait(false);
-                return (T)(object)TableReader.CreateDataSet(this, reader, options);
-            }
-            finally
-            {
-                (reader as IDisposable)?.Dispose();
-                Executor.EndSession();
-            }
-        }
-        else if (type == typeof(DataTable))
-        {
-            var behavior = (options?.MultipleResult ?? false) ? CommandBehavior.Default : CommandBehavior.SingleResult;
-            DbDataReader reader = null;
-
-            try
-            {
-                await Executor.BeginSessionAsync().ConfigureAwait(false);
-                reader = await Executor.RunReaderAsync(sql, Prepare(options), GetTimeout(timeout), token, behavior).ConfigureAwait(false);
-                return (T)(object)TableReader.CreateDataTable(this, reader, options);
-            }
-            finally
-            {
-                (reader as IDisposable)?.Dispose();
-                Executor.EndSession();
-            }
-        }
-        else if (type.IsCollection())
-        {
-            var behavior = (options?.MultipleResult ?? false) ? CommandBehavior.Default : CommandBehavior.SingleResult;
-            DbDataReader reader = null;
-
-            try
-            {
-                await Executor.BeginSessionAsync().ConfigureAwait(false);
-                reader = await Executor.RunReaderAsync(sql, Prepare(options), GetTimeout(timeout), token, behavior).ConfigureAwait(false);
-                return TableReader.Create<T>(this, reader, options);
-            }
-            finally
-            {
-                (reader as IDisposable)?.Dispose();
-                Executor.EndSession();
-            }
-        }
-
-        if (!type.IsSystem())
-            throw new NotImplementedException();
-
-        {
-            object result = await Executor.RunScalarAsync(sql, Prepare(options), GetTimeout(timeout), token).ConfigureAwait(false);
-            return Extensions.Convert<T>(result);
-        }
-    }
+    public Task<T> GetAsync<T>(string sql, QueryOptions options = null, int timeout = 0, CancellationToken token = default)
+        => TypeAction<T>.Instance.GetAsync(this, sql, options, timeout, token);
 
     /// <summary>Выполняет запрос с получением результата в данном формате</summary>
     /// <param name="sql">Текст запроса</param>
@@ -405,7 +278,8 @@ public abstract class DatabaseConnection : IDisposable
     /// <param name="sql">Текст запроса</param>
     /// <param name="options">Опции запроса</param>
     /// <param name="timeout">Максимальное время ожидания выполнения команды</param>
-    public void Run<T>(ICollection<T> source, string sql, QueryOptions options = null, int timeout = 0)
+    public void Run<T, TCollection>(TCollection source, string sql, QueryOptions options = null, int timeout = 0)
+        where TCollection : ICollection<T>, new()
     {
         ArgumentNullException.ThrowIfNull(source);
         var behavior = (options?.MultipleResult ?? false) ? CommandBehavior.Default : CommandBehavior.SingleResult;
@@ -415,7 +289,7 @@ public abstract class DatabaseConnection : IDisposable
         {
             Executor.BeginSession();
             reader = Executor.RunReader(sql, Prepare(options), GetTimeout(timeout), behavior);
-            ListReader.Append(this, source, reader, options);
+            TypeAction<TCollection>.Instance.FillCollection(this, source, reader, options);
         }
         finally
         {
@@ -430,7 +304,8 @@ public abstract class DatabaseConnection : IDisposable
     /// <param name="options">Опции запроса</param>
     /// <param name="timeout">Максимальное время ожидания выполнения команды</param>
     /// <param name="token">Оповещение отмены задачи</param>
-    public async Task RunAsync<T>(ICollection<T> source, string sql, QueryOptions options = null, int timeout = 0, CancellationToken token = default)
+    public async Task RunAsync<T, TCollection>(TCollection source, string sql, QueryOptions options = null, int timeout = 0, CancellationToken token = default)
+        where TCollection : ICollection<T>, new()
     {
         ArgumentNullException.ThrowIfNull(source);
         var behavior = (options?.MultipleResult ?? false) ? CommandBehavior.Default : CommandBehavior.SingleResult;
@@ -440,7 +315,7 @@ public abstract class DatabaseConnection : IDisposable
         {
             await Executor.BeginSessionAsync().ConfigureAwait(false);
             reader = await Executor.RunReaderAsync(sql, Prepare(options), GetTimeout(timeout), token, behavior).ConfigureAwait(false);
-            ListReader.Append(this, source, reader, options);
+            TypeAction<TCollection>.Instance.FillCollection(this, source, reader, options);
         }
         finally
         {
@@ -452,7 +327,7 @@ public abstract class DatabaseConnection : IDisposable
     #endregion
     #region Options
 
-    private QueryOptions Prepare(QueryOptions options)
+    internal QueryOptions Prepare(QueryOptions options)
     {
         if (options is null)
             return options;
@@ -510,7 +385,7 @@ public abstract class DatabaseConnection : IDisposable
 
     private const int DefaultQueryTimeout = 3 * 60; // 3 минуты
 
-    private static int GetTimeout(int timeout) => timeout == 0 ? DefaultQueryTimeout : timeout;
+    internal static int GetTimeout(int timeout) => timeout == 0 ? DefaultQueryTimeout : timeout;
 
     #endregion
 }

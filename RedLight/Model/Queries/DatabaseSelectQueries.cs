@@ -82,29 +82,7 @@ public abstract class DatabaseSelectQueries
     {
         var table = TableGenerator.From<TEnum>();
         var query = CreateQuery<TResult>(table.Name, alias);
-        var type = typeof(TResult);
-
-        if (type == typeof(DataSet) || type == typeof(DataTable))
-        {
-            foreach (var column in table.Columns)
-                query.AddColumn(column.Name, alias);
-        }
-        else if (type.IsClass && !type.IsSystem())
-        {
-            foreach (var column in table.Columns)
-            {
-                var propertyInfo = type.GetProperty(column.Name);
-
-                if (propertyInfo is null)
-                    continue;
-
-                query.AddColumn(column.Name, alias);
-                query.AddReadAction(column, (obj, value) => propertyInfo.SetValue(obj, value));
-            }
-        }
-        else
-            throw new NotImplementedException();
-
+        TypeAction<TResult>.Instance.BuildWithParseQuery(query, alias, table);
         return query;
     }
 

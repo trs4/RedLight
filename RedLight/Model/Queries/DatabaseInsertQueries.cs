@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using IcyRain.Tables;
 using RedLight.Internal;
 
@@ -69,81 +68,8 @@ public abstract class DatabaseInsertQueries
         var query = CreateQuery<TResult, TEnum>();
         var excludedColumnNames = Extensions.GetExcludedColumnNames(excludedColumns);
         query.Data = row;
-        var type = typeof(TResult);
-
-        if (type == typeof(DataSet))
-            Append(query, table, ((DataSet)(object)row).Values.First(), returningIdentity, excludedColumnNames);
-        else if (type == typeof(DataTable))
-            Append(query, table, (DataTable)(object)row, returningIdentity, excludedColumnNames);
-        else if (type.IsClass && !type.IsSystem())
-        {
-            string identityColumnName = table.Identity?.Name;
-
-            if (identityColumnName is not null)
-            {
-                foreach (var column in table.Columns)
-                {
-                    var propertyInfo = type.GetProperty(column.Name);
-
-                    if (propertyInfo is null)
-                        continue;
-
-                    if (returningIdentity && column.Name.Equals(identityColumnName, StringComparison.OrdinalIgnoreCase))
-                    {
-                        query.AddReturningColumnCore(query.Connection.Naming.GetName(column.Name));
-                        query.AddReadAction(column, (obj, value) => propertyInfo.SetValue(obj, value));
-                        continue;
-                    }
-
-                    if (excludedColumnNames?.Contains(column.Name) ?? false)
-                        continue;
-
-                    query.AddColumn(column, propertyInfo.GetValue(row));
-                }
-            }
-            else
-            {
-                foreach (var column in table.Columns)
-                {
-                    var propertyInfo = type.GetProperty(column.Name);
-
-                    if (propertyInfo is null || (excludedColumnNames?.Contains(column.Name) ?? false))
-                        continue;
-
-                    query.AddColumn(column, propertyInfo.GetValue(row));
-                }
-            }
-        }
-        else
-            throw new NotImplementedException();
-
+        TypeAction<TResult>.Instance.BuildWithParseQuery(query, table, row, returningIdentity, excludedColumnNames);
         return query;
-    }
-
-    private static void Append<TResult>(InsertQuery<TResult> query, Table table, DataTable dataTable,
-        bool returningIdentity, HashSet<string> excludedColumnNames)
-    {
-        string identityColumnName = null;
-        DataColumn returningColumn = null;
-
-        if (returningIdentity)
-        {
-            identityColumnName = table.Identity?.Name;
-
-            if (identityColumnName is not null)
-                dataTable.TryGetValue(identityColumnName, out returningColumn);
-        }
-
-        if (returningColumn is not null)
-        {
-            (excludedColumnNames ??= new(StringComparer.OrdinalIgnoreCase)).Add(identityColumnName);
-            query.AddColumns(dataTable, 0, excludedColumnNames);
-
-            query.AddReturningColumnCore(query.Connection.Naming.GetName(identityColumnName));
-            query.AddReadAction(table.IdentityColumn, (obj, value) => returningColumn.SetObject(0, value));
-        }
-        else
-            query.AddColumns(dataTable, 0, excludedColumnNames);
     }
 
 
@@ -201,54 +127,7 @@ public abstract class DatabaseInsertQueries
         var query = CreateMultiQuery<TResult, TEnum>();
         var excludedColumnNames = Extensions.GetExcludedColumnNames(excludedColumns);
         query.Data = rows;
-        var type = typeof(TResult);
-
-        if (type == typeof(DataSet))
-            Append(query, table, ((DataSet)(object)rows.First()).Values.First(), returningIdentity, excludedColumnNames); // %%TODO
-        else if (type == typeof(DataTable))
-            Append(query, table, (DataTable)(object)rows.First(), returningIdentity, excludedColumnNames); // %%TODO
-        else if (type.IsClass && !type.IsSystem())
-        {
-            string identityColumnName = table.Identity?.Name;
-
-            if (identityColumnName is not null)
-            {
-                foreach (var column in table.Columns)
-                {
-                    var propertyInfo = type.GetProperty(column.Name);
-
-                    if (propertyInfo is null)
-                        continue;
-
-                    if (returningIdentity && column.Name.Equals(identityColumnName, StringComparison.OrdinalIgnoreCase))
-                    {
-                        query.AddReturningColumnCore(query.Connection.Naming.GetName(column.Name));
-                        query.AddReadAction(column, (obj, value) => propertyInfo.SetValue(obj, value));
-                        continue;
-                    }
-
-                    if (excludedColumnNames?.Contains(column.Name) ?? false)
-                        continue;
-
-                    query.AddColumn(column, ScalarReadBuilder.Fill(propertyInfo, rows));
-                }
-            }
-            else
-            {
-                foreach (var column in table.Columns)
-                {
-                    var propertyInfo = type.GetProperty(column.Name);
-
-                    if (propertyInfo is null || (excludedColumnNames?.Contains(column.Name) ?? false))
-                        continue;
-
-                    query.AddColumn(column, ScalarReadBuilder.Fill(propertyInfo, rows));
-                }
-            }
-        }
-        else
-            throw new NotImplementedException();
-
+        TypeAction<TResult>.Instance.BuildWithParseMultiQuery(query, table, rows, returningIdentity, excludedColumnNames);
         return query;
     }
 
@@ -266,81 +145,8 @@ public abstract class DatabaseInsertQueries
         var table = TableGenerator.From<TEnum>();
         var query = CreateMultiQuery<TResult, TEnum>();
         var excludedColumnNames = Extensions.GetExcludedColumnNames(excludedColumns);
-        var type = typeof(TResult);
-
-        if (type == typeof(DataSet))
-            Append(query, table, ((DataSet)(object)row).Values.First(), returningIdentity, excludedColumnNames); // %%TODO
-        else if (type == typeof(DataTable))
-            Append(query, table, (DataTable)(object)row, returningIdentity, excludedColumnNames); // %%TODO
-        else if (type.IsClass && !type.IsSystem())
-        {
-            string identityColumnName = table.Identity?.Name;
-
-            if (identityColumnName is not null)
-            {
-                foreach (var column in table.Columns)
-                {
-                    var propertyInfo = type.GetProperty(column.Name);
-
-                    if (propertyInfo is null)
-                        continue;
-
-                    if (returningIdentity && column.Name.Equals(identityColumnName, StringComparison.OrdinalIgnoreCase))
-                    {
-                        query.AddReturningColumnCore(query.Connection.Naming.GetName(column.Name));
-                        query.AddReadAction(column, (obj, value) => propertyInfo.SetValue(obj, value));
-                        continue;
-                    }
-
-                    if (excludedColumnNames?.Contains(column.Name) ?? false)
-                        continue;
-
-                    query.AddColumn(column, new object[] { propertyInfo.GetValue(row) });
-                }
-            }
-            else
-            {
-                foreach (var column in table.Columns)
-                {
-                    var propertyInfo = type.GetProperty(column.Name);
-
-                    if (propertyInfo is null || (excludedColumnNames?.Contains(column.Name) ?? false))
-                        continue;
-
-                    query.AddColumn(column, new object[] { propertyInfo.GetValue(row) });
-                }
-            }
-        }
-        else
-            throw new NotImplementedException();
-
+        TypeAction<TResult>.Instance.BuildWithParseMultiQuery(query, table, row, returningIdentity, excludedColumnNames);
         return query;
-    }
-
-    private static void Append<TResult>(MultiInsertQuery<TResult> query, Table table, DataTable dataTable,
-        bool returningIdentity, HashSet<string> excludedColumnNames)
-    {
-        string identityColumnName = null;
-        DataColumn returningColumn = null;
-
-        if (returningIdentity)
-        {
-            identityColumnName = table.Identity?.Name;
-
-            if (identityColumnName is not null)
-                dataTable.TryGetValue(identityColumnName, out returningColumn);
-        }
-
-        if (returningColumn is not null)
-        {
-            (excludedColumnNames ??= new(StringComparer.OrdinalIgnoreCase)).Add(identityColumnName);
-            query.AddColumns(dataTable, excludedColumnNames);
-
-            query.AddReturningColumnCore(query.Connection.Naming.GetName(identityColumnName));
-            query.AddReadAction(table.IdentityColumn, (obj, value) => returningColumn.SetObject(0, value));
-        }
-        else
-            query.AddColumns(dataTable, excludedColumnNames);
     }
 
 

@@ -94,19 +94,21 @@ public abstract class RunQuery : Query, IRunQuery
 
     /// <summary>Выполняет запрос с добавлением результата в данный список</summary>
     /// <param name="source">Список, в который будет добавлен результат</param>
-    public void Append<T>(ICollection<T> source)
+    public void Append<T, TCollection>(TCollection source)
+        where TCollection : ICollection<T>, new()
     {
         var (sql, options) = BuildSql();
-        Connection.Run(source, sql, options, Timeout);
+        Connection.Run<T, TCollection>(source, sql, options, Timeout);
     }
 
     /// <summary>Выполняет запрос с добавлением результата в данный список</summary>
     /// <param name="source">Список, в который будет добавлен результат</param>
     /// <param name="token">Оповещение отмены задачи</param>
-    public Task AppendAsync<T>(ICollection<T> source, CancellationToken token = default)
+    public Task AppendAsync<T, TCollection>(TCollection source, CancellationToken token = default)
+        where TCollection : ICollection<T>, new()
     {
         var (sql, options) = BuildSql();
-        return Connection.RunAsync(source, sql, options, Timeout, token);
+        return Connection.RunAsync<T, TCollection>(source, sql, options, Timeout, token);
     }
 
     #endregion

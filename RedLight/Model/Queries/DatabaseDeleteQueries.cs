@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using IcyRain.Tables;
 using RedLight.Internal;
 
 namespace RedLight;
@@ -44,38 +42,8 @@ public abstract class DatabaseDeleteQueries
         var table = TableGenerator.From<TEnum>();
         string[] primaryKeyNames = table.GetPrimaryKeyNames();
         var query = CreateQuery<TEnum>();
-        var type = typeof(TResult);
-
-        if (type == typeof(DataSet))
-            Append(query, table, primaryKeyNames, ((DataSet)(object)row).Values.First());
-        else if (type == typeof(DataTable))
-            Append(query, table, primaryKeyNames, (DataTable)(object)row);
-        else if (type.IsClass && !type.IsSystem())
-        {
-            foreach (string primaryKeyName in primaryKeyNames)
-            {
-                var primaryKeyPropertyInfo = type.GetProperty(primaryKeyName) ?? throw new InvalidOperationException(primaryKeyName);
-                query.WithTerm(primaryKeyName, Op.Equal, table.FindColumn(primaryKeyName), primaryKeyPropertyInfo.GetValue(row));
-            }
-        }
-        else
-        {
-            foreach (string primaryKeyName in primaryKeyNames)
-                query.WithTerm(primaryKeyName, Op.Equal, table.FindColumn(primaryKeyName), row);
-        }
-
+        TypeAction<TResult>.Instance.BuildWithParseQuery(query, table, row, primaryKeyNames);
         return query;
-    }
-
-    private static void Append(DeleteQuery query, Table table, string[] primaryKeyNames, DataTable dataTable)
-    {
-        foreach (string primaryKeyName in primaryKeyNames)
-        {
-            if (!dataTable.TryGetValue(primaryKeyName, out var dataColumn))
-                throw new InvalidOperationException(primaryKeyName);
-
-            query.WithTerm(primaryKeyName, Op.Equal, table.FindColumn(primaryKeyName), dataColumn.GetObject(0)); // %%TODO
-        }
     }
 
     /// <summary>Создаёт запрос удаления множественных данных</summary>
@@ -90,36 +58,8 @@ public abstract class DatabaseDeleteQueries
         string[] primaryKeyNames = table.GetPrimaryKeyNames();
         string primaryKeyName = primaryKeyNames.Length == 1 ? primaryKeyNames[0] : throw new InvalidOperationException("Use CreateWithParseMultiQuery");
         var query = CreateQuery<TEnum>();
-        var type = typeof(TResult);
-
-        if (type == typeof(DataSet))
-            AppendValues(query, table, primaryKeyName, ((DataSet)(object)rows.First()).Values.First()); // %%TODO
-        else if (type == typeof(DataTable))
-            AppendValues(query, table, primaryKeyName, (DataTable)(object)rows.First()); // %%TODO
-        else if (type.IsClass && !type.IsSystem())
-        {
-            var primaryKeyPropertyInfo = type.GetProperty(primaryKeyName) ?? throw new InvalidOperationException(primaryKeyName);
-            var dataType = DataType.Int32; // %%TODO
-            var dataColumn = DataColumn.Create(dataType, rows.Count);
-            int index = 0;
-
-            foreach (var row in rows)
-                dataColumn.SetObject(index++, primaryKeyPropertyInfo.GetValue(row));
-
-            query.Where.WithValuesColumnTerm(primaryKeyName, dataColumn, rows.Count);
-        }
-        else
-            query.Where.WithValuesTerm(primaryKeyName, rows);
-
+        TypeAction<TResult>.Instance.BuildWithParseQuery(query, table, rows, primaryKeyName);
         return query;
-    }
-
-    private static void AppendValues(DeleteQuery query, Table table, string primaryKeyName, DataTable dataTable)
-    {
-        if (!dataTable.TryGetValue(primaryKeyName, out var dataColumn))
-            throw new InvalidOperationException(primaryKeyName);
-
-        query.Where.WithValuesColumnTerm(primaryKeyName, dataColumn, dataTable.RowCount);
     }
 
 
@@ -151,37 +91,7 @@ public abstract class DatabaseDeleteQueries
         var table = TableGenerator.From<TEnum>();
         string[] primaryKeyNames = table.GetPrimaryKeyNames();
         var query = CreateMultiQuery<TEnum>();
-        var type = typeof(TResult);
-
-        if (type == typeof(DataSet))
-            Append(query, table, primaryKeyNames, ((DataSet)(object)rows.First()).Values.First()); // %%TODO
-        else if (type == typeof(DataTable))
-            Append(query, table, primaryKeyNames, (DataTable)(object)rows.First()); // %%TODO
-        else if (type.IsClass && !type.IsSystem())
-        {
-            foreach (var column in table.Columns)
-            {
-                var propertyInfo = type.GetProperty(column.Name);
-
-                if (propertyInfo is null)
-                    continue;
-
-                if (!primaryKeyNames.Any(primaryKeyName => column.Name.Equals(primaryKeyName, StringComparison.OrdinalIgnoreCase)))
-                    continue;
-
-                var (dataType, nullable, isArray) = column.GetDataType();
-                var dataColumn = DataColumn.Create(dataType, rows.Count, nullable, isArray); // %%TODO
-                int index = 0;
-
-                foreach (var row in rows)
-                    dataColumn.SetObject(index++, propertyInfo.GetValue(row));
-
-                query.AddColumn(column.Name, dataColumn, rows.Count);
-            }
-        }
-        else
-            throw new NotImplementedException();
-
+        TypeAction<TResult>.Instance.BuildWithParseMultiQuery(query, table, rows, primaryKeyNames);
         return query;
     }
 
@@ -196,41 +106,8 @@ public abstract class DatabaseDeleteQueries
         var table = TableGenerator.From<TEnum>();
         string[] primaryKeyNames = table.GetPrimaryKeyNames();
         var query = CreateMultiQuery<TEnum>();
-        var type = typeof(TResult);
-
-        if (type == typeof(DataSet))
-            Append(query, table, primaryKeyNames, ((DataSet)(object)row).Values.First()); // %%TODO
-        else if (type == typeof(DataTable))
-            Append(query, table, primaryKeyNames, (DataTable)(object)row); // %%TODO
-        else if (type.IsClass && !type.IsSystem())
-        {
-            foreach (string primaryKeyName in primaryKeyNames)
-            {
-                var primaryKeyPropertyInfo = type.GetProperty(primaryKeyName) ?? throw new InvalidOperationException(primaryKeyName);
-                query.WithTerm(primaryKeyName, Op.Equal, table.FindColumn(primaryKeyName), primaryKeyPropertyInfo.GetValue(row));
-            }
-        }
-        else
-        {
-            foreach (string primaryKeyName in primaryKeyNames)
-                query.WithTerm(primaryKeyName, Op.Equal, table.FindColumn(primaryKeyName), row);
-        }
-
+        TypeAction<TResult>.Instance.BuildWithParseMultiQuery(query, table, row, primaryKeyNames);
         return query;
-    }
-
-    private static void Append(MultiDeleteQuery query, Table table, string[] primaryKeyNames, DataTable dataTable)
-    {
-        foreach (var column in table.Columns)
-        {
-            if (!dataTable.TryGetValue(column.Name, out var dataColumn))
-                continue;
-
-            if (!primaryKeyNames.Any(primaryKeyName => column.Name.Equals(primaryKeyName, StringComparison.OrdinalIgnoreCase)))
-                continue;
-
-            query.AddColumn(column.Name, dataColumn, dataTable.RowCount);
-        }
     }
 
     protected abstract DeleteQuery Create(string tableName);
