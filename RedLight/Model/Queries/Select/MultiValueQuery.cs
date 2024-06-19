@@ -85,12 +85,12 @@ public abstract class MultiValueQuery : WhereQuery
 
         for (int packetIndex = 0; packetIndex < packetCount; packetIndex++)
         {
-            BuildBlock(builder, options, startIndex, packetSize, tableName);
+            BuildBlock(builder, options, startIndex * packetSize, packetSize, tableName);
             builder.Append("\r\n  UNION ALL\r\n");
             startIndex += packetSize;
         }
 
-        BuildBlock(builder, options, startIndex, rowCount - startIndex, tableName);
+        BuildBlock(builder, options, startIndex * packetSize, rowCount - startIndex * packetSize, tableName);
         builder.Append("\r\n) AS ").Append(tableName);
     }
 

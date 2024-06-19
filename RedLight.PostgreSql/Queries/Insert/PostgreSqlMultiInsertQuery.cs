@@ -20,12 +20,12 @@ internal sealed class PostgreSqlMultiInsertQuery<TResult> : MultiInsertQuery<TRe
 
         for (int packetIndex = 0; packetIndex < packetCount; packetIndex++)
         {
-            BuildBlock(builder, options, startIndex, packetSize, tableName);
+            BuildBlock(builder, options, startIndex * packetSize, packetSize, tableName);
             builder.Append(";\r\n\r\n");
             startIndex += packetCount;
         }
 
-        BuildBlock(builder, options, startIndex, rowCount - startIndex, tableName);
+        BuildBlock(builder, options, startIndex * packetSize, rowCount - startIndex * packetSize, tableName);
     }
 
 }
