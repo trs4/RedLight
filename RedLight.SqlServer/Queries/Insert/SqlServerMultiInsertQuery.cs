@@ -20,12 +20,12 @@ internal sealed class SqlServerMultiInsertQuery<TResult> : MultiInsertQuery<TRes
 
         for (int packetIndex = 0; packetIndex < packetCount; packetIndex++)
         {
-            BuildBlock(builder, options, startIndex * packetSize, packetSize, tableName);
+            BuildBlock(builder, options, startIndex, packetSize, tableName);
             builder.Append(";\r\n\r\n");
-            startIndex += packetCount;
+            startIndex += packetSize;
         }
 
-        BuildBlock(builder, options, startIndex * packetSize, rowCount - startIndex * packetSize, tableName);
+        BuildBlock(builder, options, startIndex, rowCount - startIndex, tableName);
     }
 
 }
