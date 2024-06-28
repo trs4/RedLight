@@ -17,14 +17,10 @@ internal sealed class PostgreSqlMultiDeleteQuery : MultiDeleteQuery
                 Naming.GetRawNameWithAlias(DataAlias, column.Name));
         }
 
-        builder.Append("DELETE FROM ").Append(TableName)
-            .Append("\r\nFROM ").Append(TableName).Append(' ').Append(Alias)
-            .Append("\r\nINNER JOIN\r\n(\r\n");
-
+        builder.Append("WITH ").Append(DataAlias).Append(" AS (\r\n");
         base.BuildPackets(builder, options, packetSize, packetCount, rowCount);
-
-        builder.Append("\r\n) ").Append(DataAlias);
-        onTerm.BuildSql(builder, options, Consts.On);
+        builder.Append("\r\n)\r\nDELETE FROM ").Append(TableName).Append(' ').Append(Alias).Append("\r\nUSING ").Append(DataAlias);
+        onTerm.BuildSql(builder, options, Consts.Where);
         BuildWhereBlock(builder, options);
     }
 
