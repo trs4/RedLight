@@ -1,5 +1,5 @@
 ﻿using System.Data.Common;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 using RedLight.Internal;
 
 namespace RedLight.SQLite;
@@ -10,21 +10,21 @@ internal sealed class SQLiteExecutor : Executor
 
     protected override string BuildConnectionString()
     {
-        var builder = new SQLiteConnectionStringBuilder();
+        var builder = new SqliteConnectionStringBuilder();
         Prepare(builder);
         builder.DataSource = Parameters.ServerName;
         builder.Pooling = Parameters.UsePooling;
         return builder.ToString();
     }
 
-    protected override DbConnection CreateConnection() => new SQLiteConnection(ConnectionString);
+    protected override DbConnection CreateConnection() => new SqliteConnection(ConnectionString);
 
     protected override DbParameter CreateParameter(QueryParameter parameter)
     {
         var dataType = SQLiteColumnTypes.Instance.GetDataType(parameter.Type);
         int maxSize = parameter.MaxSize > 0 ? parameter.MaxSize : SQLiteColumnTypes.Instance.GetMaxSize(dataType);
 
-        return new SQLiteParameter(parameter.Name, dataType, maxSize)
+        return new SqliteParameter(parameter.Name, dataType, maxSize)
         {
             Value = parameter.Value,
             IsNullable = parameter.Nullable,

@@ -1,5 +1,5 @@
-﻿using System.Data.SQLite;
-using System.IO;
+﻿using System.IO;
+using Microsoft.Data.Sqlite;
 using RedLight.Internal;
 
 namespace RedLight.SQLite;
@@ -8,7 +8,7 @@ public sealed class DatabaseRegister : IDatabaseRegister
 {
     public DatabaseConnectionParameters ParseParameters(string connectionString)
     {
-        var builder = new SQLiteConnectionStringBuilder(connectionString);
+        var builder = new SqliteConnectionStringBuilder(connectionString);
         string fileName = Path.GetFileNameWithoutExtension(builder.DataSource);
 
         return DatabaseConnectionParameters.Create(DatabaseProvider.SQLite, fileName, builder.DataSource,
