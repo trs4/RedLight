@@ -6,6 +6,9 @@ namespace RedLight.SQLite;
 
 public sealed class DatabaseRegister : IDatabaseRegister
 {
+    public DatabaseRegister()
+        => SQLitePCL.Batteries.Init();
+
     public DatabaseConnectionParameters ParseParameters(string connectionString)
     {
         var builder = new SqliteConnectionStringBuilder(connectionString);

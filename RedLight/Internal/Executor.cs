@@ -227,7 +227,7 @@ internal abstract class Executor : IDisposable
         if (String.IsNullOrEmpty(sql))
             return EmptyDataReader.Instance;
 
-        using var command = CreateCommand(sql, ref options, timeout);
+        var command = CreateCommand(sql, ref options, timeout);
         return command.ExecuteReader(behavior);
     }
 
@@ -237,7 +237,7 @@ internal abstract class Executor : IDisposable
         if (String.IsNullOrEmpty(sql))
             return EmptyDataReader.Instance;
 
-        using var command = CreateCommand(sql, ref options, timeout);
+        var command = CreateCommand(sql, ref options, timeout);
         return await command.ExecuteReaderAsync(behavior, token).ConfigureAwait(false);
     }
 

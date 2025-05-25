@@ -1,208 +1,208 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-	<AssemblyName>RedLight</AssemblyName>
-	<TargetFrameworks>net8.0</TargetFrameworks>
-	<DefineConstants></DefineConstants>
-	<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	<PropertyGroup>
+		<AssemblyName>RedLight</AssemblyName>
+		<TargetFrameworks>net8.0</TargetFrameworks>
+		<DefineConstants></DefineConstants>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 
-	<TieredPGO>true</TieredPGO>
+		<TieredPGO>true</TieredPGO>
 
-	<PackageId>RedLight</PackageId>
-	<PackageTags>sql;sql-builder;orm;mini-orm;ado-net</PackageTags>
-	<PackageProjectUrl>https://github.com/trs4/RedLight</PackageProjectUrl>
-	<RepositoryUrl>https://github.com/trs4/RedLight</RepositoryUrl>
-  </PropertyGroup>
+		<PackageId>RedLight</PackageId>
+		<PackageTags>sql;sql-builder;orm;mini-orm;ado-net</PackageTags>
+		<PackageProjectUrl>https://github.com/trs4/RedLight</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/trs4/RedLight</RepositoryUrl>
+	</PropertyGroup>
+	
+	<ItemGroup>
+		<PackageReference Include="IcyRain.Tables" Version="2.0.2" />
+		<PackageReference Include="System.Memory" Version="4.6.3" />
+		<PackageReference Include="System.Threading.Tasks.Extensions" Version="4.6.3" />
+	</ItemGroup>
 
-  <ItemGroup>
-	<PackageReference Include="IcyRain.Tables" Version="2.0.2" />
-	<PackageReference Include="System.Memory" Version="4.6.3" />
-	<PackageReference Include="System.Threading.Tasks.Extensions" Version="4.6.3" />
-  </ItemGroup>
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+			<_Parameter1>RedLight.PostgreSql</_Parameter1>
+		</AssemblyAttribute>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+			<_Parameter1>RedLight.SQLite</_Parameter1>
+		</AssemblyAttribute>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+			<_Parameter1>RedLight.SqlServer</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
 
-  <ItemGroup>
-	<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-	  <_Parameter1>RedLight.PostgreSql</_Parameter1>
-	</AssemblyAttribute>
-	<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-	  <_Parameter1>RedLight.SQLite</_Parameter1>
-	</AssemblyAttribute>
-	<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-	  <_Parameter1>RedLight.SqlServer</_Parameter1>
-	</AssemblyAttribute>
-  </ItemGroup>
-
-  <ItemGroup>
-	<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-	<None Update="Model\Queries\Fluent\WhereQueryColumnsFluent.tt">
-	  <LastGenOutput>WhereQueryColumnsFluent.cs</LastGenOutput>
-	  <Generator>TextTemplatingFileGenerator</Generator>
-	</None>
-	<None Update="Model\Queries\Select\Fluent\SelectQueryGetOneFluent.tt">
-	  <LastGenOutput>SelectQueryGetOneFluent.cs</LastGenOutput>
-	  <Generator>TextTemplatingFileGenerator</Generator>
-	</None>
-	<None Update="Model\Queries\Select\Fluent\SelectQueryColumnsWithReadFluent.tt">
-	  <Generator>TextTemplatingFileGenerator</Generator>
-	  <LastGenOutput>SelectQueryColumnsWithReadFluent.cs</LastGenOutput>
-	</None>
-	<None Update="Internal\Scalars\ScalarReadActions.tt">
-	  <Generator>TextTemplatingFileGenerator</Generator>
-	  <LastGenOutput>ScalarReadActions.cs</LastGenOutput>
-	</None>
-	<None Update="Internal\Tables\ColumnReadActions.tt">
-	  <Generator>TextTemplatingFileGenerator</Generator>
-	  <LastGenOutput>ColumnReadActions.cs</LastGenOutput>
-	</None>
-	<None Update="Model\ParameterNamings\ParameterProcessing.tt">
-	  <Generator>TextTemplatingFileGenerator</Generator>
-	  <LastGenOutput>ParameterProcessing.cs</LastGenOutput>
-	</None>
-	<None Update="Model\Queries\Columns\MultiValueColumns.tt">
-	  <Generator>TextTemplatingFileGenerator</Generator>
-	  <LastGenOutput>MultiValueColumns.cs</LastGenOutput>
-	</None>
-	<None Update="Model\Queries\Columns\ValueColumns.tt">
-	  <Generator>TextTemplatingFileGenerator</Generator>
-	  <LastGenOutput>ValueColumns.cs</LastGenOutput>
-	</None>
-	<None Update="Model\Queries\Insert\Fluent\InsertQueryColumnsFluent.tt">
-	  <Generator>TextTemplatingFileGenerator</Generator>
-	  <LastGenOutput>InsertQueryColumnsFluent.cs</LastGenOutput>
-	</None>
-	<None Update="Model\Queries\Insert\Fluent\MultiInsertQueryColumnsFluent.tt">
-	  <Generator>TextTemplatingFileGenerator</Generator>
-	  <LastGenOutput>MultiInsertQueryColumnsFluent.cs</LastGenOutput>
-	</None>
-	<None Update="Model\Queries\Select\Fluent\MultiValueQueryColumnsFluent.tt">
-	  <Generator>TextTemplatingFileGenerator</Generator>
-	  <LastGenOutput>MultiValueQueryColumnsFluent.cs</LastGenOutput>
-	</None>
-	<None Update="Model\Queries\Select\Fluent\ValueQueryColumnsFluent.tt">
-	  <Generator>TextTemplatingFileGenerator</Generator>
-	  <LastGenOutput>ValueQueryColumnsFluent.cs</LastGenOutput>
-	</None>
-	<None Update="Model\Queries\Terms\BetweenTerms.tt">
-	  <Generator>TextTemplatingFileGenerator</Generator>
-	  <LastGenOutput>BetweenTerms.cs</LastGenOutput>
-	</None>
-	<None Update="Model\Queries\Terms\Fluent\BetweenTermsFluent.tt">
-	  <Generator>TextTemplatingFileGenerator</Generator>
-	  <LastGenOutput>BetweenTermsFluent.cs</LastGenOutput>
-	</None>
-	<None Update="Model\Queries\Terms\Fluent\OperatorTermsFluent.tt">
-	  <Generator>TextTemplatingFileGenerator</Generator>
-	  <LastGenOutput>OperatorTermsFluent.cs</LastGenOutput>
-	</None>
-	<None Update="Model\Queries\Terms\InTerms.tt">
-	  <Generator>TextTemplatingFileGenerator</Generator>
-	  <LastGenOutput>InTerms.cs</LastGenOutput>
-	</None>
-	<None Update="Model\Queries\Terms\Internal\InTermActions.tt">
-	  <Generator>TextTemplatingFileGenerator</Generator>
-	  <LastGenOutput>InTermActions.cs</LastGenOutput>
-	</None>
-	<None Update="Model\Queries\Terms\OperatorTerms.tt">
-	  <Generator>TextTemplatingFileGenerator</Generator>
-	  <LastGenOutput>OperatorTerms.cs</LastGenOutput>
-	</None>
-	<None Update="Model\QueryParameters\QueryParameters.tt">
-	  <LastGenOutput>QueryParameters.cs</LastGenOutput>
-	  <Generator>TextTemplatingFileGenerator</Generator>
-	</None>
-	<Compile Update="Internal\Scalars\ScalarReadActions.cs">
-	  <DesignTime>True</DesignTime>
-	  <AutoGen>True</AutoGen>
-	  <DependentUpon>ScalarReadActions.tt</DependentUpon>
-	</Compile>
-	<Compile Update="Internal\Tables\ColumnReadActions.cs">
-	  <DesignTime>True</DesignTime>
-	  <AutoGen>True</AutoGen>
-	  <DependentUpon>ColumnReadActions.tt</DependentUpon>
-	</Compile>
-	<Compile Update="Model\ParameterNamings\ParameterProcessing.cs">
-	  <DesignTime>True</DesignTime>
-	  <AutoGen>True</AutoGen>
-	  <DependentUpon>ParameterProcessing.tt</DependentUpon>
-	</Compile>
-	<Compile Update="Model\Queries\Columns\MultiValueColumns.cs">
-	  <DesignTime>True</DesignTime>
-	  <AutoGen>True</AutoGen>
-	  <DependentUpon>MultiValueColumns.tt</DependentUpon>
-	</Compile>
-	<Compile Update="Model\Queries\Columns\ValueColumns.cs">
-	  <DesignTime>True</DesignTime>
-	  <AutoGen>True</AutoGen>
-	  <DependentUpon>ValueColumns.tt</DependentUpon>
-	</Compile>
-	<Compile Update="Model\Queries\Fluent\WhereQueryColumnsFluent.cs">
-	  <DependentUpon>WhereQueryColumnsFluent.tt</DependentUpon>
-	  <DesignTime>True</DesignTime>
-	  <AutoGen>True</AutoGen>
-	</Compile>
-	<Compile Update="Model\Queries\Insert\Fluent\InsertQueryColumnsFluent.cs">
-	  <DesignTime>True</DesignTime>
-	  <AutoGen>True</AutoGen>
-	  <DependentUpon>InsertQueryColumnsFluent.tt</DependentUpon>
-	</Compile>
-	<Compile Update="Model\Queries\Insert\Fluent\MultiInsertQueryColumnsFluent.cs">
-	  <DesignTime>True</DesignTime>
-	  <AutoGen>True</AutoGen>
-	  <DependentUpon>MultiInsertQueryColumnsFluent.tt</DependentUpon>
-	</Compile>
-	<Compile Update="Model\Queries\Select\Fluent\MultiValueQueryColumnsFluent.cs">
-	  <DesignTime>True</DesignTime>
-	  <AutoGen>True</AutoGen>
-	  <DependentUpon>MultiValueQueryColumnsFluent.tt</DependentUpon>
-	</Compile>
-	<Compile Update="Model\Queries\Select\Fluent\SelectQueryGetOneFluent.cs">
-	  <DependentUpon>SelectQueryGetOneFluent.tt</DependentUpon>
-	  <DesignTime>True</DesignTime>
-	  <AutoGen>True</AutoGen>
-	</Compile>
-	<Compile Update="Model\Queries\Select\Fluent\SelectQueryColumnsWithReadFluent.cs">
-	  <DesignTime>True</DesignTime>
-	  <AutoGen>True</AutoGen>
-	  <DependentUpon>SelectQueryColumnsWithReadFluent.tt</DependentUpon>
-	</Compile>
-	<Compile Update="Model\Queries\Select\Fluent\ValueQueryColumnsFluent.cs">
-	  <DesignTime>True</DesignTime>
-	  <AutoGen>True</AutoGen>
-	  <DependentUpon>ValueQueryColumnsFluent.tt</DependentUpon>
-	</Compile>
-	<Compile Update="Model\Queries\Terms\BetweenTerms.cs">
-	  <DesignTime>True</DesignTime>
-	  <AutoGen>True</AutoGen>
-	  <DependentUpon>BetweenTerms.tt</DependentUpon>
-	</Compile>
-	<Compile Update="Model\Queries\Terms\Fluent\BetweenTermsFluent.cs">
-	  <DesignTime>True</DesignTime>
-	  <AutoGen>True</AutoGen>
-	  <DependentUpon>BetweenTermsFluent.tt</DependentUpon>
-	</Compile>
-	<Compile Update="Model\Queries\Terms\Fluent\OperatorTermsFluent.cs">
-	  <DesignTime>True</DesignTime>
-	  <AutoGen>True</AutoGen>
-	  <DependentUpon>OperatorTermsFluent.tt</DependentUpon>
-	</Compile>
-	<Compile Update="Model\Queries\Terms\InTerms.cs">
-	  <DesignTime>True</DesignTime>
-	  <AutoGen>True</AutoGen>
-	  <DependentUpon>InTerms.tt</DependentUpon>
-	</Compile>
-	<Compile Update="Model\Queries\Terms\Internal\InTermActions.cs">
-	  <DesignTime>True</DesignTime>
-	  <AutoGen>True</AutoGen>
-	  <DependentUpon>InTermActions.tt</DependentUpon>
-	</Compile>
-	<Compile Update="Model\Queries\Terms\OperatorTerms.cs">
-	  <DesignTime>True</DesignTime>
-	  <AutoGen>True</AutoGen>
-	  <DependentUpon>OperatorTerms.tt</DependentUpon>
-	</Compile>
-	<Compile Update="Model\QueryParameters\QueryParameters.cs">
-	  <DependentUpon>QueryParameters.tt</DependentUpon>
-	  <DesignTime>True</DesignTime>
-	  <AutoGen>True</AutoGen>
-	</Compile>
-  </ItemGroup>
+	<ItemGroup>
+		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+		<None Update="Model\Queries\Fluent\WhereQueryColumnsFluent.tt">
+			<LastGenOutput>WhereQueryColumnsFluent.cs</LastGenOutput>
+			<Generator>TextTemplatingFileGenerator</Generator>
+		</None>
+		<None Update="Model\Queries\Select\Fluent\SelectQueryGetOneFluent.tt">
+			<LastGenOutput>SelectQueryGetOneFluent.cs</LastGenOutput>
+			<Generator>TextTemplatingFileGenerator</Generator>
+		</None>
+		<None Update="Model\Queries\Select\Fluent\SelectQueryColumnsWithReadFluent.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>SelectQueryColumnsWithReadFluent.cs</LastGenOutput>
+		</None>
+		<None Update="Internal\Scalars\ScalarReadActions.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>ScalarReadActions.cs</LastGenOutput>
+		</None>
+		<None Update="Internal\Tables\ColumnReadActions.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>ColumnReadActions.cs</LastGenOutput>
+		</None>
+		<None Update="Model\ParameterNamings\ParameterProcessing.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>ParameterProcessing.cs</LastGenOutput>
+		</None>
+		<None Update="Model\Queries\Columns\MultiValueColumns.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>MultiValueColumns.cs</LastGenOutput>
+		</None>
+		<None Update="Model\Queries\Columns\ValueColumns.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>ValueColumns.cs</LastGenOutput>
+		</None>
+		<None Update="Model\Queries\Insert\Fluent\InsertQueryColumnsFluent.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>InsertQueryColumnsFluent.cs</LastGenOutput>
+		</None>
+		<None Update="Model\Queries\Insert\Fluent\MultiInsertQueryColumnsFluent.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>MultiInsertQueryColumnsFluent.cs</LastGenOutput>
+		</None>
+		<None Update="Model\Queries\Select\Fluent\MultiValueQueryColumnsFluent.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>MultiValueQueryColumnsFluent.cs</LastGenOutput>
+		</None>
+		<None Update="Model\Queries\Select\Fluent\ValueQueryColumnsFluent.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>ValueQueryColumnsFluent.cs</LastGenOutput>
+		</None>
+		<None Update="Model\Queries\Terms\BetweenTerms.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>BetweenTerms.cs</LastGenOutput>
+		</None>
+		<None Update="Model\Queries\Terms\Fluent\BetweenTermsFluent.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>BetweenTermsFluent.cs</LastGenOutput>
+		</None>
+		<None Update="Model\Queries\Terms\Fluent\OperatorTermsFluent.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>OperatorTermsFluent.cs</LastGenOutput>
+		</None>
+		<None Update="Model\Queries\Terms\InTerms.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>InTerms.cs</LastGenOutput>
+		</None>
+		<None Update="Model\Queries\Terms\Internal\InTermActions.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>InTermActions.cs</LastGenOutput>
+		</None>
+		<None Update="Model\Queries\Terms\OperatorTerms.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>OperatorTerms.cs</LastGenOutput>
+		</None>
+		<None Update="Model\QueryParameters\QueryParameters.tt">
+			<LastGenOutput>QueryParameters.cs</LastGenOutput>
+			<Generator>TextTemplatingFileGenerator</Generator>
+		</None>
+		<Compile Update="Internal\Scalars\ScalarReadActions.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>ScalarReadActions.tt</DependentUpon>
+		</Compile>
+		<Compile Update="Internal\Tables\ColumnReadActions.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>ColumnReadActions.tt</DependentUpon>
+		</Compile>
+		<Compile Update="Model\ParameterNamings\ParameterProcessing.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>ParameterProcessing.tt</DependentUpon>
+		</Compile>
+		<Compile Update="Model\Queries\Columns\MultiValueColumns.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>MultiValueColumns.tt</DependentUpon>
+		</Compile>
+		<Compile Update="Model\Queries\Columns\ValueColumns.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>ValueColumns.tt</DependentUpon>
+		</Compile>
+		<Compile Update="Model\Queries\Fluent\WhereQueryColumnsFluent.cs">
+			<DependentUpon>WhereQueryColumnsFluent.tt</DependentUpon>
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+		</Compile>
+		<Compile Update="Model\Queries\Insert\Fluent\InsertQueryColumnsFluent.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>InsertQueryColumnsFluent.tt</DependentUpon>
+		</Compile>
+		<Compile Update="Model\Queries\Insert\Fluent\MultiInsertQueryColumnsFluent.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>MultiInsertQueryColumnsFluent.tt</DependentUpon>
+		</Compile>
+		<Compile Update="Model\Queries\Select\Fluent\MultiValueQueryColumnsFluent.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>MultiValueQueryColumnsFluent.tt</DependentUpon>
+		</Compile>
+		<Compile Update="Model\Queries\Select\Fluent\SelectQueryGetOneFluent.cs">
+			<DependentUpon>SelectQueryGetOneFluent.tt</DependentUpon>
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+		</Compile>
+		<Compile Update="Model\Queries\Select\Fluent\SelectQueryColumnsWithReadFluent.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>SelectQueryColumnsWithReadFluent.tt</DependentUpon>
+		</Compile>
+		<Compile Update="Model\Queries\Select\Fluent\ValueQueryColumnsFluent.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>ValueQueryColumnsFluent.tt</DependentUpon>
+		</Compile>
+		<Compile Update="Model\Queries\Terms\BetweenTerms.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>BetweenTerms.tt</DependentUpon>
+		</Compile>
+		<Compile Update="Model\Queries\Terms\Fluent\BetweenTermsFluent.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>BetweenTermsFluent.tt</DependentUpon>
+		</Compile>
+		<Compile Update="Model\Queries\Terms\Fluent\OperatorTermsFluent.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>OperatorTermsFluent.tt</DependentUpon>
+		</Compile>
+		<Compile Update="Model\Queries\Terms\InTerms.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>InTerms.tt</DependentUpon>
+		</Compile>
+		<Compile Update="Model\Queries\Terms\Internal\InTermActions.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>InTermActions.tt</DependentUpon>
+		</Compile>
+		<Compile Update="Model\Queries\Terms\OperatorTerms.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>OperatorTerms.tt</DependentUpon>
+		</Compile>
+		<Compile Update="Model\QueryParameters\QueryParameters.cs">
+			<DependentUpon>QueryParameters.tt</DependentUpon>
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+		</Compile>
+	</ItemGroup>
 </Project>
