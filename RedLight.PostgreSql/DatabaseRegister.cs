@@ -5,6 +5,8 @@ namespace RedLight.PostgreSql;
 
 public sealed class DatabaseRegister : IDatabaseRegister
 {
+    public DatabaseProvider Provider => DatabaseProvider.PostgreSql;
+
     public DatabaseConnectionParameters ParseParameters(string connectionString)
     {
         var builder = new NpgsqlConnectionStringBuilder(connectionString);

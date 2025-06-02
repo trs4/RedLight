@@ -2,9 +2,10 @@
 
 namespace RedLight.PostgreSql;
 
-internal sealed class PostgreSqlDatabaseConnection : DatabaseConnection
+/// <summary>Соединение с базой данных</summary>
+public sealed class PostgreSqlDatabaseConnection : DatabaseConnection
 {
-    public PostgreSqlDatabaseConnection(DatabaseConnectionParameters parameters) : base(parameters) { }
+    internal PostgreSqlDatabaseConnection(DatabaseConnectionParameters parameters) : base(parameters) { }
 
     public override DatabaseProvider Provider => DatabaseProvider.PostgreSql;
 
@@ -13,6 +14,16 @@ internal sealed class PostgreSqlDatabaseConnection : DatabaseConnection
     internal override ParameterNaming ParameterNaming => AtParameterNaming.Instance;
 
     internal override ColumnTypes ColumnTypes => PostgreSqlColumnTypes.Instance;
+
+    /// <summary>Создаёт подключение для работы с базой данных через строку подключения</summary>
+    /// <param name="connectionString">Строка подключения</param>
+    public static new DatabaseConnection Create(string connectionString)
+        => DatabaseConnectionCreator.From(connectionString, Providers.Init<DatabaseRegister>());
+
+    /// <summary>Создаёт подключение для работы с базой данных через параметры подключения</summary>
+    /// <param name="parameters">Параметры подключения</param>
+    public static new DatabaseConnection Create(DatabaseConnectionParameters parameters)
+        => DatabaseConnectionCreator.From(parameters, Providers.Init<DatabaseRegister>());
 
     internal override ExplainQuery CreateExplainQuery(Query owner) => new PostgreSqlExplainQuery(owner);
 

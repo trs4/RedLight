@@ -5,6 +5,8 @@ namespace RedLight.SqlServer;
 
 public sealed class DatabaseRegister : IDatabaseRegister
 {
+    public DatabaseProvider Provider => DatabaseProvider.SqlServer;
+
     public DatabaseConnectionParameters ParseParameters(string connectionString)
     {
         var builder = new SqlConnectionStringBuilder(connectionString);

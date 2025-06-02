@@ -19,10 +19,22 @@ internal static class DatabaseConnectionCreator
         return From(parameters);
     }
 
+    public static DatabaseConnection From(string connectionString, IDatabaseRegister databaseRegister)
+    {
+        var parameters = Parse(connectionString);
+        return From(parameters, databaseRegister);
+    }
+
     public static DatabaseConnection From(DatabaseConnectionParameters parameters)
     {
         ArgumentNullException.ThrowIfNull(parameters);
         return Providers.Get(parameters.DatabaseProvider).Create(parameters);
+    }
+
+    public static DatabaseConnection From(DatabaseConnectionParameters parameters, IDatabaseRegister databaseRegister)
+    {
+        ArgumentNullException.ThrowIfNull(parameters);
+        return databaseRegister.Create(parameters);
     }
 
     public static DatabaseConnectionParameters Parse(string connectionString)
@@ -49,6 +61,35 @@ internal static class DatabaseConnectionCreator
         {
             builder.Remove(nameof(DatabaseConnectionParameters.Provider));
             return Providers.Get(databaseProvider.Value).ParseParameters(builder.ConnectionString);
+        }
+
+        throw new InvalidOperationException($"Unknown provider. Connection string:\r\n{connectionString}");
+    }
+
+    public static DatabaseConnectionParameters Parse(string connectionString, IDatabaseRegister databaseRegister)
+    {
+        if (String.IsNullOrEmpty(connectionString))
+            throw new ArgumentNullException(nameof(connectionString));
+
+        var builder = new DbConnectionStringBuilder() { ConnectionString = connectionString, };
+        string provider = GetValue(builder, nameof(DatabaseConnectionParameters.Provider));
+
+        if (provider is null)
+            return databaseRegister.ParseParameters(connectionString);
+
+        DatabaseProvider? databaseProvider = null;
+
+        if (provider.Equals("SQLite", StringComparison.OrdinalIgnoreCase))
+            databaseProvider = DatabaseProvider.SQLite;
+        else if (provider.Equals("PostgreSql", StringComparison.OrdinalIgnoreCase))
+            databaseProvider = DatabaseProvider.PostgreSql;
+        else if (provider.Equals("SqlServer", StringComparison.OrdinalIgnoreCase))
+            databaseProvider = DatabaseProvider.SqlServer;
+
+        if (databaseProvider.HasValue && databaseProvider.Value == databaseRegister.Provider)
+        {
+            builder.Remove(nameof(DatabaseConnectionParameters.Provider));
+            return databaseRegister.ParseParameters(builder.ConnectionString);
         }
 
         throw new InvalidOperationException($"Unknown provider. Connection string:\r\n{connectionString}");

@@ -11,6 +11,13 @@ internal static class Providers
     private static readonly ConcurrentDictionary<DatabaseProvider, IDatabaseRegister> _providers = new();
     private static readonly Type _databaseRegisterType = typeof(IDatabaseRegister);
 
+    public static IDatabaseRegister Init<T>()
+        where T : IDatabaseRegister, new()
+    {
+        var databaseRegister = new T();
+        return _providers.GetOrAdd(databaseRegister.Provider, databaseRegister);
+    }
+
     public static IDatabaseRegister Get(DatabaseProvider provider) => _providers.GetOrAdd(provider, Load);
 
     private static IDatabaseRegister Load(DatabaseProvider provider)
