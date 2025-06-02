@@ -77,16 +77,7 @@ internal static class DatabaseConnectionCreator
         if (provider is null)
             return databaseRegister.ParseParameters(connectionString);
 
-        DatabaseProvider? databaseProvider = null;
-
-        if (provider.Equals("SQLite", StringComparison.OrdinalIgnoreCase))
-            databaseProvider = DatabaseProvider.SQLite;
-        else if (provider.Equals("PostgreSql", StringComparison.OrdinalIgnoreCase))
-            databaseProvider = DatabaseProvider.PostgreSql;
-        else if (provider.Equals("SqlServer", StringComparison.OrdinalIgnoreCase))
-            databaseProvider = DatabaseProvider.SqlServer;
-
-        if (databaseProvider.HasValue && databaseProvider.Value == databaseRegister.Provider)
+        if (databaseRegister.Provider.ToString().Equals(provider, StringComparison.OrdinalIgnoreCase))
         {
             builder.Remove(nameof(DatabaseConnectionParameters.Provider));
             return databaseRegister.ParseParameters(builder.ConnectionString);
