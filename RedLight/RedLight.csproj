@@ -12,11 +12,9 @@
 		<PackageProjectUrl>https://github.com/trs4/RedLight</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/trs4/RedLight</RepositoryUrl>
 	</PropertyGroup>
-	
+
 	<ItemGroup>
-		<PackageReference Include="IcyRain.Tables" Version="2.0.2" />
-		<PackageReference Include="System.Memory" Version="4.6.3" />
-		<PackageReference Include="System.Threading.Tasks.Extensions" Version="4.6.3" />
+		<PackageReference Include="IcyRain.Tables" />
 	</ItemGroup>
 
 	<ItemGroup>
