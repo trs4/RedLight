@@ -78,9 +78,9 @@ internal sealed class EmptyDataReader : DbDataReader
 
     public override bool IsDBNull(int ordinal) => ThrowDisposed<bool>();
 
-    public override bool NextResult() => ThrowDisposed<bool>();
+    public override bool NextResult() => false;
 
-    public override bool Read() => ThrowDisposed<bool>();
+    public override bool Read() => false;
 
     public override T GetFieldValue<T>(int ordinal) => ThrowDisposed<T>();
 
@@ -100,7 +100,7 @@ internal sealed class EmptyDataReader : DbDataReader
 
     public override Task<bool> IsDBNullAsync(int ordinal, CancellationToken cancellationToken) => ThrowDisposed<Task<bool>>();
 
-    public override Task<bool> NextResultAsync(CancellationToken cancellationToken) => ThrowDisposed<Task<bool>>();
+    public override Task<bool> NextResultAsync(CancellationToken cancellationToken) => Task.FromResult(false);
 
-    public override Task<bool> ReadAsync(CancellationToken cancellationToken) => ThrowDisposed<Task<bool>>();
+    public override Task<bool> ReadAsync(CancellationToken cancellationToken) => Task.FromResult(false);
 }
