@@ -1,0 +1,18 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
+    <File Path="Directory.Packages.props" />
+    <File Path="NuGet.Config" />
+    <File Path="RuleSet.ruleset" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="RedLight.Console/RedLight.Console.csproj" />
+    <Project Path="RedLight.Tests/RedLight.Tests.csproj" />
+  </Folder>
+  <Project Path="RedLight.All/RedLight.All.csproj" />
+  <Project Path="RedLight.PostgreSql/RedLight.PostgreSql.csproj" />
+  <Project Path="RedLight.SQLite/RedLight.SQLite.csproj" />
+  <Project Path="RedLight.SqlServer/RedLight.SqlServer.csproj" />
+  <Project Path="RedLight/RedLight.csproj" />
+</Solution>

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<AssemblyName>RedLight.SQLite</AssemblyName>
-		<TargetFrameworks>net8.0</TargetFrameworks>
+		<TargetFrameworks>net10.0</TargetFrameworks>
 		<DefineConstants></DefineConstants>
 
 		<TieredPGO>true</TieredPGO>
