@@ -10,6 +10,7 @@
 		<PackageTags>sql;sql-builder;orm;mini-orm;ado-net</PackageTags>
 		<PackageProjectUrl>https://github.com/trs4/RedLight</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/trs4/RedLight</RepositoryUrl>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -18,4 +19,8 @@
 	<ItemGroup>
 		<ProjectReference Include="..\RedLight\RedLight.csproj" />
 	</ItemGroup>
+
+  <ItemGroup>
+    <None Include="readme.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
 </Project>
