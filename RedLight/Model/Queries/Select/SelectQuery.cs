@@ -235,6 +235,19 @@ public abstract class SelectQuery<TResult> : SelectQuery, IUnionQuery
 
     /// <summary>Выполняет запрос с получением результата в данном формате</summary>
     /// <returns>Результат заданного типа</returns>
+    public Dictionary<TKey, TResult> GetMap<TKey>(Func<TResult, TKey> keySelector)
+        => _readActions is null ? Extensions.ToMap(Get<TResult>(), keySelector) : GetMapCore(keySelector);
+
+    /// <summary>Выполняет запрос с получением результата в данном формате</summary>
+    /// <param name="token">Оповещение отмены задачи</param>
+    /// <returns>Результат заданного типа</returns>
+    public async Task<Dictionary<TKey, TResult>> GetMapAsync<TKey>(Func<TResult, TKey> keySelector, CancellationToken token = default)
+        => _readActions is null
+        ? Extensions.ToMap(await GetAsync<TResult>(token).ConfigureAwait(false), keySelector)
+        : await GetMapCoreAsync(keySelector, token).ConfigureAwait(false);
+
+    /// <summary>Выполняет запрос с получением результата в данном формате</summary>
+    /// <returns>Результат заданного типа</returns>
     public TResult GetOne() => _readActions is null ? Get<TResult>() : GetOneCore();
 
     /// <summary>Выполняет запрос с получением результата в данном формате</summary>
@@ -260,6 +273,26 @@ public abstract class SelectQuery<TResult> : SelectQuery, IUnionQuery
 
         var readAction = new Func<DbDataReader, List<TResult>>(reader
             => DataReader.Read(Connection, reader, options, _readActions, () => _columns.OfType<SelectColumn>().Select(f => f.Name)));
+
+        return await Connection.GetAsync(sql, readAction, options, Timeout, token).ConfigureAwait(false);
+    }
+
+    private Dictionary<TKey, TResult> GetMapCore<TKey>(Func<TResult, TKey> keySelector)
+    {
+        var (sql, options) = BuildSql(); // Не занимаем соединение с сервером
+
+        var readAction = new Func<DbDataReader, Dictionary<TKey, TResult>>(reader
+            => DataReader.ReadMap(Connection, reader, options, keySelector, _readActions, () => _columns.OfType<SelectColumn>().Select(f => f.Name)));
+
+        return Connection.Get(sql, readAction, options, Timeout);
+    }
+
+    private async Task<Dictionary<TKey, TResult>> GetMapCoreAsync<TKey>(Func<TResult, TKey> keySelector, CancellationToken token)
+    {
+        var (sql, options) = BuildSql(); // Не занимаем соединение с сервером
+
+        var readAction = new Func<DbDataReader, Dictionary<TKey, TResult>>(reader
+            => DataReader.ReadMap(Connection, reader, options, keySelector, _readActions, () => _columns.OfType<SelectColumn>().Select(f => f.Name)));
 
         return await Connection.GetAsync(sql, readAction, options, Timeout, token).ConfigureAwait(false);
     }

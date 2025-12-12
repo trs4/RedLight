@@ -51,6 +51,49 @@ internal static class DataReader
     }
 
     [MethodImpl(Flags.HotPath)]
+    public static Dictionary<TKey, TResult> ReadMap<TKey, TResult>(DatabaseConnection connection, DbDataReader reader, QueryOptions options,
+        Func<TResult, TKey> keySelector, List<Action<TResult, DbDataReader>> readActions, Func<IEnumerable<string>> getColumns)
+    {
+        bool multipleResult = options?.MultipleResult ?? false;
+        var result = new Dictionary<TKey, TResult>();
+
+        do
+        {
+            while (reader.Read())
+            {
+                var obj = Activator.CreateInstance<TResult>();
+
+                if (readActions.IsNullOrEmpty())
+                {
+                    var propertyNames = getColumns().Select(f => f.Substring(1, f.Length - 2));
+                    int index = -1;
+
+                    foreach (string propertyName in propertyNames)
+                    {
+                        index++;
+                        var propertyInfo = typeof(TResult).GetProperty(propertyName);
+
+                        if (propertyInfo is null)
+                            continue;
+
+                        propertyInfo.SetValue(obj, ScalarReadBuilder.Read(connection, propertyInfo.PropertyType, reader, index));
+                    }
+                }
+                else
+                {
+                    foreach (var readAction in readActions)
+                        readAction(obj, reader);
+                }
+
+                var key = keySelector(obj);
+                result[key] = obj;
+            }
+        } while (multipleResult && reader.NextResult());
+
+        return result;
+    }
+
+    [MethodImpl(Flags.HotPath)]
     public static TResult ReadOne<TResult>(DatabaseConnection connection, DbDataReader reader, QueryOptions options,
         List<Action<TResult, DbDataReader>> readActions, Func<IEnumerable<string>> getColumns)
     {
