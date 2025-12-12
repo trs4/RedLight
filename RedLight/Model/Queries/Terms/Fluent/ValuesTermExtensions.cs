@@ -147,7 +147,7 @@ public static class ValuesTermExtensions
     /// <param name="columnName">Имя поля</param>
     /// <param name="dataColumn">Столбец данных</param>
     /// <param name="rowCount">Количество строк</param>
-    public static TermBlock WithNotValuesColumnTerm<TQuery, TEnum1, TEnum2>(
+    public static TermBlock WithNotValuesColumnTerm<TEnum1, TEnum2>(
         this TermBlock termBlock, TEnum1 tableAlias, TEnum2 columnName, DataColumn dataColumn, int rowCount)
         where TEnum1 : Enum
         where TEnum2 : Enum
