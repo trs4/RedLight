@@ -4,7 +4,7 @@ using System.Text;
 
 namespace RedLight.Internal;
 
-internal class CacheStringBuilder
+internal static class CacheStringBuilder
 {
     [ThreadStatic]
     private static StringBuilder _instance;
