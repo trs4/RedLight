@@ -36,14 +36,14 @@ internal sealed class ScalarTypeAction<T> : TypeAction<T>
         => throw new NotSupportedException(typeof(T).FullName);
 
     public override void BuildWithParseQuery(UpdateQuery query, Table table, T row,
-        HashSet<string> excludedColumnNames, string[] primaryKeyNames)
+        HashSet<string> excludedColumnNames, IReadOnlyList<string> primaryKeyNames)
         => throw new NotSupportedException(typeof(T).FullName);
 
     public override void BuildWithParseMultiQuery(MultiUpdateQuery query, Table table, IReadOnlyCollection<T> rows,
-        HashSet<string> excludedColumnNames, string[] primaryKeyNames)
+        HashSet<string> excludedColumnNames, IReadOnlyList<string> primaryKeyNames)
         => throw new NotSupportedException(typeof(T).FullName);
 
-    public override void BuildWithParseQuery(DeleteQuery query, Table table, T row, string[] primaryKeyNames)
+    public override void BuildWithParseQuery(DeleteQuery query, Table table, T row, IReadOnlyList<string> primaryKeyNames)
     {
         foreach (string primaryKeyName in primaryKeyNames)
             query.WithTerm(primaryKeyName, Op.Equal, table.FindColumn(primaryKeyName), row);
@@ -52,10 +52,10 @@ internal sealed class ScalarTypeAction<T> : TypeAction<T>
     public override void BuildWithParseQuery(DeleteQuery query, Table table, IReadOnlyCollection<T> rows, string primaryKeyName)
         => query.Where.WithValuesTerm(primaryKeyName, rows);
 
-    public override void BuildWithParseMultiQuery(MultiDeleteQuery query, Table table, IReadOnlyCollection<T> rows, string[] primaryKeyNames)
+    public override void BuildWithParseMultiQuery(MultiDeleteQuery query, Table table, IReadOnlyCollection<T> rows, IReadOnlyList<string> primaryKeyNames)
         => throw new NotSupportedException(typeof(T).FullName);
 
-    public override void BuildWithParseMultiQuery(MultiDeleteQuery query, Table table, T row, string[] primaryKeyNames)
+    public override void BuildWithParseMultiQuery(MultiDeleteQuery query, Table table, T row, IReadOnlyList<string> primaryKeyNames)
     {
         foreach (string primaryKeyName in primaryKeyNames)
             query.WithTerm(primaryKeyName, Op.Equal, table.FindColumn(primaryKeyName), row);

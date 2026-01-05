@@ -150,11 +150,11 @@ internal sealed class ClassTypeAction<T> : TypeAction<T>
     }
 
     public override void BuildWithParseQuery(UpdateQuery query, Table table, T row,
-        HashSet<string> excludedColumnNames, string[] primaryKeyNames)
+        HashSet<string> excludedColumnNames, IReadOnlyList<string> primaryKeyNames)
     {
-        var columns = new Column[primaryKeyNames.Length];
+        var columns = new Column[primaryKeyNames.Count];
 
-        for (int i = 0; i < primaryKeyNames.Length; i++)
+        for (int i = 0; i < primaryKeyNames.Count; i++)
         {
             string primaryKeyName = primaryKeyNames[i];
             var column = table.FindColumn(primaryKeyName);
@@ -179,7 +179,7 @@ internal sealed class ClassTypeAction<T> : TypeAction<T>
     }
 
     public override void BuildWithParseMultiQuery(MultiUpdateQuery query, Table table, IReadOnlyCollection<T> rows,
-        HashSet<string> excludedColumnNames, string[] primaryKeyNames)
+        HashSet<string> excludedColumnNames, IReadOnlyList<string> primaryKeyNames)
     {
         foreach (string primaryKeyName in primaryKeyNames)
             query.OnColumn(primaryKeyName);
@@ -206,7 +206,7 @@ internal sealed class ClassTypeAction<T> : TypeAction<T>
         }
     }
 
-    public override void BuildWithParseQuery(DeleteQuery query, Table table, T row, string[] primaryKeyNames)
+    public override void BuildWithParseQuery(DeleteQuery query, Table table, T row, IReadOnlyList<string> primaryKeyNames)
     {
         foreach (string primaryKeyName in primaryKeyNames)
         {
@@ -232,7 +232,7 @@ internal sealed class ClassTypeAction<T> : TypeAction<T>
         query.Where.WithValuesColumnTerm(primaryKeyName, dataColumn, rows.Count);
     }
 
-    public override void BuildWithParseMultiQuery(MultiDeleteQuery query, Table table, IReadOnlyCollection<T> rows, string[] primaryKeyNames)
+    public override void BuildWithParseMultiQuery(MultiDeleteQuery query, Table table, IReadOnlyCollection<T> rows, IReadOnlyList<string> primaryKeyNames)
     {
         foreach (var column in table.Columns)
         {
@@ -253,7 +253,7 @@ internal sealed class ClassTypeAction<T> : TypeAction<T>
         }
     }
 
-    public override void BuildWithParseMultiQuery(MultiDeleteQuery query, Table table, T row, string[] primaryKeyNames)
+    public override void BuildWithParseMultiQuery(MultiDeleteQuery query, Table table, T row, IReadOnlyList<string> primaryKeyNames)
     {
         foreach (string primaryKeyName in primaryKeyNames)
         {

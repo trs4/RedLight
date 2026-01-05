@@ -40,7 +40,7 @@ public abstract class DatabaseDeleteQueries
     {
         ArgumentNullException.ThrowIfNull(row);
         var table = TableGenerator.From<TEnum>();
-        string[] primaryKeyNames = table.GetPrimaryKeyNames();
+        var primaryKeyNames = table.GetPrimaryKeyNames(row);
         var query = CreateQuery<TEnum>();
         TypeAction<TResult>.Instance.BuildWithParseQuery(query, table, row, primaryKeyNames);
         return query;
@@ -104,7 +104,7 @@ public abstract class DatabaseDeleteQueries
     {
         ArgumentNullException.ThrowIfNull(row);
         var table = TableGenerator.From<TEnum>();
-        string[] primaryKeyNames = table.GetPrimaryKeyNames();
+        var primaryKeyNames = table.GetPrimaryKeyNames(row);
         var query = CreateMultiQuery<TEnum>();
         TypeAction<TResult>.Instance.BuildWithParseMultiQuery(query, table, row, primaryKeyNames);
         return query;

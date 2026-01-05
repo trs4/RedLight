@@ -62,16 +62,16 @@ internal abstract class TypeAction<T>
         bool returningIdentity, HashSet<string> excludedColumnNames);
 
     public abstract void BuildWithParseQuery(UpdateQuery query, Table table, T row,
-        HashSet<string> excludedColumnNames, string[] primaryKeyNames);
+        HashSet<string> excludedColumnNames, IReadOnlyList<string> primaryKeyNames);
 
     public abstract void BuildWithParseMultiQuery(MultiUpdateQuery query, Table table, IReadOnlyCollection<T> rows,
-        HashSet<string> excludedColumnNames, string[] primaryKeyNames);
+        HashSet<string> excludedColumnNames, IReadOnlyList<string> primaryKeyNames);
 
-    public abstract void BuildWithParseQuery(DeleteQuery query, Table table, T row, string[] primaryKeyNames);
+    public abstract void BuildWithParseQuery(DeleteQuery query, Table table, T row, IReadOnlyList<string> primaryKeyNames);
 
     public abstract void BuildWithParseQuery(DeleteQuery query, Table table, IReadOnlyCollection<T> rows, string primaryKeyName);
 
-    public abstract void BuildWithParseMultiQuery(MultiDeleteQuery query, Table table, IReadOnlyCollection<T> rows, string[] primaryKeyNames);
+    public abstract void BuildWithParseMultiQuery(MultiDeleteQuery query, Table table, IReadOnlyCollection<T> rows, IReadOnlyList<string> primaryKeyNames);
 
-    public abstract void BuildWithParseMultiQuery(MultiDeleteQuery query, Table table, T row, string[] primaryKeyNames);
+    public abstract void BuildWithParseMultiQuery(MultiDeleteQuery query, Table table, T row, IReadOnlyList<string> primaryKeyNames);
 }

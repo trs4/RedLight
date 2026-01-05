@@ -1,33 +1,61 @@
-﻿using IcyRain.Tables;
+﻿using System.Data.Common;
+using System.Threading.Channels;
+using IcyRain.Tables;
 using RedLight;
 using RedLight.Console;
 
-File.Delete(@"C:\Users\evolution\Music\Sunrise\MediaLibrary.db");
+//File.Delete(@"C:\Users\evolution\Music\Sunrise\MediaLibrary.db");
 
 //string connectionString = @"Provider=SQLite;Data Source='C:\GitHubProjects\RedLight\test.db'"; // SQLite
-string connectionString = @"Provider=SQLite;Data Source='C:\Users\evolution\Music\Sunrise\MediaLibrary.db'"; // SQLite
+string connectionString = @"Provider=SQLite;Data Source='C:\Users\user\Music\Sunrise\MediaLibrary.db'"; // SQLite
 using var connection = DatabaseConnection.Create(connectionString);
 //var r1 = connection.Details.Version.ToString();
 
+{
+    var removePlaylistTracks = new DataTable();
+    var removePlaylistIdColumn = removePlaylistTracks.AddInt32Column(nameof(PlaylistTracks.PlaylistId));
+    var removeTrackIdColumn = removePlaylistTracks.AddInt32Column(nameof(PlaylistTracks.TrackId));
 
 
-//SQLite:
+    int row = removePlaylistTracks.RowCount++;
+    removePlaylistIdColumn.Set(row, 10);
+    removeTrackIdColumn.Set(row, 20);
 
-//Data Source=c:\mydb.db;Version=3;Password=myPassword;Pooling=True;Max Pool Size=100;
-//Data Source=:memory:;Version=3;New=True;
+    row = removePlaylistTracks.RowCount++;
+    removePlaylistIdColumn.Set(row, 11);
+    removeTrackIdColumn.Set(row, 21);
+
+    row = removePlaylistTracks.RowCount++;
+    removePlaylistIdColumn.Set(row, 12);
+    removeTrackIdColumn.Set(row, 22);
+
+    string sql = connection.Delete.CreateWithParseMultiQuery<DataTable, PlaylistTracks>(removePlaylistTracks).Sql;
+}
+//    await _connection.Insert.CreateWithParseMultiQuery<DataTable, PlaylistTracks>(addPlaylistTracks, returningIdentity: false).RunAsync(token);
 
 
-//SqlServer:
 
-//Server = myServerName\myInstanceName; Database = myDataBase; User Id = myUsername; Password = myPassword;
-//Data Source = 190.190.200.100,1433; Network Library = DBMSSOCN; Initial Catalog = myDataBase; User ID = myUsername; Password = myPassword;
-//Server =.\SQLExpress; AttachDbFilename = C:\MyFolder\MyDataFile.mdf; Database = dbname; Trusted_Connection = Yes;
-//Server = (localdb)\v11.0; Integrated Security = true; AttachDbFileName = C:\MyFolder\MyData.mdf;
 
-//PostgreSql:
-//User ID = root; Password = myPassword; Host = localhost; Port = 5432; Database = myDataBase; Pooling = true; Min Pool Size=0; Max Pool Size=100; Connection Lifetime = 0;
 
-var tracks = new List<Track>()
+
+
+    //SQLite:
+
+    //Data Source=c:\mydb.db;Version=3;Password=myPassword;Pooling=True;Max Pool Size=100;
+    //Data Source=:memory:;Version=3;New=True;
+
+
+    //SqlServer:
+
+    //Server = myServerName\myInstanceName; Database = myDataBase; User Id = myUsername; Password = myPassword;
+    //Data Source = 190.190.200.100,1433; Network Library = DBMSSOCN; Initial Catalog = myDataBase; User ID = myUsername; Password = myPassword;
+    //Server =.\SQLExpress; AttachDbFilename = C:\MyFolder\MyDataFile.mdf; Database = dbname; Trusted_Connection = Yes;
+    //Server = (localdb)\v11.0; Integrated Security = true; AttachDbFileName = C:\MyFolder\MyData.mdf;
+
+    //PostgreSql:
+    //User ID = root; Password = myPassword; Host = localhost; Port = 5432; Database = myDataBase; Pooling = true; Min Pool Size=0; Max Pool Size=100; Connection Lifetime = 0;
+
+    var tracks = new List<Track>()
 {
     new Track() { Guid = Guid.NewGuid(), Path = "test1", Title = "q1", Year = 2024, Duration = DateTime.Now.TimeOfDay, Artist = "w1",
         Created = DateTime.Now, Size = 4 },

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using IcyRain.Tables;
 using RedLight.Internal;
 
 namespace RedLight;
@@ -30,14 +31,46 @@ public sealed class Table
     internal PrimaryKeyAttribute PrimaryKey { get; set; } // %%TODO Отдельный тип сделать
 
     internal string[] GetPrimaryKeyNames()
-    {
-        if (PrimaryKey is not null && PrimaryKey.Columns.Length > 0)
-            return PrimaryKey.Columns;
+        => TryGetPrimaryKeyNames(out string[] primaryKeyNames) ? primaryKeyNames : throw new InvalidOperationException(nameof(PrimaryKey));
 
-        if (Identity is not null)
-            return [Identity.Name];
+    internal IReadOnlyList<string> GetPrimaryKeyNames<TResult>(TResult row)
+    {
+        if (TryGetPrimaryKeyNames(out string[] primaryKeyNames))
+            return primaryKeyNames;
+
+        if (row is DataTable dataTable)
+        {
+            var columns = new List<string>();
+
+            foreach (string dataColumn in dataTable.Keys)
+            {
+                if (_columns.TryGetValue(dataColumn, out var column))
+                    columns.Add(column.Name);
+            }
+
+            if (columns.Count > 0)
+                return columns;
+        }
 
         throw new InvalidOperationException(nameof(PrimaryKey));
+    }
+
+    private bool TryGetPrimaryKeyNames(out string[] primaryKeyNames)
+    {
+        if (PrimaryKey is not null && PrimaryKey.Columns.Length > 0)
+        {
+            primaryKeyNames = PrimaryKey.Columns;
+            return true;
+        }
+
+        if (Identity is not null)
+        {
+            primaryKeyNames = [Identity.Name];
+            return true;
+        }
+
+        primaryKeyNames = null;
+        return false;
     }
 
     /// <summary>Ищет описание поля по наименованию</summary>

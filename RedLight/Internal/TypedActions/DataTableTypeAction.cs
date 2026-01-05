@@ -120,14 +120,14 @@ internal sealed class DataTableTypeAction : TypeAction<DataTable>
     }
 
     public override void BuildWithParseQuery(UpdateQuery query, Table table, DataTable row,
-        HashSet<string> excludedColumnNames, string[] primaryKeyNames)
+        HashSet<string> excludedColumnNames, IReadOnlyList<string> primaryKeyNames)
         => Append(query, table, primaryKeyNames, row, excludedColumnNames);
 
-    public static void Append(UpdateQuery query, Table table, string[] primaryKeyNames, DataTable dataTable, HashSet<string> excludedColumnNames)
+    public static void Append(UpdateQuery query, Table table, IReadOnlyList<string> primaryKeyNames, DataTable dataTable, HashSet<string> excludedColumnNames)
     {
-        var columns = new Column[primaryKeyNames.Length];
+        var columns = new Column[primaryKeyNames.Count];
 
-        for (int i = 0; i < primaryKeyNames.Length; i++)
+        for (int i = 0; i < primaryKeyNames.Count; i++)
         {
             string primaryKeyName = primaryKeyNames[i];
             var column = table.FindColumn(primaryKeyName);
@@ -152,10 +152,10 @@ internal sealed class DataTableTypeAction : TypeAction<DataTable>
     }
 
     public override void BuildWithParseMultiQuery(MultiUpdateQuery query, Table table, IReadOnlyCollection<DataTable> rows,
-        HashSet<string> excludedColumnNames, string[] primaryKeyNames)
+        HashSet<string> excludedColumnNames, IReadOnlyList<string> primaryKeyNames)
         => Append(query, table, primaryKeyNames, rows.First(), excludedColumnNames);
 
-    public static void Append(MultiUpdateQuery query, Table table, string[] primaryKeyNames, DataTable dataTable, HashSet<string> excludedColumnNames)
+    public static void Append(MultiUpdateQuery query, Table table, IReadOnlyList<string> primaryKeyNames, DataTable dataTable, HashSet<string> excludedColumnNames)
     {
         foreach (string primaryKeyName in primaryKeyNames)
             query.OnColumn(primaryKeyName);
@@ -175,10 +175,10 @@ internal sealed class DataTableTypeAction : TypeAction<DataTable>
         }
     }
 
-    public override void BuildWithParseQuery(DeleteQuery query, Table table, DataTable row, string[] primaryKeyNames)
+    public override void BuildWithParseQuery(DeleteQuery query, Table table, DataTable row, IReadOnlyList<string> primaryKeyNames)
         => Append(query, table, primaryKeyNames, row);
 
-    public static void Append(DeleteQuery query, Table table, string[] primaryKeyNames, DataTable dataTable)
+    public static void Append(DeleteQuery query, Table table, IReadOnlyList<string> primaryKeyNames, DataTable dataTable)
     {
         foreach (string primaryKeyName in primaryKeyNames)
         {
@@ -200,13 +200,13 @@ internal sealed class DataTableTypeAction : TypeAction<DataTable>
         query.Where.WithValuesColumnTerm(primaryKeyName, dataColumn, dataTable.RowCount);
     }
 
-    public override void BuildWithParseMultiQuery(MultiDeleteQuery query, Table table, IReadOnlyCollection<DataTable> rows, string[] primaryKeyNames)
+    public override void BuildWithParseMultiQuery(MultiDeleteQuery query, Table table, IReadOnlyCollection<DataTable> rows, IReadOnlyList<string> primaryKeyNames)
         => Append(query, table, primaryKeyNames, rows.First());
 
-    public override void BuildWithParseMultiQuery(MultiDeleteQuery query, Table table, DataTable row, string[] primaryKeyNames)
+    public override void BuildWithParseMultiQuery(MultiDeleteQuery query, Table table, DataTable row, IReadOnlyList<string> primaryKeyNames)
         => Append(query, table, primaryKeyNames, row);
 
-    public static void Append(MultiDeleteQuery query, Table table, string[] primaryKeyNames, DataTable dataTable)
+    public static void Append(MultiDeleteQuery query, Table table, IReadOnlyList<string> primaryKeyNames, DataTable dataTable)
     {
         foreach (var column in table.Columns)
         {

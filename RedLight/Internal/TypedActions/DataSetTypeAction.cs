@@ -68,22 +68,22 @@ internal sealed class DataSetTypeAction : TypeAction<DataSet>
         => DataTableTypeAction.Append(query, table, row.Values.First(), returningIdentity, excludedColumnNames);
 
     public override void BuildWithParseQuery(UpdateQuery query, Table table, DataSet row,
-        HashSet<string> excludedColumnNames, string[] primaryKeyNames)
+        HashSet<string> excludedColumnNames, IReadOnlyList<string> primaryKeyNames)
         => DataTableTypeAction.Append(query, table, primaryKeyNames, row.Values.First(), excludedColumnNames);
 
     public override void BuildWithParseMultiQuery(MultiUpdateQuery query, Table table, IReadOnlyCollection<DataSet> rows,
-        HashSet<string> excludedColumnNames, string[] primaryKeyNames)
+        HashSet<string> excludedColumnNames, IReadOnlyList<string> primaryKeyNames)
         => DataTableTypeAction.Append(query, table, primaryKeyNames, rows.First().Values.First(), excludedColumnNames);
 
-    public override void BuildWithParseQuery(DeleteQuery query, Table table, DataSet row, string[] primaryKeyNames)
+    public override void BuildWithParseQuery(DeleteQuery query, Table table, DataSet row, IReadOnlyList<string> primaryKeyNames)
         => DataTableTypeAction.Append(query, table, primaryKeyNames, row.Values.First());
 
     public override void BuildWithParseQuery(DeleteQuery query, Table table, IReadOnlyCollection<DataSet> rows, string primaryKeyName)
         => DataTableTypeAction.AppendValues(query, table, primaryKeyName, rows.First().Values.First());
 
-    public override void BuildWithParseMultiQuery(MultiDeleteQuery query, Table table, IReadOnlyCollection<DataSet> rows, string[] primaryKeyNames)
+    public override void BuildWithParseMultiQuery(MultiDeleteQuery query, Table table, IReadOnlyCollection<DataSet> rows, IReadOnlyList<string> primaryKeyNames)
         => DataTableTypeAction.Append(query, table, primaryKeyNames, rows.First().Values.First());
 
-    public override void BuildWithParseMultiQuery(MultiDeleteQuery query, Table table, DataSet row, string[] primaryKeyNames)
+    public override void BuildWithParseMultiQuery(MultiDeleteQuery query, Table table, DataSet row, IReadOnlyList<string> primaryKeyNames)
         => DataTableTypeAction.Append(query, table, primaryKeyNames, row.Values.First());
 }
