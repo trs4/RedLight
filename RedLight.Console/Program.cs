@@ -1,6 +1,4 @@
-﻿using System.Data.Common;
-using System.Threading.Channels;
-using IcyRain.Tables;
+﻿using IcyRain.Tables;
 using RedLight;
 using RedLight.Console;
 
@@ -8,6 +6,7 @@ using RedLight.Console;
 
 //string connectionString = @"Provider=SQLite;Data Source='C:\GitHubProjects\RedLight\test.db'"; // SQLite
 string connectionString = @"Provider=SQLite;Data Source='C:\Users\user\Music\Sunrise\MediaLibrary.db'"; // SQLite
+//string connectionString = @"Provider=SqlServer"; // SQL Server
 using var connection = DatabaseConnection.Create(connectionString);
 //var r1 = connection.Details.Version.ToString();
 
@@ -18,15 +17,15 @@ using var connection = DatabaseConnection.Create(connectionString);
 
 
     int row = removePlaylistTracks.RowCount++;
-    removePlaylistIdColumn.Set(row, 10);
+    removePlaylistIdColumn.Set(row, 10000);
     removeTrackIdColumn.Set(row, 20);
 
     row = removePlaylistTracks.RowCount++;
-    removePlaylistIdColumn.Set(row, 11);
+    removePlaylistIdColumn.Set(row, 11000);
     removeTrackIdColumn.Set(row, 21);
 
     row = removePlaylistTracks.RowCount++;
-    removePlaylistIdColumn.Set(row, 12);
+    removePlaylistIdColumn.Set(row, 12000);
     removeTrackIdColumn.Set(row, 22);
 
     string sql = connection.Delete.CreateWithParseMultiQuery<DataTable, PlaylistTracks>(removePlaylistTracks).Sql;

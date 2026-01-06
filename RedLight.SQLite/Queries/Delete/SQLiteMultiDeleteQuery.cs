@@ -18,7 +18,8 @@ internal sealed class SQLiteMultiDeleteQuery : MultiDeleteQuery
         }
 
         builder.Append("DELETE FROM ").Append(TableName)
-            .Append("\r\nFROM ").Append(TableName).Append(' ').Append(Alias)
+            .Append("\r\nWHERE ROWID IN (")
+            .Append("\r\nSELECT ").Append(Alias).Append(".ROWID FROM ").Append(TableName).Append(' ').Append(Alias)
             .Append("\r\nINNER JOIN\r\n(\r\n");
 
         base.BuildPackets(builder, options, packetSize, packetCount, rowCount);
@@ -26,6 +27,18 @@ internal sealed class SQLiteMultiDeleteQuery : MultiDeleteQuery
         builder.Append("\r\n) ").Append(DataAlias);
         onTerm.BuildSql(builder, options, Consts.On);
         BuildWhereBlock(builder, options);
+
+        builder.Append("\r\n)");
+    }
+
+    protected override void BuildBlock(StringBuilder builder, QueryOptions options, int startIndex, int packetSize, string tableName)
+    {
+        int number = 0;
+        builder.Append("SELECT ");
+        ColumnBuilder.Build(builder, _columns, f => builder.Append(tableName).Append(".[column").Append(++number).Append("] ").Append(f.Name));
+        builder.Append(" FROM (\r\n");
+        QueryBuilder.BuildValues(builder, Connection, _columns, startIndex, packetSize);
+        builder.Append("\r\n) AS ").Append(tableName);
     }
 
 }

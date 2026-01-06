@@ -36,7 +36,7 @@ internal sealed class DboQuotesBracketsNaming : Naming
             return name;
 
         if (name.IndexOfAny(_bracketSymbols) == -1)
-            return $"dbo.[{name}]";
+            return $"dbo.\"{name}]\"";
 
         int index;
 
@@ -48,7 +48,7 @@ internal sealed class DboQuotesBracketsNaming : Naming
                 throw new InvalidOperationException(name);
 
             name = name.Substring(index + 1, name.Length - index - 2);
-            return $"dbo.[{name}]";
+            return $"dbo.\"{name}\"";
         }
 
         // "" brackets
@@ -70,7 +70,7 @@ internal sealed class DboQuotesBracketsNaming : Naming
             throw new InvalidOperationException(name);
 
         name = name.Substring(index + 1, name.Length - index - 2);
-        return $"dbo.[{name}]";
+        return $"dbo.\"{name}\"";
     }
 
     public override string GetNameWithSchema<TEnum>(TEnum name) => EnumNamesWithSchema<TEnum>.Get(name);
@@ -87,7 +87,7 @@ internal sealed class DboQuotesBracketsNaming : Naming
             var map = new Dictionary<T, string>(allValues.Length);
 
             foreach (var value in allValues.OfType<T>())
-                map[value] = $"dbo.[{value}]";
+                map[value] = $"dbo.\"{value}\"";
 
             _map = map.ToFrozenDictionary();
         }
@@ -97,7 +97,7 @@ internal sealed class DboQuotesBracketsNaming : Naming
 
     private static class EnumNameWithSchema<T> where T : Enum
     {
-        public static readonly string Name = $"dbo.[{typeof(T).Name}]";
+        public static readonly string Name = $"dbo.\"{typeof(T).Name}\"";
     }
 
     #endregion
@@ -120,22 +120,22 @@ internal sealed class DboQuotesBracketsNaming : Naming
             throw new ArgumentException("Empty name");
 
         if (name.IndexOfAny(_bracketSymbols) == -1)
-            return $"[{name}]";
+            return $"\"{name}\"";
 
-        if (name[0] == '[') // [] brackets
+        if (name[0] == '\"') // "" brackets
         {
-            if (name[^1] != ']') // Крайние символы
+            if (name[^1] != '\"') // Крайние символы
                 throw new InvalidOperationException(name);
 
             return name;
         }
 
-        // "" brackets
-        if (name[0] != '"' || name[^1] != '"') // Крайние символы
+        // [] brackets
+        if (name[0] != '[' || name[^1] != ']') // Крайние символы
             throw new InvalidOperationException(name);
 
         name = name.Substring(1, name.Length - 2);
-        return $"[{name}]";
+        return $"\"{name}\"";
     }
 
     public override string GetName<TEnum>(TEnum name) => EnumNames<TEnum>.Get(name);
@@ -152,7 +152,7 @@ internal sealed class DboQuotesBracketsNaming : Naming
             var map = new Dictionary<T, string>(allValues.Length);
 
             foreach (var value in allValues.OfType<T>())
-                map[value] = $"[{value}]";
+                map[value] = $"\"{value}\"";
 
             _map = map.ToFrozenDictionary();
         }
@@ -162,7 +162,7 @@ internal sealed class DboQuotesBracketsNaming : Naming
 
     private static class EnumName<T> where T : Enum
     {
-        public static readonly string Name = $"[{typeof(T).Name}]";
+        public static readonly string Name = $"\"{typeof(T).Name}\"";
     }
 
     #endregion

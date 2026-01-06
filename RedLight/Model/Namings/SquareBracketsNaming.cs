@@ -14,7 +14,7 @@ internal sealed class SquareBracketsNaming : Naming
 
     public static Naming Instance { get; } = new SquareBracketsNaming();
 
-    private readonly static char[] _bracketSymbols = ['[', ']'];
+    private readonly static char[] _bracketSymbols = ['[', ']', '"'];
     private readonly ConcurrentDictionary<string, string> _nameCache = new(4, 1024);
     private readonly ConcurrentDictionary<string, string> _clearNameCache = new(4, 128);
 
