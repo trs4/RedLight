@@ -44,6 +44,17 @@ public static class CreateColumnQueryFluent
     }
 
     /// <summary>Добавляет поле таблицы</summary>
+    /// <param name="name">Имя поля</param>
+    public static TQuery WithColumn<TQuery, TEnum>(this TQuery query, TEnum name)
+        where TQuery : CreateColumnQuery
+        where TEnum : Enum
+    {
+        var table = TableGenerator.From<TEnum>();
+        var column = table.FindColumn(name.ToString());
+        return query.WithColumn(column);
+    }
+
+    /// <summary>Добавляет поле таблицы</summary>
     /// <param name="column">Описание поля</param>
     public static TQuery WithColumn<TQuery>(this TQuery query, Column column)
         where TQuery : CreateColumnQuery

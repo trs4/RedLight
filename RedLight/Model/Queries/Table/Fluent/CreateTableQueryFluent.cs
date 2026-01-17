@@ -75,6 +75,17 @@ public static class CreateTableQueryFluent
     }
 
     /// <summary>Добавляет поле таблицы</summary>
+    /// <param name="name">Имя поля</param>
+    public static TQuery AddColumn<TQuery, TEnum>(this TQuery query, TEnum name)
+        where TQuery : CreateTableQuery
+        where TEnum : Enum
+    {
+        var table = TableGenerator.From<TEnum>();
+        var column = table.FindColumn(name.ToString());
+        return query.AddColumn(column);
+    }
+
+    /// <summary>Добавляет поле таблицы</summary>
     /// <param name="column">Описание поля</param>
     public static TQuery AddColumn<TQuery>(this TQuery query, Column column)
         where TQuery : CreateTableQuery
