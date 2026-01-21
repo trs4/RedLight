@@ -28,5 +28,5 @@ internal sealed class SQLiteValueEscape : ValueEscape
 
     public override string Escape(Guid value) => $"'{value}'";
 
-    public override string Escape(byte[] value) => $"x'{BitConverter.ToString(value).Replace("-", "")}'";
+    public override string Escape(byte[] value) => value is null ? Consts.Null : $"x'{Convert.ToHexString(value)}'";
 }

@@ -19,5 +19,5 @@ internal sealed class SqlServerValueEscape : ValueEscape
 
     public override string Escape(Guid value) => $"CAST('{value}' as uniqueidentifier)";
 
-    public override string Escape(byte[] value) => value is null ? Consts.Null : "0x" + BitConverter.ToString(value).Replace("-", "");
+    public override string Escape(byte[] value) => value is null ? Consts.Null : "0x" + Convert.ToHexString(value);
 }
