@@ -48,7 +48,7 @@ public abstract class SelectQuery : WhereQuery
     /// <summary>Список выбираемых полей</summary>
     public ReadOnlyCollection<QueryColumn> Columns => _columns.AsReadOnly();
 
-    /// <summary>Ищёт пересечение по имени таблицы</summary>
+    /// <summary>Ищем пересечение по имени таблицы</summary>
     /// <param name="tableName">Имя таблицы пересечения</param>
     public JoinQuery FindJoin(string tableName)
     {
@@ -58,7 +58,7 @@ public abstract class SelectQuery : WhereQuery
         return _joins.FirstOrDefault(j => String.Equals(j.TableName, tableName, StringComparison.OrdinalIgnoreCase));
     }
 
-    /// <summary>Ищёт пересечение по имени таблицы</summary>
+    /// <summary>Ищем пересечение по имени таблицы</summary>
     /// <param name="tableAlias">Имя псевдонима таблицы пересечения</param>
     public JoinQuery FindJoinByAlias(string tableAlias)
     {
