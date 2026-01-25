@@ -1,4 +1,8 @@
-﻿using IcyRain.Tables;
+﻿using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.Unicode;
+using IcyRain.Tables;
 using RedLight;
 using RedLight.Console;
 
@@ -11,24 +15,41 @@ using var connection = DatabaseConnection.Create(connectionString);
 //var r1 = connection.Details.Version.ToString();
 
 {
-    var removePlaylistTracks = new DataTable();
-    var removePlaylistIdColumn = removePlaylistTracks.AddInt32Column(nameof(PlaylistTracks.PlaylistId));
-    var removeTrackIdColumn = removePlaylistTracks.AddInt32Column(nameof(PlaylistTracks.TrackId));
+    var options = new JsonSerializerOptions()
+    {
+        WriteIndented = true,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
+        Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+    };
+
+    var data = new PlaylistTermRule() { Value = 5 };
+    byte[] bytes = JsonSerializer.SerializeToUtf8Bytes(data, options);
+    data = JsonSerializer.Deserialize<PlaylistTermRule>(bytes, options);
+
+    const string alias = "t";
+    var query = connection.Select.CreateQuery<Tracks>(alias);
+    query.WithTerm(Tracks.Rating, Op.Equal, data.Value);
+    string sql = query.Sql;
 
 
-    int row = removePlaylistTracks.RowCount++;
-    removePlaylistIdColumn.Set(row, 10000);
-    removeTrackIdColumn.Set(row, 20);
+    //var removePlaylistTracks = new DataTable();
+    //var removePlaylistIdColumn = removePlaylistTracks.AddInt32Column(nameof(PlaylistTracks.PlaylistId));
+    //var removeTrackIdColumn = removePlaylistTracks.AddInt32Column(nameof(PlaylistTracks.TrackId));
 
-    row = removePlaylistTracks.RowCount++;
-    removePlaylistIdColumn.Set(row, 11000);
-    removeTrackIdColumn.Set(row, 21);
 
-    row = removePlaylistTracks.RowCount++;
-    removePlaylistIdColumn.Set(row, 12000);
-    removeTrackIdColumn.Set(row, 22);
+    //int row = removePlaylistTracks.RowCount++;
+    //removePlaylistIdColumn.Set(row, 10000);
+    //removeTrackIdColumn.Set(row, 20);
 
-    string sql = connection.Delete.CreateWithParseMultiQuery<DataTable, PlaylistTracks>(removePlaylistTracks).Sql;
+    //row = removePlaylistTracks.RowCount++;
+    //removePlaylistIdColumn.Set(row, 11000);
+    //removeTrackIdColumn.Set(row, 21);
+
+    //row = removePlaylistTracks.RowCount++;
+    //removePlaylistIdColumn.Set(row, 12000);
+    //removeTrackIdColumn.Set(row, 22);
+
+    //string sql = connection.Delete.CreateWithParseMultiQuery<DataTable, PlaylistTracks>(removePlaylistTracks).Sql;
 }
 //    await _connection.Insert.CreateWithParseMultiQuery<DataTable, PlaylistTracks>(addPlaylistTracks, returningIdentity: false).RunAsync(token);
 
@@ -38,23 +59,23 @@ using var connection = DatabaseConnection.Create(connectionString);
 
 
 
-    //SQLite:
+//SQLite:
 
-    //Data Source=c:\mydb.db;Version=3;Password=myPassword;Pooling=True;Max Pool Size=100;
-    //Data Source=:memory:;Version=3;New=True;
+//Data Source=c:\mydb.db;Version=3;Password=myPassword;Pooling=True;Max Pool Size=100;
+//Data Source=:memory:;Version=3;New=True;
 
 
-    //SqlServer:
+//SqlServer:
 
-    //Server = myServerName\myInstanceName; Database = myDataBase; User Id = myUsername; Password = myPassword;
-    //Data Source = 190.190.200.100,1433; Network Library = DBMSSOCN; Initial Catalog = myDataBase; User ID = myUsername; Password = myPassword;
-    //Server =.\SQLExpress; AttachDbFilename = C:\MyFolder\MyDataFile.mdf; Database = dbname; Trusted_Connection = Yes;
-    //Server = (localdb)\v11.0; Integrated Security = true; AttachDbFileName = C:\MyFolder\MyData.mdf;
+//Server = myServerName\myInstanceName; Database = myDataBase; User Id = myUsername; Password = myPassword;
+//Data Source = 190.190.200.100,1433; Network Library = DBMSSOCN; Initial Catalog = myDataBase; User ID = myUsername; Password = myPassword;
+//Server =.\SQLExpress; AttachDbFilename = C:\MyFolder\MyDataFile.mdf; Database = dbname; Trusted_Connection = Yes;
+//Server = (localdb)\v11.0; Integrated Security = true; AttachDbFileName = C:\MyFolder\MyData.mdf;
 
-    //PostgreSql:
-    //User ID = root; Password = myPassword; Host = localhost; Port = 5432; Database = myDataBase; Pooling = true; Min Pool Size=0; Max Pool Size=100; Connection Lifetime = 0;
+//PostgreSql:
+//User ID = root; Password = myPassword; Host = localhost; Port = 5432; Database = myDataBase; Pooling = true; Min Pool Size=0; Max Pool Size=100; Connection Lifetime = 0;
 
-    var tracks = new List<Track>()
+var tracks = new List<Track>()
 {
     new Track() { Guid = Guid.NewGuid(), Path = "test1", Title = "q1", Year = 2024, Duration = DateTime.Now.TimeOfDay, Artist = "w1",
         Created = DateTime.Now, Size = 4 },

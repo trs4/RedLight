@@ -69,7 +69,7 @@ public static class WhereQueryFluent
         where TEnum : Enum
     {
         string escapedColumnName = query.Connection.Naming.GetName(column);
-        string escapedValue = query.Connection.Escaping.EscapeData(value);
+        string escapedValue = query.Connection.Escaping.EscapeData(column, value);
         query.Where.AddTerm(new RawOperatorTerm(query, escapedColumnName, termOperator, escapedValue));
         return query;
     }
